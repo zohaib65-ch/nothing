@@ -1,0 +1,84 @@
+"use client";
+
+import * as React from "react";
+import { X } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+export interface ModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  title?: string;
+  subtitle?: string;
+  children: React.ReactNode;
+  maxWidth?: "sm" | "md" | "lg" | "xl" | "2xl";
+}
+
+export function Modal({
+  isOpen,
+  onClose,
+  title,
+  subtitle,
+  children,
+  maxWidth = "md",
+}: ModalProps) {
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+      window.addEventListener("keydown", handleKeyDown);
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
+
+  const maxWidthClasses = {
+    sm: "max-w-sm",
+    md: "max-w-md",
+    lg: "max-w-lg",
+    xl: "max-w-xl",
+    "2xl": "max-w-2xl",
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
+      <div
+        className="fixed inset-0"
+        onClick={onClose}
+        aria-hidden="true"
+      />
+      <div
+        className={cn(
+          "relative w-full bg-[#0F0F10] border border-[#26262A] shadow-2xl p-6 sm:p-8 z-10 space-y-6 text-white max-h-[90vh] overflow-y-auto no-scrollbar",
+          maxWidthClasses[maxWidth]
+        )}
+      >
+        <div className="flex items-start justify-between border-b border-[#26262A] pb-4">
+          <div>
+            {title && (
+              <h3 className="font-mono text-lg font-bold uppercase tracking-wider text-white flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-[#D71921]" />
+                {title}
+              </h3>
+            )}
+            {subtitle && (
+              <p className="text-xs text-neutral-400 font-sans mt-1">{subtitle}</p>
+            )}
+          </div>
+          <button
+            onClick={onClose}
+            className="p-1 rounded-sm text-neutral-400 hover:text-white hover:bg-white/10 transition-colors"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+        <div>{children}</div>
+      </div>
+    </div>
+  );
+}

@@ -1,26 +1,126 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@layer base {
+  @font-face {
+    font-family: 'Ndot';
+    src: url('/fonts/Ndot-Regular.woff') format('woff'),
+         url('https://fonts.cdnfonts.com/s/93437/Ndot-55.woff') format('woff'),
+         local('Ndot-Regular'), local('Courier New'), local('monospace');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  @font-face {
+    font-family: 'NType82';
+    src: url('/fonts/NType82-Regular.woff') format('woff'),
+         url('https://fonts.cdnfonts.com/s/93437/NType82-Regular.woff') format('woff'),
+         local('NType82-Regular'), local('Inter'), local('system-ui');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  @font-face {
+    font-family: 'LatteraMono';
+    src: url('/fonts/LatteraMonoLL.woff') format('woff'),
+         local('LatteraMonoLL'), local('Space Mono'), local('monospace');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
   }
 }
 
+@theme {
+  --font-ndot: 'Ndot', 'Share Tech Mono', sans-serif;
+  --font-ntype82: 'NType82', 'Inter', sans-serif;
+  --font-latteramono: 'LatteraMono', 'JetBrains Mono', monospace;
+
+  --font-sans: 'NType82', 'Inter', sans-serif;
+  --font-mono: 'LatteraMono', 'JetBrains Mono', monospace;
+
+  --color-nothing-[#F4F4F4]: #F4F4F4;
+  --color-nothing-black: #111111;
+  --color-nothing-red: #D71921;
+}
+
+:root {
+  --background: #F4F4F4;
+  --foreground: #111111;
+}
+
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'NType82', sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.font-ndot {
+  font-family: 'Ndot', sans-serif !important;
+}
+
+.font-ntype {
+  font-family: 'NType82', sans-serif !important;
+}
+
+.font-lattera {
+  font-family: 'LatteraMono', monospace !important;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #000000;
+}
+::-webkit-scrollbar-thumb {
+  background: #333333;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #D71921;
+}
+
+/* Authentic Nothing Dot & Plus Grid Backgrounds */
+.bg-nothing-grid {
+  background-color: #F4F4F4;
+  background-image: 
+    radial-gradient(#999999 1.2px, transparent 1.2px),
+    radial-gradient(#999999 1.2px, #F4F4F4 1.2px);
+  background-size: 80px 80px;
+  background-position: 0 0, 40px 40px;
+}
+
+.bg-dot-plus-grid {
+  background-color: #F4F4F4;
+  background-image: radial-gradient(rgba(0, 0, 0, 0.2) 1.5px, transparent 1.5px);
+  background-size: 60px 60px;
+}
+
+.bg-dot-grid-dark {
+  background-color: #000000 !important;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.15) 1.5px, transparent 1.5px);
+  background-size: 60px 60px;
+}
+
+/* Floating Capsule Pill Bar */
+.floating-pill {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+/* Lenis Smooth Scroll */
+html.lenis, html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
 }
