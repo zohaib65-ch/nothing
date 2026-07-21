@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "npx tsx --env-file=.env scripts/seedDatabase.ts && next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "seed": "tsx scripts/seedDatabase.ts"
+    "seed": "npx tsx --env-file=.env scripts/seedDatabase.ts"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
