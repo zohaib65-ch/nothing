@@ -1,1 +1,1 @@
-export const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
+export const WHATSAPP_NUMBER: string = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "+92040527403";
