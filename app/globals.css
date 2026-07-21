@@ -1,45 +1,92 @@
 @import "tailwindcss";
 
 @layer base {
+  /* ntype82Headline — used for big section headings (Selected Gems, Choose Your Model, etc.) */
   @font-face {
-    font-family: 'Ndot';
-    src: url('/fonts/Ndot-Regular.woff') format('woff'),
-         url('https://fonts.cdnfonts.com/s/93437/Ndot-55.woff') format('woff'),
-         local('Ndot-Regular'), local('Courier New'), local('monospace');
+    font-family: 'ntype82Headline';
+    src: url('/fonts/ndot-1.otf') format('opentype');
     font-weight: 400;
     font-style: normal;
     font-display: swap;
   }
 
+  /* letteraRegular — mono/lettera text */
   @font-face {
-    font-family: 'NType82';
-    src: url('/fonts/NType82-Regular.woff') format('woff'),
-         url('https://fonts.cdnfonts.com/s/93437/NType82-Regular.woff') format('woff'),
-         local('NType82-Regular'), local('Inter'), local('system-ui');
+    font-family: 'letteraRegular';
+    src: url('/fonts/ndot-2.otf') format('opentype');
     font-weight: 400;
     font-style: normal;
     font-display: swap;
   }
 
+  /* ndot57 — dot pattern font variant */
   @font-face {
-    font-family: 'LatteraMono';
-    src: url('/fonts/LatteraMonoLL.woff') format('woff'),
-         local('LatteraMonoLL'), local('Space Mono'), local('monospace');
+    font-family: 'ndot57';
+    src: url('/fonts/ndot-3.otf') format('opentype');
     font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  /* ntype82 — body/sans text */
+  @font-face {
+    font-family: 'ntype82';
+    src: url('/fonts/ndot-4.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  /* ndot55 — dot heading font (small labels like "Phones", "WHY US") */
+  @font-face {
+    font-family: 'ndot55';
+    src: url('/fonts/ndot-5.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  /* ndot55Caps — caps variant of ndot55 */
+  @font-face {
+    font-family: 'ndot55Caps';
+    src: url('/fonts/ndot-6.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  /* interLight — Inter Light 300 */
+  @font-face {
+    font-family: 'interLight';
+    src: url('/fonts/ndot-7.otf') format('opentype');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  /* interMedium — Inter Medium 500 */
+  @font-face {
+    font-family: 'interMedium';
+    src: url('/fonts/ndot-8.otf') format('opentype');
+    font-weight: 500;
     font-style: normal;
     font-display: swap;
   }
 }
 
 @theme {
-  --font-ndot: 'Ndot', 'Share Tech Mono', sans-serif;
-  --font-ntype82: 'NType82', 'Inter', sans-serif;
-  --font-latteramono: 'LatteraMono', 'JetBrains Mono', monospace;
+  --font-ndot55: 'ndot55', 'Arial', sans-serif;
+  --font-ndot55-caps: 'ndot55Caps', 'Arial', sans-serif;
+  --font-ndot57: 'ndot57', 'Arial', sans-serif;
+  --font-ntype82: 'ntype82', 'Arial', sans-serif;
+  --font-ntype82-headline: 'ntype82Headline', 'Arial', sans-serif;
+  --font-lettera-regular: 'letteraRegular', 'Arial', monospace;
+  --font-inter-light: 'interLight', 'Arial', sans-serif;
+  --font-inter-medium: 'interMedium', 'Arial', sans-serif;
 
-  --font-sans: 'NType82', 'Inter', sans-serif;
-  --font-mono: 'LatteraMono', 'JetBrains Mono', monospace;
+  --font-sans: 'ntype82', 'Arial', sans-serif;
+  --font-mono: 'letteraRegular', 'Arial', monospace;
 
-  --color-nothing-[#F4F4F4]: #F4F4F4;
   --color-nothing-black: #111111;
   --color-nothing-red: #D71921;
 }
@@ -52,22 +99,21 @@
 body {
   background-color: var(--background);
   color: var(--foreground);
-  font-family: 'NType82', sans-serif;
+  font-family: 'ntype82', 'Arial', sans-serif;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Font utility classes matching original site's CSS variable classes */
 .font-ndot {
-  font-family: 'Ndot', sans-serif !important;
+  font-family: var(--font-ndot55) !important;
 }
-
 .font-ntype {
-  font-family: 'NType82', sans-serif !important;
+  font-family: var(--font-ntype82) !important;
 }
-
 .font-lattera {
-  font-family: 'LatteraMono', monospace !important;
+  font-family: var(--font-lettera-regular) !important;
 }
 
 /* Custom Scrollbar */
@@ -110,11 +156,64 @@ body {
 
 /* Floating Capsule Pill Bar */
 .floating-pill {
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.97);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(0, 0, 0, 0.08);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 16px 40px rgba(17, 17, 17, 0.12);
+}
+
+.site-dot-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0.06;
+  background-image: radial-gradient(#111 0.7px, transparent 0.7px);
+  background-size: 24px 24px;
+}
+
+/* dot-heading: ndot55 — used for small uppercase labels "Phones", "WHY US", "REVIEWS", "FAQS" */
+.dot-heading {
+  font-family: var(--font-ndot55);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* collection-product-name: ntype82Headline — used for big section titles "Selected Gems", "Choose Your Model" */
+.collection-product-name {
+  font-family: var(--font-ntype82-headline);
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}
+
+/* product-card-name: ndot57 — used for product card titles */
+.product-card-name {
+  font-family: var(--font-ndot57);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* spaceMono: used for footer links, mono labels */
+.__className_1c23be {
+  font-family: 'letteraRegular', 'Arial', monospace;
+}
+
+/* FAQ dotted separator line — matches original inline style */
+.faq-dot-line {
+  background-image: radial-gradient(circle, rgba(17,17,17,0.9) 1.15px, transparent 1.35px);
+  background-position: left center;
+  background-repeat: repeat-x;
+  background-size: 7px 4px;
+}
+
+/* Hide scrollbar */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
 }
 
 /* Lenis Smooth Scroll */
@@ -124,3 +223,4 @@ html.lenis, html.lenis body {
 .lenis.lenis-smooth {
   scroll-behavior: auto !important;
 }
+

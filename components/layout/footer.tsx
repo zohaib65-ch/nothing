@@ -1,141 +1,211 @@
 "use client";
 
-import * as React from "react";
 import Link from "next/link";
-import { HelpCircle, Mail, MapPin, ChevronDown, Check } from "lucide-react";
+
+const footerNavLinks = [
+  { label: "Shop all", href: "/collections/shop-all" },
+  { label: "Phones", href: "/collections/phones" },
+  { label: "Chargers", href: "/collections/chargers" },
+  { label: "Offers", href: "/collections/offers" },
+  { label: "Audio", href: "/collections/audio" },
+  { label: "Watches", href: "/collections/watches" },
+  { label: "Accessories", href: "/collections/accessories" },
+  { label: "CMF", href: "/collections/cmf" },
+];
+
+const actionLinks = [
+  { label: "About", href: "/about-us" },
+  { label: "Support", href: "/support-centre" },
+  { label: "Contact on WhatsApp", href: "/contact" },
+];
+
+const bottomLinks = [
+  { label: "Playground", href: "https://playground.nothing.tech", external: true },
+  { label: "Contact", href: "/contact" },
+  { label: "Careers", href: "https://careers.nothing.tech", external: true },
+  { label: "Legal", href: "/pages/terms-of-sale" },
+];
 
 export function Footer() {
-  const [openSection, setOpenSection] = React.useState<string | null>(null);
-
-  const toggleSection = (section: string) => {
-    setOpenSection(openSection === section ? null : section);
-  };
-
   return (
-    <footer className="w-full bg-[#000000] text-white relative py-20 px-6 overflow-hidden select-none bg-dot-grid-dark border-t border-neutral-900">
-      <div className="relative z-10 max-w-5xl mx-auto flex flex-col items-center text-center space-y-16">
-        {/* Main Big Centered Ndot Links - Exact Reference Screenshot */}
-        <nav className="space-y-6 font-ndot text-2xl sm:text-4xl uppercase tracking-[0.25em] text-white">
-          <div>
-            <Link href="/products" className="hover:text-[#D71921] transition-colors">
-              ABOUT
-            </Link>
+    <footer className="bg-black text-white uppercase" style={{ fontFamily: "var(--font-ndot57), sans-serif" }}>
+
+      {/* ═══ DESKTOP FOOTER ═══ */}
+      <div className="hidden lg:block">
+        <div className="relative overflow-hidden rounded-t-[28px] border-t border-white/10 bg-[#020202]">
+          <div className="relative min-h-[920px] px-10 pb-8 pt-10 xl:min-h-[980px] xl:px-12">
+            <div className="mx-auto flex w-full max-w-[1220px] flex-col items-center text-center">
+              <div className="flex w-full max-w-[560px] flex-col items-center">
+
+                {/* Big Nav Links */}
+                <nav className="flex flex-col items-center gap-7">
+                  {footerNavLinks.map((link) => (
+                    <Link
+                      key={link.label}
+                      className="dot-heading text-[clamp(2.55rem,3.25vw,4.3rem)] uppercase leading-[0.88] tracking-[0.02em] text-white transition-opacity hover:opacity-72"
+                      href={link.href}
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </nav>
+
+                {/* Action Button Cards */}
+                <div className="mt-24 grid w-full max-w-[512px] gap-2.5 text-left">
+                  {actionLinks.map((link) => (
+                    <Link
+                      key={link.label}
+                      className="flex h-[54px] items-center justify-between rounded-[10px] bg-white/[0.06] px-5 transition-colors hover:bg-white/[0.09]"
+                      href={link.href}
+                    >
+                      <span className="text-[11px] uppercase tracking-[0.08em] text-white" style={{ fontFamily: "var(--font-lettera-regular)" }}>
+                        {link.label}
+                      </span>
+                    </Link>
+                  ))}
+                  <button
+                    type="button"
+                    className="flex h-[54px] items-center justify-between rounded-[10px] bg-white/[0.06] px-5 text-[11px] uppercase tracking-[0.08em] text-white transition-colors hover:bg-white/[0.09]"
+                    style={{ fontFamily: "var(--font-lettera-regular)" }}
+                  >
+                    <span>Pakistan</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* SECP Company Card */}
+              <div className="mt-8 w-full max-w-[512px] rounded-[8px] border border-white/12 bg-white/[0.06] p-4 text-left text-white">
+                <p className="text-[10px] uppercase tracking-[0.24em] text-white/58">SECP Registered Company</p>
+                <p className="mt-2 text-sm leading-6 text-white/88">NOTHING OFFICIAL (SMC-PRIVATE) LIMITED</p>
+                <p className="mt-1 text-xs text-white/58">CUIN: 0337422</p>
+                <Link
+                  className="mt-3 inline-block text-[10px] uppercase tracking-[0.2em] underline-offset-4 hover:underline text-white"
+                  href="/company-verification"
+                >
+                  View Certificate
+                </Link>
+              </div>
+
+              {/* Bottom Links Row */}
+              <div className="mt-10 flex w-full max-w-[1220px] items-start justify-between gap-10">
+                <div className="flex flex-wrap items-center gap-x-10 gap-y-3 text-left">
+                  {bottomLinks.map((link) =>
+                    link.external ? (
+                      <a
+                        key={link.label}
+                        href={link.href}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-[11px] tracking-[0.14em] text-white/72 transition-colors hover:text-white"
+                        style={{ fontFamily: "var(--font-lettera-regular)" }}
+                      >
+                        {link.label}
+                      </a>
+                    ) : (
+                      <Link
+                        key={link.label}
+                        className="text-[11px] tracking-[0.14em] text-white/72 transition-colors hover:text-white"
+                        style={{ fontFamily: "var(--font-lettera-regular)" }}
+                        href={link.href}
+                      >
+                        {link.label}
+                      </Link>
+                    )
+                  )}
+                </div>
+                <div className="flex flex-wrap items-center justify-end gap-x-10 gap-y-3 text-right">
+                  <span className="cursor-default text-[11px] tracking-[0.14em] text-white/72" style={{ fontFamily: "var(--font-lettera-regular)" }}>Facebook</span>
+                  <span className="cursor-default text-[11px] tracking-[0.14em] text-white/72" style={{ fontFamily: "var(--font-lettera-regular)" }}>TikTok</span>
+                </div>
+              </div>
+            </div>
           </div>
-          <div>
-            <Link href="/products" className="hover:text-[#D71921] transition-colors">
-              COMMUNITY
-            </Link>
-          </div>
-          <div>
-            <Link href="/products" className="hover:text-[#D71921] transition-colors">
-              CLUB NOTHING (R)
-            </Link>
-          </div>
-          <div>
-            <Link href="/products" className="hover:text-[#D71921] transition-colors">
-              PLAYGROUND
-            </Link>
-          </div>
-        </nav>
-
-        {/* Centered Floating Accordion Stack Card - Exact Reference Screenshot */}
-        <div className="w-full max-w-md bg-[#121214]/90 backdrop-blur-md rounded-2xl border border-neutral-800 divide-y divide-neutral-800/80 overflow-hidden font-lattera text-xs text-neutral-300 text-left shadow-2xl">
-          {/* Support */}
-          <button
-            onClick={() => toggleSection("support")}
-            className="w-full p-4 flex items-center justify-between hover:bg-neutral-800/50 transition-colors uppercase tracking-wider"
-          >
-            <span>SUPPORT</span>
-            <HelpCircle className="h-4 w-4 text-neutral-400" />
-          </button>
-
-          {/* Newsletter */}
-          <button
-            onClick={() => toggleSection("newsletter")}
-            className="w-full p-4 flex items-center justify-between hover:bg-neutral-800/50 transition-colors uppercase tracking-wider"
-          >
-            <span>NEWSLETTER</span>
-            <Mail className="h-4 w-4 text-neutral-400" />
-          </button>
-
-          {/* Store Location */}
-          <button
-            onClick={() => toggleSection("store")}
-            className="w-full p-4 flex items-center justify-between hover:bg-neutral-800/50 transition-colors uppercase tracking-wider"
-          >
-            <span>STORE: INTERNATIONAL</span>
-            <MapPin className="h-4 w-4 text-neutral-400" />
-          </button>
-
-          {/* Language */}
-          <button
-            onClick={() => toggleSection("language")}
-            className="w-full p-4 flex items-center justify-between hover:bg-neutral-800/50 transition-colors uppercase tracking-wider"
-          >
-            <span>LANGUAGE: EN</span>
-            <ChevronDown className="h-4 w-4 text-neutral-400" />
-          </button>
-
-          {/* Consent Preferences */}
-          <button
-            onClick={() => toggleSection("consent")}
-            className="w-full p-4 flex items-center justify-between hover:bg-neutral-800/50 transition-colors uppercase tracking-wider"
-          >
-            <span>CONSENT PREFERENCES</span>
-            <Check className="h-4 w-4 text-neutral-400" />
-          </button>
         </div>
+      </div>
 
-        {/* Bottom Bar Footer Links - Exact Reference Screenshot */}
-        <div className="w-full pt-12 border-t border-neutral-900 flex flex-col md:flex-row items-center justify-between font-lattera text-[11px] text-neutral-400 uppercase tracking-widest gap-6">
-          <div className="flex items-center space-x-6">
-            <Link href="/admin/login" className="hover:text-white transition-colors">
-              ACCOUNT
-            </Link>
-            <Link href="/products" className="hover:text-white transition-colors">
-              CONTACT
-            </Link>
-            <Link href="/products" className="hover:text-white transition-colors">
-              CAREERS
-            </Link>
-            <Link href="/products" className="hover:text-white transition-colors">
-              LEGAL
+      {/* ═══ MOBILE FOOTER ═══ */}
+      <div className="lg:hidden">
+        <div className="relative overflow-hidden rounded-t-[24px] border-t border-white/10 bg-[#020202] px-6 pb-7 pt-14 text-center">
+
+          {/* Mobile Nav Links */}
+          <nav className="flex flex-col items-center gap-3">
+            {footerNavLinks.map((link) => (
+              <Link
+                key={link.label}
+                className="dot-heading text-[28px] uppercase leading-[0.92] tracking-[0.02em] text-white transition-opacity hover:opacity-72"
+                href={link.href}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+
+          {/* Mobile Action Cards */}
+          <div className="mx-auto mt-10 grid max-w-[320px] gap-2 text-left">
+            {actionLinks.map((link) => (
+              <Link
+                key={link.label}
+                className="flex h-[52px] items-center justify-between rounded-[10px] bg-white/[0.06] px-4 transition-colors hover:bg-white/[0.09]"
+                href={link.href}
+              >
+                <span className="text-[10px] uppercase tracking-[0.08em] text-white" style={{ fontFamily: "var(--font-lettera-regular)" }}>
+                  {link.label}
+                </span>
+              </Link>
+            ))}
+            <button
+              type="button"
+              className="flex h-[52px] items-center justify-between rounded-[10px] bg-white/[0.06] px-4 text-[10px] uppercase tracking-[0.08em] text-white transition-colors hover:bg-white/[0.09]"
+              style={{ fontFamily: "var(--font-lettera-regular)" }}
+            >
+              <span>Pakistan</span>
+            </button>
+          </div>
+
+          {/* Mobile SECP Card */}
+          <div className="mx-auto mt-7 max-w-[320px] rounded-[8px] border border-white/12 bg-white/[0.06] p-4 text-left text-white">
+            <p className="text-[10px] uppercase tracking-[0.24em] text-white/58">SECP Registered Company</p>
+            <p className="mt-2 text-sm leading-6 text-white/88">NOTHING OFFICIAL (SMC-PRIVATE) LIMITED</p>
+            <p className="mt-1 text-xs text-white/58">CUIN: 0337422</p>
+            <Link
+              className="mt-3 inline-block text-[10px] uppercase tracking-[0.2em] underline-offset-4 hover:underline text-white"
+              href="/company-verification"
+            >
+              View Certificate
             </Link>
           </div>
 
-          <div className="flex items-center space-x-6">
-            <a
-              href="https://instagram.com/nothing"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-white transition-colors"
-            >
-              INSTAGRAM
-            </a>
-            <a
-              href="https://youtube.com/@nothingtech"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-white transition-colors"
-            >
-              YOUTUBE
-            </a>
-            <a
-              href="https://x.com/nothing"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-white transition-colors"
-            >
-              X
-            </a>
-            <a
-              href="https://tiktok.com/@nothing"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-white transition-colors"
-            >
-              TIKTOK
-            </a>
+          {/* Mobile Bottom Links */}
+          <div className="mx-auto mt-8 grid w-full max-w-[320px] grid-cols-2 gap-x-6 gap-y-3">
+            <div className="flex flex-col items-start gap-3 text-left">
+              {bottomLinks.map((link) =>
+                link.external ? (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-[10px] tracking-[0.14em] text-white/72 transition-colors hover:text-white"
+                    style={{ fontFamily: "var(--font-lettera-regular)" }}
+                  >
+                    {link.label}
+                  </a>
+                ) : (
+                  <Link
+                    key={link.label}
+                    className="text-[10px] tracking-[0.14em] text-white/72 transition-colors hover:text-white"
+                    style={{ fontFamily: "var(--font-lettera-regular)" }}
+                    href={link.href}
+                  >
+                    {link.label}
+                  </Link>
+                )
+              )}
+            </div>
+            <div className="flex flex-col items-end gap-3 text-right">
+              <span className="cursor-default text-[10px] tracking-[0.14em] text-white/72" style={{ fontFamily: "var(--font-lettera-regular)" }}>Facebook</span>
+              <span className="cursor-default text-[10px] tracking-[0.14em] text-white/72" style={{ fontFamily: "var(--font-lettera-regular)" }}>TikTok</span>
+            </div>
           </div>
         </div>
       </div>

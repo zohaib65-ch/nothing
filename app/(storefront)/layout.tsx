@@ -20,7 +20,7 @@ export default function StorefrontLayout({
 
   return (
     <LenisProvider>
-      <div className="min-h-screen flex flex-col bg-[#050505] text-white">
+      <div className="min-h-screen flex flex-col bg-white text-[#111]">
         <Navbar />
         <main className="flex-1">{children}</main>
         <Footer />
