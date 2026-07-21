@@ -1,5 +1,4 @@
 import { Product, CategoryInfo } from "@/types";
-import { INITIAL_PRODUCTS, INITIAL_CATEGORIES } from "@/constants/seedData";
 
 export class ProductService {
   private static isBrowser(): boolean {
@@ -11,22 +10,22 @@ export class ProductService {
       const res = await fetch("/api/products");
       if (res.ok) {
         const data = await res.json();
-        if (Array.isArray(data) && data.length > 0) return data;
+        if (Array.isArray(data)) return data;
       }
     } catch {
       // Fallback
     }
-    return this.getProductsLocal();
+    return [];
   }
 
   public static getProductsLocal(): Product[] {
-    if (!this.isBrowser()) return INITIAL_PRODUCTS;
+    if (!this.isBrowser()) return [];
     try {
       const stored = localStorage.getItem("nothing_products_v1");
-      if (!stored) return INITIAL_PRODUCTS;
+      if (!stored) return [];
       return JSON.parse(stored) as Product[];
     } catch {
-      return INITIAL_PRODUCTS;
+      return [];
     }
   }
 
@@ -103,14 +102,27 @@ export class ProductService {
   }
 
   public static getCategories(): CategoryInfo[] {
-    if (!this.isBrowser()) return INITIAL_CATEGORIES;
+    if (!this.isBrowser()) return [];
     try {
       const stored = localStorage.getItem("nothing_categories_v1");
-      if (!stored) return INITIAL_CATEGORIES;
+      if (!stored) return [];
       return JSON.parse(stored) as CategoryInfo[];
     } catch {
-      return INITIAL_CATEGORIES;
+      return [];
     }
+  }
+
+  public static async fetchCategoriesFromApi(): Promise<CategoryInfo[]> {
+    try {
+      const res = await fetch("/api/categories");
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) return data;
+      }
+    } catch {
+      // Fallback
+    }
+    return [];
   }
 
   public static saveCategory(category: CategoryInfo): CategoryInfo {

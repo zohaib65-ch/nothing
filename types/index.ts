@@ -58,6 +58,7 @@ export interface Product {
   shortDescription: string;
   price: number;
   salePrice?: number;
+  originalPrice?: number;
   category: ProductCategory;
   subcategory: string;
   images: string[];
@@ -75,6 +76,7 @@ export interface Product {
   isFeatured: boolean;
   isNewArrival: boolean;
   sortOrder: number;
+  warranty?: string;
   status: 'draft' | 'published';
   createdAt: string;
   updatedAt: string;
@@ -87,38 +89,6 @@ export interface CategoryInfo {
   description: string;
   heroImage: string;
   badge?: string;
-}
-
-export interface StoreSettings {
-  storeName: string;
-  logoUrl: string;
-  whatsappNumber: string; // e.g. "+1234567890" or "1234567890"
-  whatsappMessageTemplate: string;
-  announcementBar: {
-    enabled: boolean;
-    text: string;
-    link?: string;
-    linkText?: string;
-  };
-  socialLinks: {
-    instagram?: string;
-    x?: string;
-    youtube?: string;
-    discord?: string;
-  };
-  homepageHero: {
-    productId: string;
-    title: string;
-    subtitle: string;
-    badge: string;
-    videoUrl?: string;
-    bgImageUrl: string;
-  };
-  seoDefaults: {
-    metaTitle: string;
-    metaDescription: string;
-    ogImage: string;
-  };
 }
 
 export interface CartItem {

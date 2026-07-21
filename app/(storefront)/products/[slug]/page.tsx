@@ -5,9 +5,9 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ProductService } from "@/services/productService";
 import { Product, ProductVariant } from "@/types";
-import { useSettingsStore } from "@/store/useSettingsStore";
 import { useCartStore } from "@/store/useCartStore";
 import { formatPrice, generateWhatsAppLink } from "@/lib/utils";
+import { WHATSAPP_NUMBER } from "@/lib/config";
 import { ProductGallery } from "@/components/features/products/product-gallery";
 import { VariantSelector } from "@/components/features/products/variant-selector";
 import { SpecsTable } from "@/components/features/products/specs-table";
@@ -24,7 +24,6 @@ export default function ProductDetailPage() {
   const router = useRouter();
   const slug = params?.slug as string;
 
-  const { settings } = useSettingsStore();
   const { addItem } = useCartStore();
 
   const [product, setProduct] = React.useState<Product | null>(null);
@@ -33,16 +32,29 @@ export default function ProductDetailPage() {
   const [isLoading, setIsLoading] = React.useState(true);
 
   React.useEffect(() => {
-    if (!slug) return;
-    const item = ProductService.getProductBySlug(slug);
-    if (item) {
-      setProduct(item);
-      setSelectedVariant(item.variants[0] || null);
+    const loadProduct = async () => {
+      if (!slug) return;
 
-      const all = ProductService.getPublishedProducts();
-      setRelatedProducts(all.filter((p) => p.id !== item.id && p.category === item.category).slice(0, 3));
-    }
-    setIsLoading(false);
+      const all = await ProductService.fetchProductsFromApi();
+      const item = all.find((product) => product.slug === slug) || null;
+
+      setProduct(item);
+      setSelectedVariant(item?.variants[0] || null);
+
+      if (item) {
+        setRelatedProducts(
+          all
+            .filter((p) => p.id !== item.id && p.category === item.category && p.status === "published")
+            .slice(0, 3)
+        );
+      } else {
+        setRelatedProducts([]);
+      }
+
+      setIsLoading(false);
+    };
+
+    loadProduct();
   }, [slug]);
 
   if (isLoading) {
@@ -71,7 +83,7 @@ export default function ProductDetailPage() {
   const originalPrice = selectedVariant.salePrice ? selectedVariant.price : null;
 
   const whatsappUrl = generateWhatsAppLink(
-    settings.whatsappNumber,
+    WHATSAPP_NUMBER,
     product,
     selectedVariant,
     1

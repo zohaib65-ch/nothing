@@ -2,14 +2,25 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { CATALOG_PRODUCTS, Product, createCartProductAndVariant } from "@/lib/catalog";
+import { ProductService } from "@/services/productService";
+import { Product, ProductVariant } from "@/types";
 import { useCartStore } from "@/store/useCartStore";
-import { Search, ShoppingBag, ShieldCheck } from "lucide-react";
+import { Search, ShoppingBag } from "lucide-react";
 
 export default function ShopAllPage() {
   const { addItem } = useCartStore();
   const [selectedCategory, setSelectedCategory] = React.useState<string>("all");
   const [searchQuery, setSearchQuery] = React.useState<string>("");
+  const [products, setProducts] = React.useState<Product[]>([]);
+
+  React.useEffect(() => {
+    const loadProducts = async () => {
+      const data = await ProductService.fetchProductsFromApi();
+      setProducts(data.filter((product) => product.status === "published"));
+    };
+
+    loadProducts();
+  }, []);
 
   const categories = [
     { id: "all", label: "ALL PRODUCTS" },
@@ -19,7 +30,7 @@ export default function ShopAllPage() {
     { id: "protectors", label: "PROTECTORS" },
   ];
 
-  const filteredProducts = CATALOG_PRODUCTS.filter((product) => {
+  const filteredProducts = products.filter((product) => {
     const matchesCategory = selectedCategory === "all" || product.category === selectedCategory;
     const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
@@ -33,9 +44,7 @@ export default function ShopAllPage() {
         {/* Header Title */}
         <div className="border-b border-black/10 pb-8 space-y-3">
           <p className="dot-heading text-[11px] tracking-[0.3em] text-black/45">OFFICIAL CATALOG</p>
-          <h1 className="collection-product-name text-3xl sm:text-5xl font-bold text-black">
-            Shop All Products
-          </h1>
+          <h1 className="collection-product-name text-3xl sm:text-5xl font-bold text-black">Shop All Products</h1>
           <p className="font-sans text-xs sm:text-sm text-black/65 max-w-xl">
             Explore authentic Nothing and CMF phones, chargers, audio gear, and screen protectors with live PKR pricing across Pakistan.
           </p>
@@ -48,9 +57,7 @@ export default function ShopAllPage() {
                   key={cat.id}
                   onClick={() => setSelectedCategory(cat.id)}
                   className={`rounded-full px-4 py-1.5 text-[11px] font-mono tracking-wider transition ${
-                    selectedCategory === cat.id
-                      ? "bg-black text-white font-bold"
-                      : "bg-black/5 text-black/70 hover:bg-black/10"
+                    selectedCategory === cat.id ? "bg-black text-white font-bold" : "bg-black/5 text-black/70 hover:bg-black/10"
                   }`}
                 >
                   {cat.label}
@@ -74,47 +81,38 @@ export default function ShopAllPage() {
         {/* Product Cards Grid */}
         <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 gap-y-8">
           {filteredProducts.map((product) => (
-            <div
-              key={product.id}
-              className="group flex flex-col justify-between rounded-2xl border border-black/8 bg-white p-4 shadow-sm transition hover:shadow-md hover:border-black/20"
-            >
-              <div className="relative aspect-[4/5] overflow-hidden rounded-xl bg-black/[0.01]">
-                {product.warranty && (
-                  <span className="absolute top-2 right-2 z-20 rounded bg-[#D71921] px-2 py-0.5 text-[9px] font-mono text-white font-bold">
-                    {product.warranty}
-                  </span>
-                )}
-                <img
-                  alt={product.name}
-                  src={product.image}
-                  className="h-full w-full object-contain p-2 transition-transform duration-300 group-hover:scale-105"
-                />
-              </div>
+            <div key={product.id} className="group flex flex-col justify-between rounded-2xl border border-black/8 bg-white p-4 shadow-sm transition hover:shadow-md hover:border-black/20">
+              <Link href={`/products/${product.slug}`} className="relative aspect-[4/5] overflow-hidden rounded-xl bg-black/[0.01]">
+                {product.warranty && <span className="absolute top-2 right-2 z-20 rounded bg-[#D71921] px-2 py-0.5 text-[9px] font-mono text-white font-bold">{product.warranty}</span>}
+                <img alt={product.name} src={product.images[0]} className="h-full w-full object-contain p-2 transition-transform duration-300 group-hover:scale-105" />
+              </Link>
 
               <div className="mt-4 flex flex-col flex-1 justify-between text-center">
                 <div>
-                  <h2 className="product-card-name text-xs sm:text-sm font-bold text-black line-clamp-1">
-                    {product.name}
-                  </h2>
-                  <p className="mt-1 font-sans text-[11px] text-black/50 line-clamp-2">
-                    {product.description}
-                  </p>
+                  <h2 className="product-card-name text-xs sm:text-sm font-bold text-black line-clamp-1">{product.name}</h2>
+                  <p className="mt-1 font-sans text-[11px] text-black/50 line-clamp-2">{product.description}</p>
                 </div>
 
                 <div className="mt-3 pt-3 border-t border-black/5">
                   <div className="flex items-center justify-center space-x-2">
                     <span className="text-sm font-bold text-black">Rs {product.price.toLocaleString()}</span>
-                    {product.originalPrice && (
-                      <span className="text-xs text-black/40 line-through">
-                        {product.originalPrice.toLocaleString()}
-                      </span>
-                    )}
+                    {product.originalPrice && <span className="text-xs text-black/40 line-through">{product.originalPrice.toLocaleString()}</span>}
                   </div>
 
                   <button
                     onClick={() => {
-                      const { product: p, variant: v } = createCartProductAndVariant(product);
-                      addItem(p, v, 1);
+                      const variant: ProductVariant = product.variants[0] || {
+                        id: `${product.id}-default`,
+                        name: product.name,
+                        color: "Standard",
+                        colorHex: "#000000",
+                        price: product.salePrice || product.price,
+                        salePrice: product.salePrice || product.price,
+                        sku: product.slug,
+                        inStock: true,
+                        image: product.images[0],
+                      };
+                      addItem(product, variant, 1);
                     }}
                     className="mt-3 w-full inline-flex items-center justify-center space-x-2 rounded-lg bg-black py-2 text-[10px] font-bold tracking-widest text-white uppercase transition hover:bg-[#D71921]"
                   >

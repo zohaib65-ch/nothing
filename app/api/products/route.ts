@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import { ProductModel } from "@/models/Product";
-import { INITIAL_PRODUCTS } from "@/constants/seedData";
 
 export async function GET(request: Request) {
   try {
@@ -22,18 +21,9 @@ export async function GET(request: Request) {
       products = [];
     }
 
-    if (products.length === 0) {
-      try {
-        await ProductModel.insertMany(INITIAL_PRODUCTS);
-        products = await ProductModel.find({}).sort({ sortOrder: 1, createdAt: -1 });
-      } catch {
-        products = INITIAL_PRODUCTS;
-      }
-    }
-
     return NextResponse.json(products);
   } catch (error: any) {
-    return NextResponse.json(INITIAL_PRODUCTS);
+    return NextResponse.json({ error: error.message || "Failed to fetch products" }, { status: 500 });
   }
 }
 

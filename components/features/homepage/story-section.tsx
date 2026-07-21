@@ -4,6 +4,7 @@ import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { MessageSquare, ArrowRight } from "lucide-react";
+import { WHATSAPP_NUMBER } from "@/lib/config";
 
 export interface StorySectionProps {
   badge: string;
@@ -26,7 +27,7 @@ export function StorySection({
   bgType,
   bgImageUrl,
   thumbnailUrl,
-  whatsappNumber = "+18005550199",
+  whatsappNumber = WHATSAPP_NUMBER,
 }: StorySectionProps) {
   const bgStyles = {
     yellow: "bg-[#FFE500] text-black",

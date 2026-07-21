@@ -3,8 +3,8 @@
 import * as React from "react";
 import { Product, ProductVariant } from "@/types";
 import { formatPrice, generateWhatsAppLink } from "@/lib/utils";
-import { useSettingsStore } from "@/store/useSettingsStore";
 import { useCartStore } from "@/store/useCartStore";
+import { WHATSAPP_NUMBER } from "@/lib/config";
 import { MessageSquare, ShoppingBag } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -14,7 +14,6 @@ export interface StickyBuyBarProps {
 }
 
 export function StickyBuyBar({ product, selectedVariant }: StickyBuyBarProps) {
-  const { settings } = useSettingsStore();
   const { addItem } = useCartStore();
   const [isVisible, setIsVisible] = React.useState(false);
 
@@ -31,7 +30,7 @@ export function StickyBuyBar({ product, selectedVariant }: StickyBuyBarProps) {
 
   const currentPrice = selectedVariant.salePrice || selectedVariant.price;
   const whatsappUrl = generateWhatsAppLink(
-    settings.whatsappNumber,
+    WHATSAPP_NUMBER,
     product,
     selectedVariant,
     1

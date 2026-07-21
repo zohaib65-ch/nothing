@@ -4,7 +4,6 @@ import * as React from "react";
 import { usePathname } from "next/navigation";
 import { AdminSidebar } from "@/components/layout/admin-sidebar";
 import { AdminHeader } from "@/components/layout/admin-header";
-import { useSettingsStore } from "@/store/useSettingsStore";
 
 export default function AdminLayout({
   children,
@@ -12,12 +11,6 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const { loadSettings } = useSettingsStore();
-
-  React.useEffect(() => {
-    loadSettings();
-  }, [loadSettings]);
-
   const isLoginPage = pathname === "/admin/login";
 
   if (isLoginPage) {

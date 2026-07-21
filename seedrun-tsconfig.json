@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "outDir": "./.seedrun",
+    "module": "commonjs",
+    "moduleResolution": "node"
+  },
+  "include": ["./scripts/seedDatabase.ts"]
+}

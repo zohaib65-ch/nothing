@@ -5,19 +5,12 @@ import { LenisProvider } from "@/providers/lenis-provider";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { CartDrawer } from "@/components/features/cart/cart-drawer";
-import { useSettingsStore } from "@/store/useSettingsStore";
 
 export default function StorefrontLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { loadSettings } = useSettingsStore();
-
-  React.useEffect(() => {
-    loadSettings();
-  }, [loadSettings]);
-
   return (
     <LenisProvider>
       <div className="min-h-screen flex flex-col bg-white text-[#111]">

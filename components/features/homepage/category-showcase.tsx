@@ -1,11 +1,24 @@
 import Link from "next/link";
 import Image from "next/image";
-import { INITIAL_CATEGORIES } from "@/constants/seedData";
+import * as React from "react";
+import { ProductService } from "@/services/productService";
+import { CategoryInfo } from "@/types";
 import { Container } from "@/components/ui/container";
 import { Heading } from "@/components/ui/heading";
 import { ArrowUpRight } from "lucide-react";
 
 export function CategoryShowcase() {
+  const [categories, setCategories] = React.useState<CategoryInfo[]>([]);
+
+  React.useEffect(() => {
+    const loadCategories = async () => {
+      const data = await ProductService.fetchCategoriesFromApi();
+      setCategories(data);
+    };
+
+    loadCategories();
+  }, []);
+
   return (
     <section className="py-20 bg-[#050505] border-b border-[#26262A]">
       <Container>
@@ -28,7 +41,7 @@ export function CategoryShowcase() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {INITIAL_CATEGORIES.map((category) => (
+          {categories.map((category) => (
             <Link
               key={category.id}
               href={`/categories/${category.slug}`}

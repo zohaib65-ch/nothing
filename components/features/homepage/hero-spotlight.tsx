@@ -5,19 +5,27 @@ import Image from "next/image";
 import Link from "next/link";
 import { Product } from "@/types";
 import { formatPrice, generateWhatsAppLink } from "@/lib/utils";
-import { useSettingsStore } from "@/store/useSettingsStore";
+import { WHATSAPP_NUMBER } from "@/lib/config";
 import { MessageSquare, ArrowRight, Play, Pause } from "lucide-react";
 
 export interface HeroSpotlightProps {
   product?: Product;
 }
 
+const HERO_CONFIG = {
+  title: "PHONE (4a)",
+  subtitle: "PURE INSTINCT. TRANSPARENT DESIGN REIMAGINED.",
+  badge: "NEW DROP",
+  videoUrl: "",
+  bgImageUrl: "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=1600&q=80",
+  whatsappNumber: WHATSAPP_NUMBER,
+};
+
 export function HeroSpotlight({ product }: HeroSpotlightProps) {
-  const { settings } = useSettingsStore();
   const [isPlaying, setIsPlaying] = React.useState(true);
   const videoRef = React.useRef<HTMLVideoElement>(null);
 
-  const heroConfig = settings.homepageHero;
+  const heroConfig = HERO_CONFIG;
 
   const toggleVideo = () => {
     if (videoRef.current) {
@@ -32,8 +40,8 @@ export function HeroSpotlight({ product }: HeroSpotlightProps) {
 
   const defaultVariant = product?.variants[0];
   const whatsappUrl = product && defaultVariant
-    ? generateWhatsAppLink(settings.whatsappNumber, product, defaultVariant, 1)
-    : `https://wa.me/${settings.whatsappNumber}`;
+    ? generateWhatsAppLink(HERO_CONFIG.whatsappNumber, product, defaultVariant, 1)
+    : `https://wa.me/${HERO_CONFIG.whatsappNumber}`;
 
   return (
     <div className="relative min-h-[88vh] lg:min-h-[92vh] w-full bg-[#050505] flex items-center justify-center border-b border-[#26262A] overflow-hidden">

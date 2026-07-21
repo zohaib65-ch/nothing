@@ -3,52 +3,8 @@
 import * as React from "react";
 import Link from "next/link";
 import { useCartStore } from "@/store/useCartStore";
-import { createCartProductAndVariant } from "@/lib/catalog";
-
-/* ───── DATA ───── */
-const selectedGems = [
-  {
-    id: "cmf-buds-pro", name: "CMF Buds Pro", href: "/products/cmf-buds-pro",
-    price: 12999, originalPrice: 14949,
-    image: "https://res.cloudinary.com/dbdsmy4em/image/upload/v1775702876/nothing-pakistan/products/cmf-buds-pro/cmf-buds-pro-orange.webp",
-  },
-  {
-    id: "cmf-power-65w-gan", name: "CMF Power 65W GaN", href: "/products/cmf-power-65w-gan",
-    price: 6499,
-    image: "https://cdn.nothingshop.pk/products/nothing-65w-charger-orange.png",
-  },
-  {
-    id: "nothing-usb-c-cable", name: "Nothing USB-C to USB-C Cable", href: "/products/nothing-usb-c-to-usb-c-cable",
-    price: 1999, originalPrice: 2299,
-    image: "https://cdn.nothingshop.pk/products/nothing-usb-c-to-usb-c-cable/nothing-usb-c-to-usb-c-cable-01.webp",
-  },
-  {
-    id: "cmf-buds-pro-2", name: "CMF Buds Pro 2", href: "/products/cmf-buds-pro-2",
-    price: 15999, originalPrice: 18399,
-    image: "https://cdn.nothingshop.pk/products/cmf-buds-pro-2-light-black-pakistan.webp",
-  },
-  {
-    id: "nothing-power-45w", name: "Nothing Power 45W", href: "/products/nothing-power-45w",
-    price: 4499, originalPrice: 5174,
-    image: "https://cdn.nothingshop.pk/products/nothing-power-45w/nothing-power-45w-01.webp",
-  },
-  {
-    id: "ear-a", name: "Ear (a)", href: "/products/ear-a",
-    price: 25499, originalPrice: 39324,
-    image: "https://cdn.nothingshop.pk/products/ear-a/ear-a-01.webp",
-  },
-];
-
-const phoneModels = [
-  { name: "Phone (4a) Pro", href: "/products/nothing-4a-pro", image: "https://cdn.nothingshop.pk/mobiles/nothing-4a-pro-silver.webp" },
-  { name: "Phone (4a)", href: "/products/phone-4a", image: "https://cdn.nothingshop.pk/mobiles/phone-4a-blue.webp" },
-  { name: "Phone (3)", href: "/products/phone-3", image: "https://cdn.nothingshop.pk/mobiles/phone-3-black.webp" },
-  { name: "Phone (3a)", href: "/products/phone-3a", image: "https://cdn.nothingshop.pk/mobiles/phone-3a-white.webp" },
-  { name: "Phone (3a) Pro", href: "/products/phone-3a-pro", image: "https://cdn.nothingshop.pk/mobiles/phone-3a-pro-grey.webp" },
-  { name: "Phone (3a) Lite", href: "/products/phone-3a-lite", image: "https://cdn.nothingshop.pk/mobiles/phone-3a-lite-white.webp" },
-  { name: "Phone (3a) Community Edition", href: "/products/phone-3a-community-edition", image: "https://cdn.nothingshop.pk/mobiles/phone-3a-community-edition-green.webp" },
-  { name: "CMF Phone 2 Pro", href: "/products/cmf-phone-2-pro", image: "https://cdn.nothingshop.pk/mobiles/cmf-phone-2-pro-orange.webp" },
-];
+import { ProductService } from "@/services/productService";
+import { Product } from "@/types";
 
 const storeBenefits = [
   {
@@ -143,9 +99,19 @@ const verifiedReviews = [
 /* ───── COMPONENT ───── */
 export default function HomePage() {
   const { addItem } = useCartStore();
+  const [products, setProducts] = React.useState<Product[]>([]);
   const [activeFaqCategory, setActiveFaqCategory] = React.useState("general");
   const [openFaqIndex, setOpenFaqIndex] = React.useState<number | null>(null);
   const reviewsRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    ProductService.fetchProductsFromApi().then((data) => {
+      setProducts(data.filter((p) => p.status === "published"));
+    });
+  }, []);
+
+  const selectedGems = products.filter((p) => ["cmf-buds-pro", "cmf-power-65w-gan", "nothing-usb-c-cable", "cmf-buds-pro-2", "nothing-power-45w", "ear-a"].includes(p.slug));
+  const phoneModels = products.filter((p) => p.category === "phones");
 
   const filteredFaqs = allFaqs.filter((f) => f.category === activeFaqCategory);
 
@@ -200,16 +166,16 @@ export default function HomePage() {
           {/* Mobile: 2-col grid */}
           <div className="mt-8 grid grid-cols-2 gap-x-4 gap-y-9 lg:hidden">
             {selectedGems.map((p) => (
-              <Link key={p.id} className="group block" href={p.href}>
+              <Link key={p.id} className="group block" href={`/products/${p.slug}`}>
                 <article className="flex h-full flex-col">
                   <div className="relative overflow-hidden aspect-[4/5]">
-                    <img alt={`${p.name} original product price in Pakistan from Nothing Pakistan`} loading="lazy" className="absolute inset-0 h-full w-full object-contain object-center transition-transform duration-500 ease-out group-hover:scale-[1.02]" src={p.image} />
+                    <img alt={`${p.name} original product price in Pakistan from Nothing Pakistan`} loading="lazy" className="absolute inset-0 h-full w-full object-contain object-center transition-transform duration-500 ease-out group-hover:scale-[1.02]" src={p.images[0]} />
                   </div>
                   <div className="mt-3 text-center">
                     <h3 className="product-card-name text-[0.98rem] leading-[1.12] text-black sm:text-[1.04rem]">{p.name}</h3>
                     <div className="mt-1">
                       <p className="text-[11px] text-black/62">Rs {p.price.toLocaleString()}</p>
-                      {p.originalPrice && <p className="mt-0.5 text-[10px] text-black/65 line-through decoration-black/65">{p.originalPrice.toLocaleString()}</p>}
+                      {p.salePrice && <p className="mt-0.5 text-[10px] text-black/65 line-through decoration-black/65">{p.salePrice.toLocaleString()}</p>}
                     </div>
                   </div>
                 </article>
@@ -220,16 +186,16 @@ export default function HomePage() {
           {/* Desktop: 5-col grid */}
           <div className="mt-8 hidden grid-cols-5 gap-x-7 gap-y-14 lg:grid">
             {selectedGems.map((p) => (
-              <Link key={p.id} className="group block" href={p.href}>
+              <Link key={p.id} className="group block" href={`/products/${p.slug}`}>
                 <article className="flex h-full flex-col">
                   <div className="relative overflow-hidden aspect-[4/5]">
-                    <img alt={`${p.name} original product price in Pakistan from Nothing Pakistan`} loading="lazy" className="absolute inset-0 h-full w-full object-contain object-center transition-transform duration-500 ease-out group-hover:scale-[1.02]" src={p.image} />
+                    <img alt={`${p.name} original product price in Pakistan from Nothing Pakistan`} loading="lazy" className="absolute inset-0 h-full w-full object-contain object-center transition-transform duration-500 ease-out group-hover:scale-[1.02]" src={p.images[0]} />
                   </div>
                   <div className="mt-3 text-center">
                     <h3 className="product-card-name text-[0.98rem] leading-[1.12] text-black sm:text-[1.04rem]">{p.name}</h3>
                     <div className="mt-1">
                       <p className="text-[11px] text-black/62">Rs {p.price.toLocaleString()}</p>
-                      {p.originalPrice && <p className="mt-0.5 text-[10px] text-black/65 line-through decoration-black/65">{p.originalPrice.toLocaleString()}</p>}
+                      {p.salePrice && <p className="mt-0.5 text-[10px] text-black/65 line-through decoration-black/65">{p.salePrice.toLocaleString()}</p>}
                     </div>
                   </div>
                 </article>
@@ -249,12 +215,12 @@ export default function HomePage() {
           </div>
 
           <div className="mt-10 grid grid-cols-2 gap-4 lg:grid-cols-5 lg:gap-5">
-            {phoneModels.map((phone, idx) => (
+            {phoneModels.map((phone) => (
               <Link
-                key={idx}
+                key={phone.id}
                 className="group flex min-h-[270px] flex-col items-start justify-between rounded-[28px] bg-transparent p-1 transition duration-300 hover:-translate-y-1 sm:min-h-[330px] lg:min-h-[455px] lg:p-2"
                 aria-label={`Open ${phone.name}`}
-                href={phone.href}
+                href={`/products/${phone.slug}`}
               >
                 <div className="w-full">
                   <div className="relative mx-auto h-[215px] w-full max-w-[190px] sm:h-[265px] sm:max-w-[230px] lg:h-[365px] lg:max-w-[275px]">
@@ -262,7 +228,7 @@ export default function HomePage() {
                       alt={phone.name}
                       loading="lazy"
                       className="absolute inset-0 h-full w-full scale-[1.08] object-contain object-center transition-transform duration-500 ease-out group-hover:scale-[1.12] lg:scale-[1.12] lg:group-hover:scale-[1.16]"
-                      src={phone.image}
+                      src={phone.images[0]}
                     />
                   </div>
                 </div>

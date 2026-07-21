@@ -5,7 +5,6 @@ import { useParams } from "next/navigation";
 import Image from "next/image";
 import { ProductService } from "@/services/productService";
 import { Product, CategoryInfo } from "@/types";
-import { INITIAL_CATEGORIES } from "@/constants/seedData";
 import { ProductGrid } from "@/components/features/products/product-grid";
 import { Container } from "@/components/ui/container";
 import { Heading } from "@/components/ui/heading";
@@ -19,14 +18,23 @@ export default function CategoryPage() {
   const [isLoading, setIsLoading] = React.useState(true);
 
   React.useEffect(() => {
-    if (!slug) return;
-    const cat = INITIAL_CATEGORIES.find((c) => c.slug === slug || c.id === slug);
-    if (cat) {
+    const loadCategory = async () => {
+      if (!slug) return;
+
+      const [categories, allProducts] = await Promise.all([
+        ProductService.fetchCategoriesFromApi(),
+        ProductService.fetchProductsFromApi(),
+      ]);
+
+      const cat = categories.find((c) => c.slug === slug || c.id === slug) || null;
       setCategory(cat);
-      const all = ProductService.getPublishedProducts();
-      setProducts(all.filter((p) => p.category === cat.id));
-    }
-    setIsLoading(false);
+      setProducts(
+        cat ? allProducts.filter((p) => p.status === "published" && p.category === cat.id) : []
+      );
+      setIsLoading(false);
+    };
+
+    loadCategory();
   }, [slug]);
 
   if (isLoading) {

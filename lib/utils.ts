@@ -41,7 +41,7 @@ export function generateWhatsAppLink(
 
   let message =
     template ||
-    "Hello Nothing Store, I want to buy:\n\n*Product:* {product}\n*Variant:* {variant}\n*Quantity:* {quantity}\n*Total:* {total}\n\nPlease confirm availability and payment details.";
+    "Hello Nothing Store, I want to buy:\n\nProduct: {product}\nVariant: {variant}\nQuantity: {quantity}\nTotal: {total}\n\nPlease confirm availability and payment details.";
 
   message = message
     .replace("{product}", product.name)

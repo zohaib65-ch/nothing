@@ -53,9 +53,7 @@ function LoginForm() {
         <Heading badgeText="SECURE PORTAL" dotMatrix size="sm">
           ADMIN LOGIN
         </Heading>
-        <p className="text-xs text-neutral-400 font-sans">
-          Enter authorized credentials to access the Nothing store control center.
-        </p>
+        <p className="text-xs text-neutral-400 font-sans">Enter authorized credentials to access the Nothing store control center.</p>
       </div>
 
       {error && (
@@ -66,33 +64,12 @@ function LoginForm() {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4 font-lattera text-xs">
-        <Input
-          label="USERNAME / EMAIL"
-          type="text"
-          placeholder="admin"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-        />
+        <Input label="USERNAME / EMAIL" type="text" placeholder="admin" value={username} onChange={(e) => setUsername(e.target.value)} required />
 
-        <Input
-          label="PASSWORD"
-          type="password"
-          placeholder="••••••••"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
+        <Input label="PASSWORD" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required />
 
         <div className="pt-2">
-          <Button
-            type="submit"
-            variant="red"
-            size="lg"
-            fullWidth
-            isLoading={isLoading}
-            leftIcon={<Lock className="h-4 w-4" />}
-          >
+          <Button type="submit" variant="red" size="lg" fullWidth isLoading={isLoading} leftIcon={<Lock className="h-4 w-4" />}>
             AUTHENTICATE & ACCESS
           </Button>
         </div>

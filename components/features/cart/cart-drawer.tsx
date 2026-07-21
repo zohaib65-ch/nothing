@@ -4,20 +4,19 @@ import * as React from "react";
 import Image from "next/image";
 import { X, Trash2, ShoppingBag, MessageSquare, Plus, Minus } from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
-import { useSettingsStore } from "@/store/useSettingsStore";
 import { formatPrice, generateWhatsAppCartLink, getValidImageUrl } from "@/lib/utils";
+import { WHATSAPP_NUMBER } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 
 export function CartDrawer() {
   const { isOpen, closeCart, items, removeItem, updateQuantity, getTotalPrice } = useCartStore();
-  const { settings } = useSettingsStore();
 
   if (!isOpen) return null;
 
   const totalPrice = getTotalPrice();
 
   const whatsappUrl = generateWhatsAppCartLink(
-    settings.whatsappNumber || "+18005550199",
+    WHATSAPP_NUMBER,
     items,
     totalPrice
   );

@@ -2,7 +2,8 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { CATALOG_PRODUCTS, Product, createCartProductAndVariant } from "@/lib/catalog";
+import { ProductService } from "@/services/productService";
+import { Product, ProductVariant } from "@/types";
 import { useCartStore } from "@/store/useCartStore";
 import { ShoppingBag, ArrowLeft } from "lucide-react";
 import { useParams } from "next/navigation";
@@ -11,6 +12,16 @@ export default function CollectionSlugPage() {
   const params = useParams();
   const slug = (params?.slug as string) || "phones";
   const { addItem } = useCartStore();
+  const [products, setProducts] = React.useState<Product[]>([]);
+
+  React.useEffect(() => {
+    const loadProducts = async () => {
+      const data = await ProductService.fetchProductsFromApi();
+      setProducts(data.filter((product) => product.status === "published"));
+    };
+
+    loadProducts();
+  }, []);
 
   const titleMap: Record<string, string> = {
     phones: "Nothing & CMF Phones",
@@ -23,8 +34,8 @@ export default function CollectionSlugPage() {
   const currentTitle = titleMap[slug] || `Collection: ${slug.toUpperCase()}`;
 
   const categoryProducts = slug === "shop-all"
-    ? CATALOG_PRODUCTS
-    : CATALOG_PRODUCTS.filter((p) => p.category === slug);
+    ? products
+    : products.filter((p) => p.category === slug);
 
   return (
     <div className="min-h-screen bg-white text-[#111] pt-24 pb-16 px-4 sm:px-6 lg:px-8">
@@ -57,7 +68,7 @@ export default function CollectionSlugPage() {
               key={product.id}
               className="group flex flex-col justify-between rounded-2xl border border-black/8 bg-white p-4 shadow-sm transition hover:shadow-md hover:border-black/20"
             >
-              <div className="relative aspect-[4/5] overflow-hidden rounded-xl bg-black/[0.01]">
+              <Link href={`/products/${product.slug}`} className="relative aspect-[4/5] overflow-hidden rounded-xl bg-black/[0.01]">
                 {product.warranty && (
                   <span className="absolute top-2 right-2 z-20 rounded bg-[#D71921] px-2 py-0.5 text-[9px] font-mono text-white font-bold">
                     {product.warranty}
@@ -65,10 +76,10 @@ export default function CollectionSlugPage() {
                 )}
                 <img
                   alt={product.name}
-                  src={product.image}
+                  src={product.images[0]}
                   className="h-full w-full object-contain p-2 transition-transform duration-300 group-hover:scale-105"
                 />
-              </div>
+              </Link>
 
               <div className="mt-4 flex flex-col flex-1 justify-between text-center">
                 <div>
@@ -92,8 +103,18 @@ export default function CollectionSlugPage() {
 
                   <button
                     onClick={() => {
-                      const { product: p, variant: v } = createCartProductAndVariant(product);
-                      addItem(p, v, 1);
+                      const variant: ProductVariant = product.variants[0] || {
+                        id: `${product.id}-default`,
+                        name: product.name,
+                        color: "Standard",
+                        colorHex: "#000000",
+                        price: product.salePrice || product.price,
+                        salePrice: product.salePrice || product.price,
+                        sku: product.slug,
+                        inStock: true,
+                        image: product.images[0],
+                      };
+                      addItem(product, variant, 1);
                     }}
                     className="mt-3 w-full inline-flex items-center justify-center space-x-2 rounded-lg bg-black py-2 text-[10px] font-bold tracking-widest text-white uppercase transition hover:bg-[#D71921]"
                   >
