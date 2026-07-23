@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { WHATSAPP_NUMBER } from "@/lib/config";
 
 const footerNavLinks = [
   { label: "Shop all", href: "/collections/shop-all" },
@@ -13,20 +14,22 @@ const footerNavLinks = [
   { label: "CMF", href: "/collections/cmf" },
 ];
 
-const actionLinks = [
-  { label: "About", href: "/about-us" },
-  { label: "Support", href: "/support-centre" },
-  { label: "Contact on WhatsApp", href: "/contact" },
-];
-
-const bottomLinks = [
-  { label: "Playground", href: "https://playground.nothing.tech", external: true },
-  { label: "Contact", href: "/contact" },
-  { label: "Careers", href: "https://careers.nothing.tech", external: true },
-  { label: "Legal", href: "/pages/terms-of-sale" },
-];
-
 export function Footer() {
+  const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER.replace(/\+/g, "")}`;
+
+  const actionLinks = [
+    { label: "About", href: "/about-us", external: false },
+    { label: "Support", href: "/support-centre", external: false },
+    { label: "Contact on WhatsApp", href: whatsappUrl, external: true },
+  ];
+
+  const bottomLinks = [
+    { label: "Playground", href: "https://playground.nothing.tech", external: true },
+    { label: "Contact", href: whatsappUrl, external: true },
+    { label: "Careers", href: "https://careers.nothing.tech", external: true },
+    { label: "Legal", href: "/pages/terms-of-sale", external: false },
+  ];
+
   return (
     <footer className="bg-black text-white uppercase" style={{ fontFamily: "var(--font-ndot57), sans-serif" }}>
 
@@ -52,17 +55,31 @@ export function Footer() {
 
                 {/* Action Button Cards */}
                 <div className="mt-24 grid w-full max-w-[512px] gap-2.5 text-left">
-                  {actionLinks.map((link) => (
-                    <Link
-                      key={link.label}
-                      className="flex h-[54px] items-center justify-between rounded-[10px] bg-white/[0.06] px-5 transition-colors hover:bg-white/[0.09]"
-                      href={link.href}
-                    >
-                      <span className="text-[11px] uppercase tracking-[0.08em] text-white" style={{ fontFamily: "var(--font-lettera-regular)" }}>
-                        {link.label}
-                      </span>
-                    </Link>
-                  ))}
+                  {actionLinks.map((link) =>
+                    link.external ? (
+                      <a
+                        key={link.label}
+                        className="flex h-[54px] items-center justify-between rounded-[10px] bg-white/[0.06] px-5 transition-colors hover:bg-white/[0.09]"
+                        href={link.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <span className="text-[11px] uppercase tracking-[0.08em] text-white" style={{ fontFamily: "var(--font-lettera-regular)" }}>
+                          {link.label}
+                        </span>
+                      </a>
+                    ) : (
+                      <Link
+                        key={link.label}
+                        className="flex h-[54px] items-center justify-between rounded-[10px] bg-white/[0.06] px-5 transition-colors hover:bg-white/[0.09]"
+                        href={link.href}
+                      >
+                        <span className="text-[11px] uppercase tracking-[0.08em] text-white" style={{ fontFamily: "var(--font-lettera-regular)" }}>
+                          {link.label}
+                        </span>
+                      </Link>
+                    )
+                  )}
                   <button
                     type="button"
                     className="flex h-[54px] items-center justify-between rounded-[10px] bg-white/[0.06] px-5 text-[11px] uppercase tracking-[0.08em] text-white transition-colors hover:bg-white/[0.09]"
@@ -142,17 +159,31 @@ export function Footer() {
 
           {/* Mobile Action Cards */}
           <div className="mx-auto mt-10 grid max-w-[320px] gap-2 text-left">
-            {actionLinks.map((link) => (
-              <Link
-                key={link.label}
-                className="flex h-[52px] items-center justify-between rounded-[10px] bg-white/[0.06] px-4 transition-colors hover:bg-white/[0.09]"
-                href={link.href}
-              >
-                <span className="text-[10px] uppercase tracking-[0.08em] text-white" style={{ fontFamily: "var(--font-lettera-regular)" }}>
-                  {link.label}
-                </span>
-              </Link>
-            ))}
+            {actionLinks.map((link) =>
+              link.external ? (
+                <a
+                  key={link.label}
+                  className="flex h-[52px] items-center justify-between rounded-[10px] bg-white/[0.06] px-4 transition-colors hover:bg-white/[0.09]"
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span className="text-[10px] uppercase tracking-[0.08em] text-white" style={{ fontFamily: "var(--font-lettera-regular)" }}>
+                    {link.label}
+                  </span>
+                </a>
+              ) : (
+                <Link
+                  key={link.label}
+                  className="flex h-[52px] items-center justify-between rounded-[10px] bg-white/[0.06] px-4 transition-colors hover:bg-white/[0.09]"
+                  href={link.href}
+                >
+                  <span className="text-[10px] uppercase tracking-[0.08em] text-white" style={{ fontFamily: "var(--font-lettera-regular)" }}>
+                    {link.label}
+                  </span>
+                </Link>
+              )
+            )}
             <button
               type="button"
               className="flex h-[52px] items-center justify-between rounded-[10px] bg-white/[0.06] px-4 text-[10px] uppercase tracking-[0.08em] text-white transition-colors hover:bg-white/[0.09]"

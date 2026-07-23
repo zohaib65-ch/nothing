@@ -3,133 +3,88 @@
 import * as React from "react";
 import Link from "next/link";
 import { ProductService } from "@/services/productService";
-import { Product, ProductVariant } from "@/types";
-import { useCartStore } from "@/store/useCartStore";
-import { Search, ShoppingBag } from "lucide-react";
+import { Product } from "@/types";
+import { Loader } from "@/components/ui/loader";
 
 export default function ShopAllPage() {
-  const { addItem } = useCartStore();
-  const [selectedCategory, setSelectedCategory] = React.useState<string>("all");
-  const [searchQuery, setSearchQuery] = React.useState<string>("");
   const [products, setProducts] = React.useState<Product[]>([]);
+  const [isLoading, setIsLoading] = React.useState<boolean>(true);
 
   React.useEffect(() => {
     const loadProducts = async () => {
-      const data = await ProductService.fetchProductsFromApi();
-      setProducts(data.filter((product) => product.status === "published"));
+      setIsLoading(true);
+      try {
+        const data = await ProductService.fetchProductsFromApi();
+        setProducts(data.filter((product) => product.status === "published"));
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     loadProducts();
   }, []);
 
-  const categories = [
-    { id: "all", label: "ALL PRODUCTS" },
-    { id: "phones", label: "PHONES" },
-    { id: "chargers", label: "CHARGERS & CABLES" },
-    { id: "audio", label: "AUDIO & EARBUDS" },
-    { id: "protectors", label: "PROTECTORS" },
-  ];
-
-  const filteredProducts = products.filter((product) => {
-    const matchesCategory = selectedCategory === "all" || product.category === selectedCategory;
-    const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
-
   return (
-    <div className="min-h-screen bg-white text-[#111] pt-24 pb-16 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#f4f5f8] text-[#111] pt-24 pb-16 px-4 md:px-6 lg:px-8">
       <div aria-hidden="true" className="site-dot-overlay" />
 
-      <div className="mx-auto max-w-screen-2xl">
+      <div className="mx-auto max-w-[1680px]">
         {/* Header Title */}
-        <div className="border-b border-black/10 pb-8 space-y-3">
-          <p className="dot-heading text-[11px] tracking-[0.3em] text-black/45">OFFICIAL CATALOG</p>
-          <h1 className="collection-product-name text-3xl sm:text-5xl font-bold text-black">Shop All Products</h1>
-          <p className="font-sans text-xs sm:text-sm text-black/65 max-w-xl">
-            Explore authentic Nothing and CMF phones, chargers, audio gear, and screen protectors with live PKR pricing across Pakistan.
-          </p>
+        <div className="pb-4 md:pb-6">
+          <div className="flex items-center justify-center py-2 sm:py-4">
+            <div className="max-w-4xl text-center">
+              <h1 className="font-ndot57 uppercase text-center text-[2.15rem] leading-[0.95] tracking-[0.2em] text-black sm:text-[2.9rem] lg:text-[3.45rem]">All products</h1>
+              <p className="mx-auto mt-4 max-w-3xl text-sm leading-7 text-black/62 md:text-base font-sans">
+                Browse the full Nothing Pakistan catalog for chargers, earbuds, protectors, CMF devices, and other compatible accessories.
+              </p>
+            </div>
+          </div>
+        </div>
 
-          {/* Search bar & filter pills */}
-          <div className="pt-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
-            <div className="flex flex-wrap gap-2">
-              {categories.map((cat) => (
-                <button
-                  key={cat.id}
-                  onClick={() => setSelectedCategory(cat.id)}
-                  className={`rounded-full px-4 py-1.5 text-[11px] font-mono tracking-wider transition ${
-                    selectedCategory === cat.id ? "bg-black text-white font-bold" : "bg-black/5 text-black/70 hover:bg-black/10"
-                  }`}
-                >
-                  {cat.label}
-                </button>
+        {/* Loading Spinner or Product Cards Grid */}
+        {isLoading ? (
+          <Loader />
+        ) : (
+          <>
+            <div className="grid grid-cols-2 mt-8 gap-x-4 gap-y-9 md:gap-x-6 md:gap-y-12 lg:grid-cols-5 lg:gap-x-7 lg:gap-y-14">
+              {products.map((product) => (
+                <Link key={product.id} href={`/products/${product.slug}`} className="group block">
+                  <article className="flex h-full flex-col">
+                    {/* Image Wrap */}
+                    <div className="relative overflow-hidden aspect-[4/5] bg-black/[0.02] rounded-xl flex items-center justify-center p-4">
+                      {product.warranty && (
+                        <span className="absolute z-20 right-2 top-2 h-10 w-10 sm:right-3 sm:top-3 sm:h-12 sm:w-12 rounded-full bg-[#D71921] border border-white/20 flex flex-col items-center justify-center text-center font-mono leading-[1.15] text-white uppercase shadow-sm select-none">
+                          <span className="text-[8px] sm:text-[9px] font-bold tracking-tighter">{product.warranty.split(" ")[0]}</span>
+                          <span className="text-[5px] sm:text-[6px] text-white/80 font-normal tracking-wider">{product.warranty.split(" ")[1] || "WARRANTY"}</span>
+                        </span>
+                      )}
+                      <img alt={product.name} src={product.images[0]} className="h-full w-full object-contain transition-transform duration-500 ease-out group-hover:scale-[1.02]" />
+                    </div>
+
+                    {/* Info Wrap */}
+                    <div className="mt-3 text-center">
+                      <h3 className="font-sans text-[0.98rem] sm:text-[1.04rem] leading-[1.12] text-black font-normal tracking-normal">{product.name}</h3>
+                      <div className="mt-1 flex flex-col items-center">
+                        <p className="text-[11px] text-black/62 font-[system-ui] font-normal">Rs {product.price.toLocaleString()}</p>
+                        {product.originalPrice && (
+                          <p className="mt-0.5 text-[10px] text-black/65 line-through decoration-black/65 font-[system-ui] font-normal">{product.originalPrice.toLocaleString()}</p>
+                        )}
+                      </div>
+                    </div>
+                  </article>
+                </Link>
               ))}
             </div>
 
-            <div className="relative max-w-xs w-full">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black/40" />
-              <input
-                type="text"
-                placeholder="Search products..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-full border border-black/10 bg-black/[0.02] pl-9 pr-4 py-1.5 text-xs text-black placeholder:text-black/40 focus:outline-none focus:border-black"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Product Cards Grid */}
-        <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 gap-y-8">
-          {filteredProducts.map((product) => (
-            <div key={product.id} className="group flex flex-col justify-between rounded-2xl border border-black/8 bg-white p-4 shadow-sm transition hover:shadow-md hover:border-black/20">
-              <Link href={`/products/${product.slug}`} className="relative aspect-[4/5] overflow-hidden rounded-xl bg-black/[0.01]">
-                {product.warranty && <span className="absolute top-2 right-2 z-20 rounded bg-[#D71921] px-2 py-0.5 text-[9px] font-mono text-white font-bold">{product.warranty}</span>}
-                <img alt={product.name} src={product.images[0]} className="h-full w-full object-contain p-2 transition-transform duration-300 group-hover:scale-105" />
-              </Link>
-
-              <div className="mt-4 flex flex-col flex-1 justify-between text-center">
-                <div>
-                  <h2 className="product-card-name text-xs sm:text-sm font-bold text-black line-clamp-1">{product.name}</h2>
-                  <p className="mt-1 font-sans text-[11px] text-black/50 line-clamp-2">{product.description}</p>
-                </div>
-
-                <div className="mt-3 pt-3 border-t border-black/5">
-                  <div className="flex items-center justify-center space-x-2">
-                    <span className="text-sm font-bold text-black">Rs {product.price.toLocaleString()}</span>
-                    {product.originalPrice && <span className="text-xs text-black/40 line-through">{product.originalPrice.toLocaleString()}</span>}
-                  </div>
-
-                  <button
-                    onClick={() => {
-                      const variant: ProductVariant = product.variants[0] || {
-                        id: `${product.id}-default`,
-                        name: product.name,
-                        color: "Standard",
-                        colorHex: "#000000",
-                        price: product.salePrice || product.price,
-                        salePrice: product.salePrice || product.price,
-                        sku: product.slug,
-                        inStock: true,
-                        image: product.images[0],
-                      };
-                      addItem(product, variant, 1);
-                    }}
-                    className="mt-3 w-full inline-flex items-center justify-center space-x-2 rounded-lg bg-black py-2 text-[10px] font-bold tracking-widest text-white uppercase transition hover:bg-[#D71921]"
-                  >
-                    <ShoppingBag className="h-3.5 w-3.5" />
-                    <span>ADD TO CART</span>
-                  </button>
-                </div>
+            {products.length === 0 && (
+              <div className="py-20 text-center space-y-3">
+                <p className="dot-heading text-lg text-black/40">NO PRODUCTS FOUND</p>
+                <p className="text-xs text-black/60">Try searching for a different product name or category filter.</p>
               </div>
-            </div>
-          ))}
-        </div>
-
-        {filteredProducts.length === 0 && (
-          <div className="py-20 text-center space-y-3">
-            <p className="dot-heading text-lg text-black/40">NO PRODUCTS FOUND</p>
-            <p className="text-xs text-black/60">Try searching for a different product name or category filter.</p>
-          </div>
+            )}
+          </>
         )}
       </div>
     </div>

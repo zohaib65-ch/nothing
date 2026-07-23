@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useCartStore } from "@/store/useCartStore";
 import { ProductService } from "@/services/productService";
 import { Product } from "@/types";
+import { Loader } from "@/components/ui/loader";
 
 const storeBenefits = [
   {
@@ -100,14 +101,19 @@ const verifiedReviews = [
 export default function HomePage() {
   const { addItem } = useCartStore();
   const [products, setProducts] = React.useState<Product[]>([]);
+  const [isLoading, setIsLoading] = React.useState<boolean>(true);
   const [activeFaqCategory, setActiveFaqCategory] = React.useState("general");
   const [openFaqIndex, setOpenFaqIndex] = React.useState<number | null>(null);
   const reviewsRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
-    ProductService.fetchProductsFromApi().then((data) => {
-      setProducts(data.filter((p) => p.status === "published"));
-    });
+    setIsLoading(true);
+    ProductService.fetchProductsFromApi()
+      .then((data) => {
+        setProducts(data.filter((p) => p.status === "published"));
+      })
+      .catch((err) => console.error(err))
+      .finally(() => setIsLoading(false));
   }, []);
 
   const selectedGems = products.filter((p) => ["cmf-buds-pro", "cmf-power-65w-gan", "nothing-usb-c-cable", "cmf-buds-pro-2", "nothing-power-45w", "ear-a"].includes(p.slug));
@@ -163,45 +169,51 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Mobile: 2-col grid */}
-          <div className="mt-8 grid grid-cols-2 gap-x-4 gap-y-9 lg:hidden">
-            {selectedGems.map((p) => (
-              <Link key={p.id} className="group block" href={`/products/${p.slug}`}>
-                <article className="flex h-full flex-col">
-                  <div className="relative overflow-hidden aspect-[4/5]">
-                    <img alt={`${p.name} original product price in Pakistan from Nothing Pakistan`} loading="lazy" className="absolute inset-0 h-full w-full object-contain object-center transition-transform duration-500 ease-out group-hover:scale-[1.02]" src={p.images[0]} />
-                  </div>
-                  <div className="mt-3 text-center">
-                    <h3 className="product-card-name text-[0.98rem] leading-[1.12] text-black sm:text-[1.04rem]">{p.name}</h3>
-                    <div className="mt-1">
-                      <p className="text-[11px] text-black/62">Rs {p.price.toLocaleString()}</p>
-                      {p.salePrice && <p className="mt-0.5 text-[10px] text-black/65 line-through decoration-black/65">{p.salePrice.toLocaleString()}</p>}
-                    </div>
-                  </div>
-                </article>
-              </Link>
-            ))}
-          </div>
+          {isLoading ? (
+            <Loader />
+          ) : (
+            <>
+              {/* Mobile: 2-col grid */}
+              <div className="mt-8 grid grid-cols-2 gap-x-4 gap-y-9 lg:hidden">
+                {selectedGems.map((p) => (
+                  <Link key={p.id} className="group block" href={`/products/${p.slug}`}>
+                    <article className="flex h-full flex-col">
+                      <div className="relative overflow-hidden aspect-[4/5]">
+                        <img alt={`${p.name} original product price in Pakistan from Nothing Pakistan`} loading="lazy" className="absolute inset-0 h-full w-full object-contain object-center transition-transform duration-500 ease-out group-hover:scale-[1.02]" src={p.images[0]} />
+                      </div>
+                      <div className="mt-3 text-center">
+                        <h3 className="font-sans text-[0.98rem] sm:text-[1.04rem] leading-[1.12] text-black font-normal tracking-normal">{p.name}</h3>
+                        <div className="mt-1">
+                          <p className="text-[11px] text-black/62 font-[system-ui] font-normal">Rs {p.price.toLocaleString()}</p>
+                          {p.salePrice && <p className="mt-0.5 text-[10px] text-black/65 line-through decoration-black/65 font-[system-ui] font-normal">{p.salePrice.toLocaleString()}</p>}
+                        </div>
+                      </div>
+                    </article>
+                  </Link>
+                ))}
+              </div>
 
-          {/* Desktop: 5-col grid */}
-          <div className="mt-8 hidden grid-cols-5 gap-x-7 gap-y-14 lg:grid">
-            {selectedGems.map((p) => (
-              <Link key={p.id} className="group block" href={`/products/${p.slug}`}>
-                <article className="flex h-full flex-col">
-                  <div className="relative overflow-hidden aspect-[4/5]">
-                    <img alt={`${p.name} original product price in Pakistan from Nothing Pakistan`} loading="lazy" className="absolute inset-0 h-full w-full object-contain object-center transition-transform duration-500 ease-out group-hover:scale-[1.02]" src={p.images[0]} />
-                  </div>
-                  <div className="mt-3 text-center">
-                    <h3 className="product-card-name text-[0.98rem] leading-[1.12] text-black sm:text-[1.04rem]">{p.name}</h3>
-                    <div className="mt-1">
-                      <p className="text-[11px] text-black/62">Rs {p.price.toLocaleString()}</p>
-                      {p.salePrice && <p className="mt-0.5 text-[10px] text-black/65 line-through decoration-black/65">{p.salePrice.toLocaleString()}</p>}
-                    </div>
-                  </div>
-                </article>
-              </Link>
-            ))}
-          </div>
+              {/* Desktop: 5-col grid */}
+              <div className="mt-8 hidden grid-cols-5 gap-x-7 gap-y-14 lg:grid">
+                {selectedGems.map((p) => (
+                  <Link key={p.id} className="group block" href={`/products/${p.slug}`}>
+                    <article className="flex h-full flex-col">
+                      <div className="relative overflow-hidden aspect-[4/5]">
+                        <img alt={`${p.name} original product price in Pakistan from Nothing Pakistan`} loading="lazy" className="absolute inset-0 h-full w-full object-contain object-center transition-transform duration-500 ease-out group-hover:scale-[1.02]" src={p.images[0]} />
+                      </div>
+                      <div className="mt-3 text-center">
+                        <h3 className="font-sans text-[0.98rem] sm:text-[1.04rem] leading-[1.12] text-black font-normal tracking-normal">{p.name}</h3>
+                        <div className="mt-1">
+                          <p className="text-[11px] text-black/62 font-[system-ui] font-normal">Rs {p.price.toLocaleString()}</p>
+                          {p.salePrice && <p className="mt-0.5 text-[10px] text-black/65 line-through decoration-black/65 font-[system-ui] font-normal">{p.salePrice.toLocaleString()}</p>}
+                        </div>
+                      </div>
+                    </article>
+                  </Link>
+                ))}
+              </div>
+            </>
+          )}
         </div>
       </section>
 
@@ -214,30 +226,34 @@ export default function HomePage() {
             <p className="mt-5 font-sans text-[15px] leading-7 text-black/68 sm:text-base">Pick your Nothing or CMF phone and browse accessories that fit right, look clean, and are ready to order across Pakistan.</p>
           </div>
 
-          <div className="mt-10 grid grid-cols-2 gap-4 lg:grid-cols-5 lg:gap-5">
-            {phoneModels.map((phone) => (
-              <Link
-                key={phone.id}
-                className="group flex min-h-[270px] flex-col items-start justify-between rounded-[28px] bg-transparent p-1 transition duration-300 hover:-translate-y-1 sm:min-h-[330px] lg:min-h-[455px] lg:p-2"
-                aria-label={`Open ${phone.name}`}
-                href={`/products/${phone.slug}`}
-              >
-                <div className="w-full">
-                  <div className="relative mx-auto h-[215px] w-full max-w-[190px] sm:h-[265px] sm:max-w-[230px] lg:h-[365px] lg:max-w-[275px]">
-                    <img
-                      alt={phone.name}
-                      loading="lazy"
-                      className="absolute inset-0 h-full w-full scale-[1.08] object-contain object-center transition-transform duration-500 ease-out group-hover:scale-[1.12] lg:scale-[1.12] lg:group-hover:scale-[1.16]"
-                      src={phone.images[0]}
-                    />
+          {isLoading ? (
+            <Loader />
+          ) : (
+            <div className="mt-10 grid grid-cols-2 gap-4 lg:grid-cols-5 lg:gap-5">
+              {phoneModels.map((phone) => (
+                <Link
+                  key={phone.id}
+                  className="group flex min-h-[270px] flex-col items-start justify-between rounded-[28px] bg-transparent p-1 transition duration-300 hover:-translate-y-1 sm:min-h-[330px] lg:min-h-[455px] lg:p-2"
+                  aria-label={`Open ${phone.name}`}
+                  href={`/products/${phone.slug}`}
+                >
+                  <div className="w-full">
+                    <div className="relative mx-auto h-[215px] w-full max-w-[190px] sm:h-[265px] sm:max-w-[230px] lg:h-[365px] lg:max-w-[275px]">
+                      <img
+                        alt={phone.name}
+                        loading="lazy"
+                        className="absolute inset-0 h-full w-full scale-[1.08] object-contain object-center transition-transform duration-500 ease-out group-hover:scale-[1.12] lg:scale-[1.12] lg:group-hover:scale-[1.16]"
+                        src={phone.images[0]}
+                      />
+                    </div>
                   </div>
-                </div>
-                <p className="product-card-name mx-auto mt-4 min-h-[2.5rem] w-full text-center text-[0.92rem] leading-[1.25] text-black/78 sm:min-h-[2.8rem] sm:text-[1rem] lg:min-h-[3rem] lg:text-[1.08rem]">
-                  {phone.name}
-                </p>
-              </Link>
-            ))}
-          </div>
+                  <p className="font-sans font-normal mx-auto mt-4 min-h-[2.5rem] w-full text-center text-[0.92rem] leading-[1.25] text-black/78 sm:min-h-[2.8rem] sm:text-[1rem] lg:min-h-[3rem] lg:text-[1.08rem]">
+                    {phone.name}
+                  </p>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

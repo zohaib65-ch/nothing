@@ -3,21 +3,28 @@
 import * as React from "react";
 import Link from "next/link";
 import { ProductService } from "@/services/productService";
-import { Product, ProductVariant } from "@/types";
-import { useCartStore } from "@/store/useCartStore";
-import { ShoppingBag, ArrowLeft } from "lucide-react";
+import { Product } from "@/types";
+import { ArrowLeft } from "lucide-react";
 import { useParams } from "next/navigation";
+import { Loader } from "@/components/ui/loader";
 
 export default function CollectionSlugPage() {
   const params = useParams();
   const slug = (params?.slug as string) || "phones";
-  const { addItem } = useCartStore();
   const [products, setProducts] = React.useState<Product[]>([]);
+  const [isLoading, setIsLoading] = React.useState<boolean>(true);
 
   React.useEffect(() => {
     const loadProducts = async () => {
-      const data = await ProductService.fetchProductsFromApi();
-      setProducts(data.filter((product) => product.status === "published"));
+      setIsLoading(true);
+      try {
+        const data = await ProductService.fetchProductsFromApi();
+        setProducts(data.filter((product) => product.status === "published"));
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     loadProducts();
@@ -38,12 +45,12 @@ export default function CollectionSlugPage() {
     : products.filter((p) => p.category === slug);
 
   return (
-    <div className="min-h-screen bg-white text-[#111] pt-24 pb-16 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#f4f5f8] text-[#111] pt-24 pb-16 px-4 md:px-6 lg:px-8">
       <div aria-hidden="true" className="site-dot-overlay" />
 
-      <div className="mx-auto max-w-screen-2xl">
+      <div className="mx-auto max-w-[1680px]">
         <Link
-          href="/shop-all"
+          href="/collections/shop-all"
           className="inline-flex items-center space-x-1.5 text-xs font-mono text-black/60 hover:text-black mb-6 transition-colors"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
@@ -61,82 +68,67 @@ export default function CollectionSlugPage() {
           </p>
         </div>
 
-        {/* Product Cards Grid */}
-        <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 gap-y-8">
-          {categoryProducts.map((product) => (
-            <div
-              key={product.id}
-              className="group flex flex-col justify-between rounded-2xl border border-black/8 bg-white p-4 shadow-sm transition hover:shadow-md hover:border-black/20"
-            >
-              <Link href={`/products/${product.slug}`} className="relative aspect-[4/5] overflow-hidden rounded-xl bg-black/[0.01]">
-                {product.warranty && (
-                  <span className="absolute top-2 right-2 z-20 rounded bg-[#D71921] px-2 py-0.5 text-[9px] font-mono text-white font-bold">
-                    {product.warranty}
-                  </span>
-                )}
-                <img
-                  alt={product.name}
-                  src={product.images[0]}
-                  className="h-full w-full object-contain p-2 transition-transform duration-300 group-hover:scale-105"
-                />
-              </Link>
+        {/* Loading Spinner or Product Cards Grid */}
+        {isLoading ? (
+          <Loader />
+        ) : (
+          <>
+            <div className="grid grid-cols-2 mt-8 gap-x-4 gap-y-9 md:gap-x-6 md:gap-y-12 lg:grid-cols-5 lg:gap-x-7 lg:gap-y-14">
+              {categoryProducts.map((product) => (
+                <Link 
+                  key={product.id} 
+                  href={`/products/${product.slug}`} 
+                  className="group block"
+                >
+                  <article className="flex h-full flex-col">
+                    {/* Image Wrap */}
+                    <div className="relative overflow-hidden aspect-[4/5] bg-black/[0.02] rounded-xl flex items-center justify-center p-4">
+                      {product.warranty && (
+                        <span className="absolute z-20 right-2 top-2 h-10 w-10 sm:right-3 sm:top-3 sm:h-12 sm:w-12 rounded-full bg-[#D71921] border border-white/20 flex flex-col items-center justify-center text-center font-mono leading-[1.15] text-white uppercase shadow-sm select-none">
+                          <span className="text-[8px] sm:text-[9px] font-bold tracking-tighter">{product.warranty.split(" ")[0]}</span>
+                          <span className="text-[5px] sm:text-[6px] text-white/80 font-normal tracking-wider">{product.warranty.split(" ")[1] || "WARRANTY"}</span>
+                        </span>
+                      )}
+                      <img 
+                        alt={product.name} 
+                        src={product.images[0]} 
+                        className="h-full w-full object-contain transition-transform duration-500 ease-out group-hover:scale-[1.02]" 
+                      />
+                    </div>
 
-              <div className="mt-4 flex flex-col flex-1 justify-between text-center">
-                <div>
-                  <h2 className="product-card-name text-xs sm:text-sm font-bold text-black line-clamp-1">
-                    {product.name}
-                  </h2>
-                  <p className="mt-1 font-sans text-[11px] text-black/50 line-clamp-2">
-                    {product.description}
-                  </p>
-                </div>
-
-                <div className="mt-3 pt-3 border-t border-black/5">
-                  <div className="flex items-center justify-center space-x-2">
-                    <span className="text-sm font-bold text-black">Rs {product.price.toLocaleString()}</span>
-                    {product.originalPrice && (
-                      <span className="text-xs text-black/40 line-through">
-                        {product.originalPrice.toLocaleString()}
-                      </span>
-                    )}
-                  </div>
-
-                  <button
-                    onClick={() => {
-                      const variant: ProductVariant = product.variants[0] || {
-                        id: `${product.id}-default`,
-                        name: product.name,
-                        color: "Standard",
-                        colorHex: "#000000",
-                        price: product.salePrice || product.price,
-                        salePrice: product.salePrice || product.price,
-                        sku: product.slug,
-                        inStock: true,
-                        image: product.images[0],
-                      };
-                      addItem(product, variant, 1);
-                    }}
-                    className="mt-3 w-full inline-flex items-center justify-center space-x-2 rounded-lg bg-black py-2 text-[10px] font-bold tracking-widest text-white uppercase transition hover:bg-[#D71921]"
-                  >
-                    <ShoppingBag className="h-3.5 w-3.5" />
-                    <span>ADD TO CART</span>
-                  </button>
-                </div>
-              </div>
+                    {/* Info Wrap */}
+                    <div className="mt-3 text-center">
+                      <h3 className="font-sans text-[0.98rem] sm:text-[1.04rem] leading-[1.12] text-black font-normal tracking-normal">
+                        {product.name}
+                      </h3>
+                      <div className="mt-1 flex flex-col items-center">
+                        <p className="text-[11px] text-black/62 font-[system-ui] font-normal">
+                          Rs {product.price.toLocaleString()}
+                        </p>
+                        {product.originalPrice && (
+                          <p className="mt-0.5 text-[10px] text-black/65 line-through decoration-black/65 font-[system-ui] font-normal">
+                            {product.originalPrice.toLocaleString()}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </article>
+                </Link>
+              ))}
             </div>
-          ))}
-        </div>
 
-        {categoryProducts.length === 0 && (
-          <div className="py-20 text-center space-y-3">
-            <p className="dot-heading text-lg text-black/40">NO PRODUCTS IN THIS COLLECTION</p>
-            <Link
-              href="/shop-all"
-              className="inline-block rounded-lg bg-black px-4 py-2 text-xs font-bold text-white uppercase"
-            >
-              Browse Shop All
-            </Link>
-          </div>
+            {categoryProducts.length === 0 && (
+              <div className="py-20 text-center space-y-3">
+                <p className="dot-heading text-lg text-black/40">NO PRODUCTS IN THIS COLLECTION</p>
+                <Link
+                  href="/collections/shop-all"
+                  className="inline-block rounded-lg bg-black px-4 py-2 text-xs font-bold text-white uppercase"
+                >
+                  Browse Shop All
+                </Link>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
