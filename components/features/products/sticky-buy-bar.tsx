@@ -5,6 +5,7 @@ import { Product, ProductVariant } from "@/types";
 import { formatPrice, generateWhatsAppLink } from "@/lib/utils";
 import { useCartStore } from "@/store/useCartStore";
 import { WHATSAPP_NUMBER } from "@/lib/config";
+import Link from "next/link";
 import { MessageSquare, ShoppingBag } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -67,16 +68,14 @@ export function StickyBuyBar({ product, selectedVariant }: StickyBuyBarProps) {
             <ShoppingBag className="h-4 w-4" />
           </button>
 
-          <a
-            href={whatsappUrl}
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            href={`/order/${product.slug}?variant=${selectedVariant.id}`}
             className="inline-flex items-center space-x-2 bg-[#D71921] hover:bg-[#B51219] text-white font-mono text-xs font-bold uppercase tracking-wider px-4 py-2.5 shadow-[0_0_15px_rgba(215,25,33,0.4)] transition-all"
           >
-            <MessageSquare className="h-4 w-4" />
-            <span className="hidden sm:inline">ORDER ON WHATSAPP</span>
-            <span className="sm:hidden">ORDER</span>
-          </a>
+            <ShoppingBag className="h-4 w-4" />
+            <span className="hidden sm:inline">BUY NOW</span>
+            <span className="sm:hidden">BUY</span>
+          </Link>
         </div>
       </div>
     </div>

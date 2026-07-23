@@ -11,6 +11,7 @@ import {
   Store,
   LogOut,
   Shield,
+  ShoppingBag,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -21,6 +22,7 @@ export function AdminSidebar() {
     { name: "DASHBOARD", href: "/admin", icon: LayoutDashboard },
     { name: "PRODUCTS", href: "/admin/products", icon: Package },
     { name: "CATEGORIES", href: "/admin/categories", icon: FolderTree },
+    { name: "ORDERS", href: "/admin/orders", icon: ShoppingBag },
     { name: "SETTINGS", href: "/admin/settings", icon: Settings },
   ];
 

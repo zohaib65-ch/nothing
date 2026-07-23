@@ -164,15 +164,13 @@ export default function ProductDetailPage() {
 
             {/* Order Action Buttons */}
             <div className="space-y-3 pt-2">
-              <a
-                href={whatsappUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                href={`/order/${product.slug}?variant=${selectedVariant.id}`}
                 className="w-full inline-flex items-center justify-center space-x-2 bg-[#D71921] hover:bg-[#B51219] text-white font-mono text-sm font-bold uppercase tracking-wider py-4 shadow-[0_0_25px_rgba(215,25,33,0.35)] transition-all"
               >
-                <MessageSquare className="h-5 w-5" />
-                <span>BUY NOW ON WHATSAPP</span>
-              </a>
+                <ShoppingBag className="h-5 w-5" />
+                <span>BUY NOW</span>
+              </Link>
 
               <Button
                 variant="outline"

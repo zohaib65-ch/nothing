@@ -111,3 +111,35 @@ export interface AnalyticsOverview {
     whatsappNumber: string;
   }[];
 }
+
+export interface OrderItem {
+  productId: string;
+  productName: string;
+  variantId: string;
+  variantName: string;
+  price: number;
+  quantity: number;
+  image?: string;
+}
+
+export interface Order {
+  id?: string;
+  fullName: string;
+  address: string;
+  city: string;
+  district: string;
+  postalCode?: string;
+  phoneNumber: string;
+  phone2?: string;
+  paymentMethod: "bank_transfer" | "cod";
+  items: OrderItem[];
+  subtotal: number;
+  shippingFee: number;
+  tax: number;
+  total: number;
+  status: "pending" | "processing" | "shipped" | "cancelled" | "completed";
+  receiptImage?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
