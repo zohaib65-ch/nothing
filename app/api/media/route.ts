@@ -8,18 +8,21 @@ export async function GET() {
 
     try {
       const files = await readdir(uploadsDir);
-      const mediaList = await Promise.all(
-        files.map(async (filename) => {
-          const filePath = path.join(uploadsDir, filename);
-          const fileStat = await stat(filePath);
-          return {
-            filename,
-            url: `/uploads/${filename}`,
-            size: fileStat.size,
-            createdAt: fileStat.birthtime.toISOString(),
-          };
-        })
-      );
+      const mediaList = (
+        await Promise.all(
+          files.map(async (filename) => {
+            const filePath = path.join(uploadsDir, filename);
+            const fileStat = await stat(filePath);
+            if (fileStat.isDirectory()) return null;
+            return {
+              filename,
+              url: `/uploads/${filename}`,
+              size: fileStat.size,
+              createdAt: fileStat.birthtime.toISOString(),
+            };
+          })
+        )
+      ).filter(Boolean) as { filename: string; url: string; size: number; createdAt: string }[];
 
       // Sort newest first
       mediaList.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());

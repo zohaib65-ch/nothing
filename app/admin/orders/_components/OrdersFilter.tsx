@@ -28,7 +28,7 @@ export function OrdersFilter({
   setPaymentFilter,
 }: OrdersFilterProps) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-12 gap-4 bg-[#0A0A0B] border border-[#26262A] p-4 rounded-xl items-center">
+    <div className="grid grid-cols-1 md:grid-cols-12 gap-4 bg-white border border-neutral-200 p-4 rounded-xl items-center shadow-sm">
       {/* Search Input */}
       <div className="md:col-span-6 relative">
         <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-500" />
@@ -37,7 +37,7 @@ export function OrdersFilter({
           placeholder="Search by Order ID, Recipient name or phone..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full bg-[#111] border border-[#26262A] rounded-lg pl-10 pr-4 py-2.5 text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-neutral-600 transition"
+          className="w-full bg-white border border-neutral-200 rounded-lg pl-10 pr-4 py-2.5 text-xs text-neutral-900 placeholder-neutral-400 focus:outline-none focus:border-neutral-400 transition shadow-sm"
         />
       </div>
 

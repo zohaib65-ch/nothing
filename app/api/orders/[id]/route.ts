@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import { OrderModel } from "@/models/Order";
+import mongoose from "mongoose";
 
 export async function GET(
   request: Request,
@@ -11,7 +12,11 @@ export async function GET(
     const id = resolvedParams?.id;
     await connectToDatabase();
 
-    const order = await OrderModel.findById(id);
+    const queryId = mongoose.Types.ObjectId.isValid(id)
+      ? new mongoose.Types.ObjectId(id)
+      : id;
+
+    const order = await OrderModel.findById(queryId);
     if (!order) {
       return NextResponse.json({ error: "Order not found" }, { status: 404 });
     }
@@ -35,8 +40,12 @@ export async function PATCH(
     const body = await request.json();
 
     await connectToDatabase();
+    const queryId = mongoose.Types.ObjectId.isValid(id)
+      ? new mongoose.Types.ObjectId(id)
+      : id;
+
     const order = await OrderModel.findByIdAndUpdate(
-      id,
+      queryId,
       { $set: body },
       { new: true }
     );

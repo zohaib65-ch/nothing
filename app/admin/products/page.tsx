@@ -4,11 +4,14 @@ import * as React from "react";
 import Image from "next/image";
 import { ProductService } from "@/services/productService";
 import { Product } from "@/types";
-import { formatPrice, slugify, getValidImageUrl } from "@/lib/utils";
+import { formatPrice, slugify, getValidImageUrl, cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Modal } from "@/components/ui/modal";
+import { DataTable } from "@/components/ui/data-table";
+import { ColumnDef } from "@tanstack/react-table";
+import { getColumns } from "./_components/columns";
 import { Plus, Search, Edit2, Trash2, Star, Upload, Image as ImageIcon, AlertTriangle } from "lucide-react";
 
 export default function AdminProductsPage() {
@@ -42,9 +45,6 @@ export default function AdminProductsPage() {
     return () => window.removeEventListener("products_updated", loadProducts);
   }, [loadProducts]);
 
-  if (!mounted) {
-    return <div className="p-8 text-xs font-mono text-neutral-500 animate-pulse">LOADING PRODUCTS CONTROL PANEL...</div>;
-  }
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -182,15 +182,24 @@ export default function AdminProductsPage() {
       p.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const columns = React.useMemo<ColumnDef<Product>[]>(
+    () => getColumns(handleToggleFeatured, handleToggleStatus, handleEdit, handlePromptDelete),
+    [handleToggleFeatured, handleToggleStatus, handleEdit, handlePromptDelete]
+  );
+
+  if (!mounted) {
+    return <div className="p-8 text-xs font-mono text-neutral-500 animate-pulse">LOADING PRODUCTS CONTROL PANEL...</div>;
+  }
+
   return (
     <div className="space-y-6">
       {/* Header Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#26262A] pb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-200 pb-6">
         <div>
-          <h2 className="font-mono text-lg font-bold uppercase tracking-wider text-white">
+          <h2 className="font-mono text-lg font-bold uppercase tracking-wider text-neutral-900">
             PRODUCT MANAGEMENT
           </h2>
-          <p className="text-xs text-neutral-400 font-sans">
+          <p className="text-xs text-neutral-500 font-sans">
             Create, edit, delete, publish, or feature products in your MongoDB catalog.
           </p>
         </div>
@@ -208,94 +217,12 @@ export default function AdminProductsPage() {
           placeholder="SEARCH PRODUCTS BY NAME OR CATEGORY..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full bg-[#0F0F10] border border-[#26262A] pl-10 pr-4 py-2.5 font-mono text-xs text-white placeholder:text-neutral-600 focus:outline-none focus:border-[#D71921] transition-all"
+          className="w-full bg-white border border-neutral-200 pl-10 pr-4 py-2.5 font-mono text-xs text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-[#D71921] transition-all rounded-lg shadow-sm"
         />
       </div>
 
       {/* Products Table */}
-      <div className="bg-[#0F0F10] border border-[#26262A] overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-[#26262A] font-mono text-[10px] uppercase text-neutral-500 bg-[#141416]">
-                <th className="py-3 px-4">IMAGE</th>
-                <th className="py-3 px-4">PRODUCT NAME</th>
-                <th className="py-3 px-4">CATEGORY</th>
-                <th className="py-3 px-4">PRICE</th>
-                <th className="py-3 px-4">FEATURED</th>
-                <th className="py-3 px-4">STATUS</th>
-                <th className="py-3 px-4 text-right">ACTIONS</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#1C1C1E] font-mono text-xs text-neutral-300">
-              {filteredProducts.map((prod) => {
-                const imageUrl = getValidImageUrl(prod.images?.[0]);
-                return (
-                  <tr key={prod.id} className="hover:bg-white/5 transition-colors">
-                    <td className="py-3 px-4">
-                      <div className="relative h-12 w-12 bg-[#141416] border border-[#26262A]">
-                        <Image
-                          src={imageUrl}
-                          alt={prod.name}
-                          fill
-                          sizes="48px"
-                          className="object-contain p-1"
-                        />
-                      </div>
-                    </td>
-                    <td className="py-3 px-4">
-                      <div className="font-bold text-white">{prod.name}</div>
-                      <div className="text-[10px] text-neutral-500">{prod.tagline}</div>
-                    </td>
-                    <td className="py-3 px-4 uppercase text-neutral-400">{prod.category}</td>
-                    <td className="py-3 px-4 font-bold text-white">
-                      {formatPrice(prod.salePrice || prod.price)}
-                    </td>
-                    <td className="py-3 px-4">
-                      <button
-                        onClick={() => handleToggleFeatured(prod)}
-                        className={`p-1.5 rounded transition-colors ${
-                          prod.isFeatured
-                            ? "text-[#D71921] bg-[#D71921]/10"
-                            : "text-neutral-600 hover:text-white"
-                        }`}
-                        title="Toggle Featured Status"
-                      >
-                        <Star className="h-4 w-4 fill-current" />
-                      </button>
-                    </td>
-                    <td className="py-3 px-4">
-                      <button onClick={() => handleToggleStatus(prod)}>
-                        {prod.status === "published" ? (
-                          <Badge variant="red">PUBLISHED</Badge>
-                        ) : (
-                          <Badge variant="outline">DRAFT</Badge>
-                        )}
-                      </button>
-                    </td>
-                    <td className="py-3 px-4 text-right space-x-2">
-                      <button
-                        onClick={() => handleEdit(prod)}
-                        className="p-2 bg-[#141416] text-neutral-300 hover:text-white border border-[#26262A] hover:border-white transition-colors"
-                        title="Edit Product"
-                      >
-                        <Edit2 className="h-3.5 w-3.5" />
-                      </button>
-                      <button
-                        onClick={() => handlePromptDelete(prod)}
-                        className="p-2 bg-[#141416] text-neutral-400 hover:text-red-500 border border-[#26262A] hover:border-red-500 transition-colors"
-                        title="Delete Product"
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <DataTable columns={columns} data={filteredProducts} showPagination={true} pageSize={8} />
 
       {/* Direct Image File Upload Product Form Modal */}
       {isModalOpen && editingProduct && (
@@ -321,12 +248,12 @@ export default function AdminProductsPage() {
 
             {/* Direct Image File Upload Field */}
             <div className="space-y-2">
-              <label className="block text-[11px] uppercase text-neutral-400 font-bold">
+              <label className="block text-[11px] uppercase text-neutral-500 font-bold">
                 PRODUCT IMAGE UPLOAD
               </label>
 
-              <div className="flex items-center gap-4 bg-[#141416] border border-[#26262A] p-4 rounded-lg">
-                <div className="relative h-20 w-20 bg-[#0A0A0B] border border-[#26262A] rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center">
+              <div className="flex items-center gap-4 bg-neutral-50 border border-neutral-200 p-4 rounded-lg">
+                <div className="relative h-20 w-20 bg-white border border-neutral-200 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center">
                   {editingProduct.images?.[0] ? (
                     <Image
                       src={getValidImageUrl(editingProduct.images[0])}
@@ -336,7 +263,7 @@ export default function AdminProductsPage() {
                       className="object-contain p-2"
                     />
                   ) : (
-                    <ImageIcon className="h-8 w-8 text-neutral-600" />
+                    <ImageIcon className="h-8 w-8 text-neutral-400" />
                   )}
                 </div>
 
@@ -360,7 +287,7 @@ export default function AdminProductsPage() {
                     UPLOAD IMAGE FILE
                   </Button>
 
-                  <p className="text-[10px] text-neutral-400">
+                  <p className="text-[10px] text-neutral-500">
                     Click to upload a PNG, JPG, or WEBP photo directly from your device.
                   </p>
 
@@ -392,14 +319,14 @@ export default function AdminProductsPage() {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <label className="block text-[11px] uppercase text-neutral-400">CATEGORY</label>
+              <div className="space-y-1.5">
+                <label className="block text-[11px] uppercase text-neutral-500 font-mono font-bold">CATEGORY</label>
                 <select
                   value={editingProduct.category || "phones"}
                   onChange={(e) =>
                     setEditingProduct({ ...editingProduct, category: e.target.value as any })
                   }
-                  className="w-full bg-[#141416] border border-[#26262A] p-2 text-white focus:outline-none focus:border-[#D71921]"
+                  className="w-full bg-white border border-neutral-300 rounded-lg p-2 text-neutral-900 focus:outline-none focus:border-[#D71921] h-11 text-xs font-mono font-bold uppercase"
                 >
                   <option value="phones">PHONES</option>
                   <option value="audio">AUDIO</option>
@@ -425,15 +352,15 @@ export default function AdminProductsPage() {
               }
             />
 
-            <div className="space-y-1">
-              <label className="block text-[11px] uppercase text-neutral-400">DESCRIPTION</label>
+            <div className="space-y-1.5">
+              <label className="block text-[11px] uppercase text-neutral-500 font-mono font-bold">DESCRIPTION</label>
               <textarea
                 rows={3}
                 value={editingProduct.description || ""}
                 onChange={(e) =>
                   setEditingProduct({ ...editingProduct, description: e.target.value })
                 }
-                className="w-full bg-[#141416] border border-[#26262A] p-2 text-white font-mono text-xs focus:outline-none focus:border-[#D71921]"
+                className="w-full bg-white border border-neutral-300 rounded-lg p-3 text-neutral-900 font-mono text-xs focus:outline-none focus:border-[#D71921]"
               />
             </div>
 
@@ -463,7 +390,7 @@ export default function AdminProductsPage() {
               </label>
             </div>
 
-            <div className="pt-4 flex justify-end space-x-3 border-t border-[#26262A]">
+            <div className="pt-4 flex justify-end space-x-3 border-t border-neutral-200">
               <Button variant="outline" type="button" onClick={() => setIsModalOpen(false)}>
                 CANCEL
               </Button>
@@ -483,19 +410,19 @@ export default function AdminProductsPage() {
           title="CONFIRM PRODUCT DELETION"
           maxWidth="md"
         >
-          <div className="space-y-4 font-mono text-xs text-white">
-            <div className="flex items-center space-x-3 p-4 bg-red-950/30 border border-red-900/50 rounded-lg text-red-300">
+          <div className="space-y-4 font-mono text-xs text-neutral-900">
+            <div className="flex items-center space-x-3 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
               <AlertTriangle className="h-6 w-6 text-red-500 flex-shrink-0" />
               <div>
-                <p className="font-bold uppercase text-white">PERMANENT DELETE</p>
-                <p className="text-[11px] text-neutral-400 font-sans">
+                <p className="font-bold uppercase text-red-800">PERMANENT DELETE</p>
+                <p className="text-[11px] text-neutral-600 font-sans">
                   Are you sure you want to delete product{" "}
-                  <span className="text-white font-bold font-mono font-lg">"{productToDelete.name}"</span>? This will permanently remove it from MongoDB.
+                  <span className="text-neutral-900 font-bold font-mono font-lg">"{productToDelete.name}"</span>? This will permanently remove it from MongoDB.
                 </p>
               </div>
             </div>
 
-            <div className="pt-4 flex justify-end space-x-3 border-t border-[#26262A]">
+            <div className="pt-4 flex justify-end space-x-3 border-t border-neutral-200">
               <Button
                 variant="outline"
                 type="button"

@@ -156,12 +156,12 @@ export default function AdminCategoriesPage() {
   return (
     <div className="space-y-6 font-mono text-xs">
       {/* Header Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#26262A] pb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-200 pb-6">
         <div>
-          <h2 className="font-mono text-lg font-bold uppercase tracking-wider text-white">
+          <h2 className="font-mono text-lg font-bold uppercase tracking-wider text-neutral-900">
             CATEGORY MANAGEMENT
           </h2>
-          <p className="text-xs text-neutral-400 font-sans">
+          <p className="text-xs text-neutral-500 font-sans">
             Create and manage storefront category banners, descriptions, and badges.
           </p>
         </div>
@@ -184,9 +184,9 @@ export default function AdminCategoriesPage() {
           return (
             <div
               key={keyId}
-              className="bg-[#0F0F10] border border-[#26262A] p-6 space-y-4 flex flex-col justify-between rounded-xl shadow-xl hover:border-neutral-700 transition-all"
+              className="bg-white border border-neutral-200 p-6 space-y-4 flex flex-col justify-between rounded-xl shadow-sm hover:border-neutral-400 transition-all"
             >
-              <div className="relative aspect-video w-full bg-[#141416] border border-[#26262A] rounded-lg overflow-hidden">
+              <div className="relative aspect-video w-full bg-neutral-50 border border-neutral-200 rounded-lg overflow-hidden">
                 <Image
                   src={imageUrl}
                   alt={cat.name}
@@ -197,34 +197,34 @@ export default function AdminCategoriesPage() {
               </div>
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <h3 className="font-mono text-base font-bold uppercase text-white">{cat.name}</h3>
+                  <h3 className="font-mono text-base font-bold uppercase text-neutral-900">{cat.name}</h3>
                   {cat.badge && (
                     <span className="font-mono text-[9px] bg-[#D71921] text-white px-2 py-0.5 uppercase tracking-wider font-bold rounded">
                       {cat.badge}
                     </span>
                   )}
                 </div>
-                <p className="text-xs text-neutral-400 font-sans leading-relaxed">{cat.description}</p>
+                <p className="text-xs text-neutral-500 font-sans leading-relaxed">{cat.description}</p>
               </div>
 
-              <div className="flex items-center space-x-2 pt-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  fullWidth
-                  leftIcon={<Edit2 className="h-3.5 w-3.5" />}
-                  onClick={() => handleEdit(cat)}
-                >
-                  EDIT
-                </Button>
-                <button
-                  onClick={() => handlePromptDelete(cat)}
-                  className="p-2 bg-[#141416] text-neutral-400 hover:text-red-500 border border-[#26262A] hover:border-red-500 rounded transition-colors"
-                  title="Delete Category"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
-              </div>
+               <div className="flex items-center space-x-2 pt-2">
+                 <Button
+                   variant="outline"
+                   size="sm"
+                   fullWidth
+                   leftIcon={<Edit2 className="h-3.5 w-3.5" />}
+                   onClick={() => handleEdit(cat)}
+                 >
+                   EDIT
+                 </Button>
+                 <button
+                   onClick={() => handlePromptDelete(cat)}
+                   className="p-2 bg-red-50 text-red-500 hover:text-red-700 border border-red-100 hover:border-red-300 rounded transition-colors cursor-pointer"
+                   title="Delete Category"
+                 >
+                   <Trash2 className="h-4 w-4" />
+                 </button>
+               </div>
             </div>
           );
         })}
@@ -237,7 +237,7 @@ export default function AdminCategoriesPage() {
           onClose={() => setIsModalOpen(false)}
           title={editingCategory.name ? `EDIT CATEGORY: ${editingCategory.name}` : "CREATE NEW CATEGORY"}
         >
-          <form onSubmit={handleSaveCategory} className="space-y-4 font-mono text-xs text-white">
+          <form onSubmit={handleSaveCategory} className="space-y-4 font-mono text-xs text-neutral-900">
             <Input
               label="CATEGORY NAME"
               value={editingCategory.name || ""}
@@ -260,26 +260,26 @@ export default function AdminCategoriesPage() {
               }
             />
 
-            <div className="space-y-1">
-              <label className="block text-[11px] uppercase text-neutral-400">DESCRIPTION</label>
+            <div className="space-y-1.5">
+              <label className="block text-[11px] uppercase text-neutral-500 font-bold">DESCRIPTION</label>
               <textarea
                 rows={3}
                 value={editingCategory.description || ""}
                 onChange={(e) =>
                   setEditingCategory({ ...editingCategory, description: e.target.value })
                 }
-                className="w-full bg-[#141416] border border-[#26262A] p-2 text-white font-mono text-xs focus:outline-none focus:border-[#D71921]"
+                className="w-full bg-white border border-neutral-300 rounded-lg p-3 text-neutral-900 font-mono text-xs focus:outline-none focus:border-[#D71921]"
               />
             </div>
 
             {/* Direct Image File Uploader */}
             <div className="space-y-2">
-              <label className="block text-[11px] uppercase text-neutral-400 font-bold">
+              <label className="block text-[11px] uppercase text-neutral-500 font-bold">
                 CATEGORY HERO BANNER IMAGE (FILE UPLOAD)
               </label>
 
-              <div className="flex items-center gap-4 bg-[#141416] border border-[#26262A] p-4 rounded-lg">
-                <div className="relative h-20 w-32 bg-[#0A0A0B] border border-[#26262A] rounded overflow-hidden flex-shrink-0 flex items-center justify-center">
+              <div className="flex items-center gap-4 bg-neutral-50 border border-neutral-200 p-4 rounded-lg">
+                <div className="relative h-20 w-32 bg-white border border-neutral-200 rounded overflow-hidden flex-shrink-0 flex items-center justify-center">
                   {editingCategory.heroImage ? (
                     <Image
                       src={getValidImageUrl(editingCategory.heroImage)}
@@ -289,7 +289,7 @@ export default function AdminCategoriesPage() {
                       className="object-cover"
                     />
                   ) : (
-                    <ImageIcon className="h-8 w-8 text-neutral-600" />
+                    <ImageIcon className="h-8 w-8 text-neutral-400" />
                   )}
                 </div>
 
@@ -320,7 +320,7 @@ export default function AdminCategoriesPage() {
               </div>
             </div>
 
-            <div className="pt-4 flex justify-end space-x-3 border-t border-[#26262A]">
+            <div className="pt-4 flex justify-end space-x-3 border-t border-neutral-200">
               <Button variant="outline" type="button" onClick={() => setIsModalOpen(false)}>
                 CANCEL
               </Button>
@@ -340,19 +340,19 @@ export default function AdminCategoriesPage() {
           title="CONFIRM CATEGORY DELETION"
           maxWidth="md"
         >
-          <div className="space-y-4 font-mono text-xs text-white">
-            <div className="flex items-center space-x-3 p-4 bg-red-950/30 border border-red-900/50 rounded-lg text-red-300">
+          <div className="space-y-4 font-mono text-xs text-neutral-900">
+            <div className="flex items-center space-x-3 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
               <AlertTriangle className="h-6 w-6 text-red-500 flex-shrink-0" />
               <div>
-                <p className="font-bold uppercase text-white">PERMANENT DELETE</p>
-                <p className="text-[11px] text-neutral-400 font-sans">
+                <p className="font-bold uppercase text-red-800">PERMANENT DELETE</p>
+                <p className="text-[11px] text-neutral-600 font-sans">
                   Are you sure you want to delete category{" "}
-                  <span className="text-white font-bold font-mono font-lg">"{categoryToDelete.name}"</span>? This will permanently remove it from MongoDB.
+                  <span className="text-neutral-900 font-bold font-mono font-lg">"{categoryToDelete.name}"</span>? This will permanently remove it from MongoDB.
                 </p>
               </div>
             </div>
 
-            <div className="pt-4 flex justify-end space-x-3 border-t border-[#26262A]">
+            <div className="pt-4 flex justify-end space-x-3 border-t border-neutral-200">
               <Button
                 variant="outline"
                 type="button"

@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Check, Copy, ShieldCheck, ArrowLeft, Info, HelpCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TransactionProofModal } from "@/components/features/checkout/transaction-proof-modal";
+import { toast } from "sonner";
 
 // Form validation schema with Zod
 const checkoutSchema = z.object({
@@ -85,8 +86,8 @@ export default function CheckoutPage() {
           const found = item.variants.find((v) => v.id === variantParam);
           setSelectedVariant(found || item.variants[0]);
         }
-      } catch (err) {
-        console.error("Error fetching product", err);
+      } catch {
+        toast.error("Failed to load product details.");
       } finally {
         setIsLoading(false);
       }
@@ -100,13 +101,15 @@ export default function CheckoutPage() {
       await navigator.clipboard.writeText(text);
       if (type === "account") {
         setCopiedAccount(true);
+        toast.success("Account number copied!");
         setTimeout(() => setCopiedAccount(false), 2000);
       } else {
         setCopiedIban(true);
+        toast.success("IBAN copied!");
         setTimeout(() => setCopiedIban(false), 2000);
       }
     } catch (err) {
-      console.error("Clipboard copy failed", err);
+      toast.error("Failed to copy to clipboard.");
     }
   };
 
@@ -182,6 +185,7 @@ export default function CheckoutPage() {
 
       if (response.ok) {
         const savedOrder = await response.json();
+        toast.success("Order registered successfully!");
         const ordId = savedOrder.id || savedOrder._id;
         if (paymentMethod === "bank_transfer") {
           setPlacedOrderId(ordId);
@@ -191,11 +195,10 @@ export default function CheckoutPage() {
         }
       } else {
         const errorData = await response.json();
-        alert(errorData.error || "Failed to place order. Please try again.");
+        toast.error(errorData.error || "Failed to place order. Please try again.");
       }
     } catch (err) {
-      console.error(err);
-      alert("Something went wrong. Please check your internet connection.");
+      toast.error("Something went wrong. Please check your internet connection.");
     } finally {
       setIsSubmitPending(false);
     }
@@ -425,27 +428,27 @@ export default function CheckoutPage() {
                           </div>
                           <div>
                             <p className="font-lattera text-[10px] font-bold text-emerald-700 tracking-wider uppercase">BANK DETAILS</p>
-                            <p className="font-bold text-slate-900 mt-0.5">United Bank Limited</p>
+                            <p className="font-bold text-slate-900 mt-0.5">Bank Alfalah</p>
                           </div>
                         </div>
 
                         {/* Account Title Field */}
                         <div>
                           <p className="font-lattera text-[9px] text-slate-400 uppercase tracking-widest font-bold">ACCOUNT TITLE</p>
-                          <p className="font-bold text-slate-800 mt-0.5 text-[13px]">NOTHING PAKISTAN</p>
+                          <p className="font-bold text-slate-800 mt-0.5 text-[13px]">NOTHING OFFICIAL</p>
                         </div>
 
                         {/* Account Number Copy Area */}
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-white border border-slate-200/80 rounded-xl p-3 gap-2.5 shadow-sm">
                           <div className="min-w-0">
                             <p className="font-lattera text-[9px] text-slate-400 uppercase tracking-widest font-bold">ACCOUNT NUMBER</p>
-                            <p className="font-lattera text-sm font-bold text-slate-800 mt-0.5 break-all">1007384871573</p>
+                            <p className="font-lattera text-sm font-bold text-slate-800 mt-0.5 break-all">57065002935977</p>
                           </div>
                           <button
                             type="button"
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleCopyText("1007384871573", "account");
+                              handleCopyText("57065002935977", "account");
                             }}
                             className="inline-flex items-center space-x-1.5 border border-slate-200 hover:border-black bg-slate-50 hover:bg-black hover:text-white transition-all text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg text-slate-700 cursor-pointer self-end sm:self-center"
                           >
@@ -467,13 +470,13 @@ export default function CheckoutPage() {
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-white border border-slate-200/80 rounded-xl p-3 gap-2.5 shadow-sm">
                           <div className="min-w-0">
                             <p className="font-lattera text-[9px] text-slate-400 uppercase tracking-widest font-bold">IBAN</p>
-                            <p className="font-lattera text-xs sm:text-sm font-bold text-slate-800 mt-0.5 break-all">PK86UNIL0109000384871573</p>
+                            <p className="font-lattera text-xs sm:text-sm font-bold text-slate-800 mt-0.5 break-all">PK35ALFH5706005002935977</p>
                           </div>
                           <button
                             type="button"
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleCopyText("PK86UNIL0109000384871573", "iban");
+                              handleCopyText("PK35ALFH5706005002935977", "iban");
                             }}
                             className="inline-flex items-center space-x-1.5 border border-slate-200 hover:border-black bg-slate-50 hover:bg-black hover:text-white transition-all text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg text-slate-700 cursor-pointer self-end sm:self-center"
                           >

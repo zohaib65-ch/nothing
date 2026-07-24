@@ -67,14 +67,14 @@ export default function AdminMediaPage() {
   };
 
   return (
-    <div className="space-y-6 font-mono text-xs text-white">
+    <div className="space-y-6 font-mono text-xs text-neutral-900 select-none">
       {/* Header Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#26262A] pb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-200 pb-6">
         <div>
-          <h2 className="font-mono text-lg font-bold uppercase tracking-wider text-white">
+          <h2 className="font-mono text-lg font-bold uppercase tracking-wider text-neutral-900">
             MEDIA LIBRARY
           </h2>
-          <p className="text-xs text-neutral-400 font-sans">
+          <p className="text-xs text-neutral-500 font-sans">
             Upload and manage product photos, specs diagrams, and media assets.
           </p>
         </div>
@@ -101,8 +101,8 @@ export default function AdminMediaPage() {
 
       {/* Media Grid */}
       {mediaList.length === 0 ? (
-        <div className="bg-[#0F0F10] border border-[#26262A] p-12 text-center text-neutral-500 space-y-3 rounded-lg">
-          <ImageIcon className="h-12 w-12 mx-auto text-neutral-600" />
+        <div className="bg-white border border-neutral-200 p-12 text-center text-neutral-500 space-y-3 rounded-xl shadow-sm">
+          <ImageIcon className="h-12 w-12 mx-auto text-neutral-400" />
           <p className="uppercase tracking-wider text-xs">NO MEDIA FILES UPLOADED YET</p>
           <Button
             variant="outline"
@@ -117,9 +117,9 @@ export default function AdminMediaPage() {
           {mediaList.map((media) => (
             <div
               key={media.filename}
-              className="bg-[#0F0F10] border border-[#26262A] rounded-lg overflow-hidden group hover:border-white transition-all space-y-2 p-2 relative"
+              className="bg-white border border-neutral-200 rounded-lg overflow-hidden group hover:border-neutral-400 transition-all space-y-2 p-2 relative shadow-sm"
             >
-              <div className="relative aspect-square bg-[#141416] rounded overflow-hidden">
+              <div className="relative aspect-square bg-neutral-50 border border-neutral-100 rounded overflow-hidden">
                 <Image
                   src={media.url}
                   alt={media.filename}
@@ -130,17 +130,17 @@ export default function AdminMediaPage() {
               </div>
 
               <div className="space-y-1">
-                <p className="text-[10px] text-neutral-400 truncate" title={media.filename}>
+                <p className="text-[10px] text-neutral-600 truncate" title={media.filename}>
                   {media.filename}
                 </p>
                 <div className="flex items-center justify-between pt-1">
                   <button
                     onClick={() => handleCopyUrl(media.url)}
-                    className="p-1 text-neutral-400 hover:text-white flex items-center space-x-1"
+                    className="p-1 text-neutral-500 hover:text-neutral-900 flex items-center space-x-1 cursor-pointer"
                     title="Copy URL"
                   >
                     {copiedUrl === media.url ? (
-                      <Check className="h-3.5 w-3.5 text-green-500" />
+                      <Check className="h-3.5 w-3.5 text-green-600" />
                     ) : (
                       <Copy className="h-3.5 w-3.5" />
                     )}

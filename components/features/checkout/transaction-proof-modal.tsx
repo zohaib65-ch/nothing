@@ -4,6 +4,7 @@ import * as React from "react";
 import { Upload, HelpCircle, ArrowRight, FileText, CheckCircle2, Image as ImageIcon, Trash2, ShieldAlert } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 interface TransactionProofModalProps {
   isOpen: boolean;
@@ -27,7 +28,7 @@ export function TransactionProofModal({ isOpen, onClose, orderId, onComplete }: 
       const formData = new FormData();
       formData.append("file", file);
 
-      const res = await fetch("/api/media/upload", {
+      const res = await fetch("/api/orders/upload-receipt", {
         method: "POST",
         body: formData,
       });
@@ -35,13 +36,13 @@ export function TransactionProofModal({ isOpen, onClose, orderId, onComplete }: 
       if (res.ok) {
         const data = await res.json();
         setReceiptImage(data.url);
+        toast.success("Receipt image uploaded successfully.");
       } else {
-        alert("Failed to process receipt image. Please try again.");
+        toast.error("Failed to process receipt image. Please try again.");
         setFileName("");
       }
     } catch (err) {
-      console.error("Upload error:", err);
-      alert("Something went wrong while uploading receipt.");
+      toast.error("Something went wrong while uploading receipt.");
       setFileName("");
     } finally {
       setIsUploading(false);
@@ -99,14 +100,14 @@ export function TransactionProofModal({ isOpen, onClose, orderId, onComplete }: 
         }),
       });
       if (res.ok) {
+        toast.success("Payment proof submitted successfully!");
         onComplete();
       } else {
-        // Fallback to complete anyway so checkout flow isn't blocked
-        onComplete();
+        const errData = await res.json().catch(() => ({}));
+        toast.error(errData.error || "Failed to update order with receipt image.");
       }
     } catch (error) {
-      console.error("Failed to submit transaction proof:", error);
-      onComplete();
+      toast.error("Failed to submit transaction proof. Please check your internet connection.");
     } finally {
       setIsSubmitting(false);
     }
@@ -114,18 +115,29 @@ export function TransactionProofModal({ isOpen, onClose, orderId, onComplete }: 
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md bg-white border-slate-200 text-slate-900 rounded-[28px] p-6 sm:p-8 shadow-2xl overflow-y-auto max-h-[90vh] no-scrollbar font-ntype">
+      <DialogContent className="max-w-md bg-white border-slate-200 text-slate-900 rounded-[28px] p-6 sm:p-8 shadow-2xl overflow-y-auto max-h-[90vh] scrollbar-none font-ntype">
         <DialogHeader className="text-center space-y-2 pb-4 border-b border-slate-100">
           <div className="mx-auto bg-slate-50 border border-slate-200/60 rounded-2xl p-3 inline-flex items-center justify-center mb-1">
             <ImageIcon className="h-6 w-6 text-slate-700" />
           </div>
-          <DialogTitle className=" text-lg font-bold text-slate-900 justify-center tracking-tight">SUBMIT PAYMENT PROOF</DialogTitle>
+          <DialogTitle className=" text-lg font-bold text-slate-900 justify-center tracking-tight"> SUBMIT PAYMENT PROOF </DialogTitle>
           <DialogDescription className="text-xs text-slate-500 font-ntype leading-relaxed max-w-sm mx-auto">
-            Thank you! Your order has been registered. Please upload a screenshot of your bank transfer receipt below to activate express shipment.
+            Thank you! Your order has been registered.Please upload a screenshot of your bank transfer receipt below to activate express shipment.
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-6 pt-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Reassurance Banner */}
+          <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-4 flex items-start space-x-3 text-left">
+            <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0 mt-0.5" />
+            <div>
+              <p className="font-bold text-emerald-900 text-xs uppercase tracking-wider"> Order Successfully Confirmed! </p>
+              <p className="text-[11px] text-emerald-800 leading-relaxed mt-1">
+                Your order has been safely registered in our system.Uploading the transfer receipt is only required to verify the payment so we can dispatch your package today.
+              </p>
+            </div>
+          </div>
+
           {/* Drag & Drop File Upload */}
           <div className="space-y-2">
             {receiptImage ? (
@@ -141,7 +153,7 @@ export function TransactionProofModal({ isOpen, onClose, orderId, onComplete }: 
                       <FileText className="h-4 w-4" />
                     </div>
                     <div className="text-left min-w-0">
-                      <p className="text-xs font-bold text-slate-800 truncate max-w-[170px]">{fileName}</p>
+                      <p className="text-xs font-bold text-slate-800 truncate max-w-[170px]"> {fileName} </p>
                       <p className="text-[10px] text-emerald-600 font-bold uppercase tracking-wider flex items-center gap-1 mt-0.5">
                         <CheckCircle2 className="h-3 w-3 stroke-[2.5]" /> File Selected
                       </p>
@@ -175,7 +187,7 @@ export function TransactionProofModal({ isOpen, onClose, orderId, onComplete }: 
                   {isUploading ? (
                     <div className="flex flex-col items-center space-y-2">
                       <div className="h-5 w-5 border-2 border-slate-300 border-t-slate-800 animate-spin rounded-full" />
-                      <p className="text-xs text-slate-600 font-bold">Uploading file to media catalog...</p>
+                      <p className="text-xs text-slate-600 font-bold"> Uploading file to media catalog...</p>
                     </div>
                   ) : (
                     <>
@@ -183,8 +195,8 @@ export function TransactionProofModal({ isOpen, onClose, orderId, onComplete }: 
                         <Upload className="h-5 w-5 stroke-[2]" />
                       </div>
                       <div className="text-center space-y-1">
-                        <p className="text-xs font-bold text-slate-800">Drag receipt snapshot here</p>
-                        <p className="text-[10px] text-slate-400 font-normal">or click to browse files</p>
+                        <p className="text-xs font-bold text-slate-800"> Drag receipt snapshot here </p>
+                        <p className="text-[10px] text-slate-400 font-normal"> or click to browse files </p>
                       </div>
                     </>
                   )}
@@ -198,7 +210,7 @@ export function TransactionProofModal({ isOpen, onClose, orderId, onComplete }: 
               type="button"
               variant="outline"
               onClick={onComplete}
-              className="font-lattera text-[10px] font-semibold py-3 uppercase tracking-wider h-11 border-slate-200 hover:border-black rounded-[16px] transition flex-1 text-slate-600 hover:text-black cursor-pointer bg-white"
+              className="font-lattera text-[9px] font-semibold py-3 uppercase tracking-wider h-11 border-slate-200 hover:border-black rounded-[16px] transition flex-1 text-slate-600 hover:text-black cursor-pointer bg-white"
             >
               Skip / Submit Later
             </Button>

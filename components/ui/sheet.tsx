@@ -33,26 +33,35 @@ const SheetContent = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof SheetPrimitive.Content> & {
     side?: "top" | "bottom" | "left" | "right";
   }
->(({ side = "right", className, children, ...props }, ref) => (
-  <SheetPortal>
-    <SheetOverlay />
-    <SheetPrimitive.Content
-      ref={ref}
-      className={cn(
-        "fixed z-50 gap-4 bg-white border-l border-slate-200 p-6 shadow-lg transition-transform duration-300 ease-out",
-        "inset-y-0 right-0 h-full w-full sm:max-w-md",
-        className
-      )}
-      {...props}
-    >
-      {children}
-      <SheetPrimitive.Close className="absolute right-6 top-6 rounded-md opacity-70 hover:opacity-100 focus:outline-none transition-opacity cursor-pointer">
-        <X className="h-5 w-5 text-slate-400 hover:text-slate-900" />
-        <span className="sr-only">Close</span>
-      </SheetPrimitive.Close>
-    </SheetPrimitive.Content>
-  </SheetPortal>
-));
+>(({ side = "right", className, children, ...props }, ref) => {
+  const sideClasses = {
+    left: "left-0 inset-y-0 h-full w-full sm:max-w-md border-r border-neutral-200 data-[state=open]:slide-in-from-left data-[state=closed]:slide-out-to-left",
+    right: "right-0 inset-y-0 h-full w-full sm:max-w-md border-l border-neutral-200 data-[state=open]:slide-in-from-right data-[state=closed]:slide-out-to-right",
+    top: "top-0 inset-x-0 w-full h-auto border-b border-neutral-200 data-[state=open]:slide-in-from-top data-[state=closed]:slide-out-to-top",
+    bottom: "bottom-0 inset-x-0 w-full h-auto border-t border-neutral-200 data-[state=open]:slide-in-from-bottom data-[state=closed]:slide-out-to-bottom",
+  };
+
+  return (
+    <SheetPortal>
+      <SheetOverlay />
+      <SheetPrimitive.Content
+        ref={ref}
+        className={cn(
+          "fixed z-50 gap-4 bg-white p-6 shadow-lg transition-transform duration-300 ease-out dark:bg-[#0A0A0B] dark:border-neutral-800",
+          sideClasses[side],
+          className
+        )}
+        {...props}
+      >
+        {children}
+        <SheetPrimitive.Close className="absolute right-6 top-6 rounded-md opacity-70 hover:opacity-100 focus:outline-none transition-opacity cursor-pointer">
+          <X className="h-5 w-5 text-neutral-400 hover:text-neutral-900 dark:hover:text-white" />
+          <span className="sr-only">Close</span>
+        </SheetPrimitive.Close>
+      </SheetPrimitive.Content>
+    </SheetPortal>
+  );
+});
 SheetContent.displayName = SheetPrimitive.Content.displayName;
 
 const SheetHeader = ({

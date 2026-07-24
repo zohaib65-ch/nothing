@@ -39,9 +39,11 @@ export default function OrderConfirmedPage() {
   }, [id]);
 
   const handleCopyOrderId = async () => {
-    if (!order?.id) return;
+    if (!order) return;
+    const copyText = order.customId || order.id;
+    if (!copyText) return;
     try {
-      await navigator.clipboard.writeText(order.id);
+      await navigator.clipboard.writeText(copyText);
       setCopiedOrderId(true);
       setTimeout(() => setCopiedOrderId(false), 2000);
     } catch (err) {
@@ -84,7 +86,7 @@ export default function OrderConfirmedPage() {
     ? order.items.map((item) => `- ${item.productName} (${item.variantName}) x${item.quantity}`).join("\n")
     : "";
   const whatsappMsg = `Hello Nothing Pakistan! I have just placed an order.
-Order ID: ${order.id}
+Order ID: ${order.customId || order.id}
 Items:
 ${itemsText}
 Customer: ${order.fullName}
@@ -117,7 +119,7 @@ Please confirm my order. Thank you!`;
             <div className="bg-slate-50 border border-slate-200/60 rounded-2xl p-4 flex sm:flex-row flex-col items-center justify-between max-w-sm mx-auto">
               <div className="text-left">
                 <p className="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">Order Reference ID</p>
-                 <p className="font-lattera text-sm font-bold text-slate-900 mt-0.5 line-clamp-1">{order.id}</p>
+                 <p className="font-lattera text-sm font-bold text-slate-900 mt-0.5 line-clamp-1">{order.customId || order.id}</p>
               </div>
               <button
                 onClick={handleCopyOrderId}
@@ -168,12 +170,13 @@ Please confirm my order. Thank you!`;
                 <span>Action Required: Complete Bank Transfer</span>
               </h4>
               <p className="text-[11px] text-slate-600 leading-relaxed font-ntype pl-5">
-                Please transfer the total amount of <span className="font-bold text-slate-900">{formatPKR(order.total)}</span> to our bank account. Once completed, kindly share a screenshot of the receipt on WhatsApp along with your Order ID <span className="font-lattera font-bold text-slate-955">{order.id}</span> so we can dispatch your parcel immediately.
+                Please transfer the total amount of <span className="font-bold text-slate-900">{formatPKR(order.total)}</span> to our bank account. Once completed, kindly share a screenshot of the receipt on WhatsApp along with your Order ID <span className="font-lattera font-bold text-slate-955">{order.customId || order.id}</span> so we can dispatch your parcel immediately.
               </p>
               <div className="pl-5 pt-1 space-y-1 text-[11px] text-slate-500">
-                <p>• Bank: <span className="font-semibold text-slate-700">United Bank Limited (UBL)</span></p>
-                <p>• Account Title: <span className="font-semibold text-slate-700">NOTHING PAKISTAN</span></p>
-                <p>• Account Number: <span className="font-semibold text-slate-700">1007384871573</span></p>
+                <p>• Bank: <span className="font-semibold text-slate-700">Bank Alfalah</span></p>
+                <p>• Account Title: <span className="font-semibold text-slate-700">NOTHING OFFICIAL</span></p>
+                <p>• Account Number: <span className="font-semibold text-slate-700">57065002935977</span></p>
+                <p>• IBAN: <span className="font-semibold text-slate-700">PK35ALFH5706005002935977</span></p>
               </div>
             </div>
           )}

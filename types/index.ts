@@ -124,6 +124,7 @@ export interface OrderItem {
 
 export interface Order {
   id?: string;
+  customId?: string;
   fullName: string;
   address: string;
   city: string;

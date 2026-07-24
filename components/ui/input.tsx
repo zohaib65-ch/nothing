@@ -21,7 +21,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="space-y-1.5 w-full">
         {label && (
-          <label className="block font-mono text-[11px] uppercase tracking-wider text-neutral-400">
+          <label className="block font-mono text-[11px] uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
             {label}
           </label>
         )}
@@ -29,7 +29,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <input
             type={inputType}
             className={cn(
-              "flex h-11 w-full bg-[#141416] border border-[#26262A] px-4 py-2 font-mono text-xs text-white placeholder:text-neutral-600 focus:outline-none focus:border-[#D71921] focus:ring-1 focus:ring-[#D71921] transition-all disabled:cursor-not-allowed disabled:opacity-50",
+              "flex h-11 w-full bg-white border border-neutral-300 px-4 py-2 font-mono text-xs text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-[#D71921] focus:ring-1 focus:ring-[#D71921] transition-all disabled:cursor-not-allowed disabled:opacity-50 dark:bg-[#141416] dark:border-[#26262A] dark:text-white dark:placeholder:text-neutral-600",
               isPassword && "pr-10",
               error && "border-red-500 focus:border-red-500 focus:ring-red-500",
               className
@@ -41,7 +41,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 text-neutral-400 hover:text-white transition-colors focus:outline-none p-1"
+              className="absolute right-3 text-neutral-400 hover:text-neutral-950 dark:hover:text-white transition-colors focus:outline-none p-1"
               title={showPassword ? "Hide Password" : "Show Password"}
             >
               {showPassword ? (

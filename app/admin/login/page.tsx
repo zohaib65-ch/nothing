@@ -45,19 +45,19 @@ function LoginForm() {
   };
 
   return (
-    <div className="w-full max-w-md bg-[#0F0F10] border border-[#26262A] p-8 space-y-8 relative z-10 shadow-2xl">
+    <div className="w-full max-w-md bg-white border border-neutral-200 p-8 space-y-8 relative z-10 shadow-xl rounded-2xl">
       <div className="text-center space-y-3">
         <div className="inline-flex p-3 rounded-full bg-[#D71921]/10 border border-[#D71921]/20">
           <Shield className="h-6 w-6 text-[#D71921]" />
         </div>
-        <Heading badgeText="SECURE PORTAL" dotMatrix size="sm">
+        <Heading badgeText="SECURE PORTAL" dotMatrix size="sm" className="text-neutral-900">
           ADMIN LOGIN
         </Heading>
-        <p className="text-xs text-neutral-400 font-sans">Enter authorized credentials to access the Nothing store control center.</p>
+        <p className="text-xs text-neutral-500 font-sans">Enter authorized credentials to access the Nothing store control center.</p>
       </div>
 
       {error && (
-        <div className="p-3 bg-red-950/40 border border-red-800 text-red-400 font-lattera text-xs flex items-center space-x-2">
+        <div className="p-3 bg-red-50 border border-red-200 text-red-600 font-lattera text-xs flex items-center space-x-2 rounded-lg">
           <AlertCircle className="h-4 w-4 flex-shrink-0" />
           <span>{error}</span>
         </div>
@@ -75,8 +75,8 @@ function LoginForm() {
         </div>
       </form>
 
-      <div className="p-3 bg-[#141416] border border-[#26262A] text-center font-lattera text-[10px] text-neutral-500">
-        DEFAULT CREDENTIALS: <span className="text-white font-bold">admin</span> / <span className="text-white font-bold">admin123</span>
+      <div className="p-3 bg-neutral-50 border border-neutral-200 text-center font-lattera text-[10px] text-neutral-500 rounded-lg">
+        DEFAULT CREDENTIALS: <span className="text-neutral-900 font-bold">admin</span> / <span className="text-neutral-900 font-bold">admin123</span>
       </div>
     </div>
   );
@@ -84,9 +84,8 @@ function LoginForm() {
 
 export default function AdminLoginPage() {
   return (
-    <div className="min-h-screen bg-[#050505] flex items-center justify-center p-4 relative overflow-hidden text-white">
-      <div className="absolute inset-0 bg-dot-grid opacity-30 pointer-events-none" />
-      <React.Suspense fallback={<div className="font-lattera text-xs text-neutral-400 animate-pulse">LOADING LOGIN PORTAL...</div>}>
+    <div className="min-h-[85vh] flex items-center justify-center p-4 relative overflow-hidden text-neutral-900">
+      <React.Suspense fallback={<div className="font-lattera text-xs text-neutral-500 animate-pulse">LOADING LOGIN PORTAL...</div>}>
         <LoginForm />
       </React.Suspense>
     </div>

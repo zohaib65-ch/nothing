@@ -10,12 +10,22 @@ import { Button } from "@/components/ui/button";
 export default function AdminDashboardPage() {
   const [products, setProducts] = React.useState<Product[]>([]);
   const [categories, setCategories] = React.useState<CategoryInfo[]>([]);
+  const [orders, setOrders] = React.useState<any[]>([]);
 
   React.useEffect(() => {
     const loadData = async () => {
-      const [productsData, categoriesData] = await Promise.all([ProductService.fetchProductsFromApi(), ProductService.fetchCategoriesFromApi()]);
-      setProducts(productsData);
-      setCategories(categoriesData);
+      try {
+        const [productsData, categoriesData, ordersRes] = await Promise.all([
+          ProductService.fetchProductsFromApi(),
+          ProductService.fetchCategoriesFromApi(),
+          fetch("/api/orders").then((res) => (res.ok ? res.json() : [])),
+        ]);
+        setProducts(productsData);
+        setCategories(categoriesData);
+        setOrders(ordersRes);
+      } catch (err) {
+        console.error("Failed to load dashboard data:", err);
+      }
     };
     loadData();
     window.addEventListener("products_updated", loadData);
@@ -28,13 +38,16 @@ export default function AdminDashboardPage() {
 
   const totalPublished = products.filter((p) => p.status === "published").length;
   const totalFeatured = products.filter((p) => p.isFeatured).length;
+  const pendingOrdersCount = orders.filter((o) => o.status === "pending" || o.status === "processing").length;
+  const deliveredOrdersCount = orders.filter((o) => o.status === "delivered").length;
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 select-none">
       {/* Header & Quick Action Buttons */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#26262A] pb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-200 pb-6">
         <div>
-          <h2 className="font-mono text-xl font-bold uppercase tracking-wider text-white">OVERVIEW & ANALYTICS</h2>
-          <p className="text-xs text-neutral-400 font-sans">Real-time management of product catalog, categories, and WhatsApp storefront settings.</p>
+          <h2 className="font-mono text-lg sm:text-xl font-bold uppercase tracking-wider text-neutral-900">OVERVIEW & ANALYTICS</h2>
+          <p className="text-xs text-neutral-500 font-sans">Real-time management of product catalog, categories, and WhatsApp storefront settings.</p>
         </div>
 
         <div className="flex items-center space-x-3">
@@ -53,42 +66,44 @@ export default function AdminDashboardPage() {
 
       {/* Metrics Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        <div className="bg-[#0F0F10] border border-[#26262A] p-6 space-y-3">
-          <div className="flex items-center justify-between text-neutral-400">
-            <span className="font-mono text-[10px] uppercase tracking-widest">TOTAL PRODUCTS</span>
+        <div className="bg-white border border-neutral-200/80 p-6 space-y-3 rounded-xl shadow-sm">
+          <div className="flex items-center justify-between text-neutral-500">
+            <span className="font-mono text-[10px] uppercase tracking-widest font-bold">TOTAL PRODUCTS</span>
             <Package className="h-4 w-4 text-[#D71921]" />
           </div>
-          <div className="font-mono text-3xl font-black text-white">{products.length}</div>
-          <div className="font-mono text-[10px] text-emerald-500 uppercase">
+          <div className="font-mono text-3xl font-black text-neutral-900">{products.length}</div>
+          <div className="font-mono text-[10px] text-emerald-600 uppercase font-bold">
             {totalPublished} PUBLISHED • {totalFeatured} FEATURED
           </div>
         </div>
 
-        <div className="bg-[#0F0F10] border border-[#26262A] p-6 space-y-3">
-          <div className="flex items-center justify-between text-neutral-400">
-            <span className="font-mono text-[10px] uppercase tracking-widest">CATEGORIES</span>
+        <div className="bg-white border border-neutral-200/80 p-6 space-y-3 rounded-xl shadow-sm">
+          <div className="flex items-center justify-between text-neutral-500">
+            <span className="font-mono text-[10px] uppercase tracking-widest font-bold">CATEGORIES</span>
             <FolderTree className="h-4 w-4 text-[#D71921]" />
           </div>
-          <div className="font-mono text-3xl font-black text-white">{categories.length}</div>
-          <div className="font-mono text-[10px] text-neutral-500 uppercase">ACTIVE CATALOG SECTIONS</div>
+          <div className="font-mono text-3xl font-black text-neutral-900">{categories.length}</div>
+          <div className="font-mono text-[10px] text-neutral-500 uppercase font-bold">ACTIVE CATALOG SECTIONS</div>
         </div>
 
-        <div className="bg-[#0F0F10] border border-[#26262A] p-6 space-y-3">
-          <div className="flex items-center justify-between text-neutral-400">
-            <span className="font-mono text-[10px] uppercase tracking-widest">WHATSAPP ORDERS</span>
+        <div className="bg-white border border-neutral-200/80 p-6 space-y-3 rounded-xl shadow-sm">
+          <div className="flex items-center justify-between text-neutral-500">
+            <span className="font-mono text-[10px] uppercase tracking-widest font-bold"> ORDERS</span>
             <MessageSquare className="h-4 w-4 text-[#D71921]" />
           </div>
-          <div className="font-mono text-3xl font-black text-white">48</div>
-          <div className="font-mono text-[10px] text-emerald-500 uppercase">+12% THIS WEEK</div>
+          <div className="font-mono text-3xl font-black text-neutral-900">{orders.length}</div>
+          <div className="font-mono text-[10px] text-emerald-600 uppercase font-bold">
+            {pendingOrdersCount} PENDING • {deliveredOrdersCount} DELIVERED
+          </div>
         </div>
 
-        <div className="bg-[#0F0F10] border border-[#26262A] p-6 space-y-3">
-          <div className="flex items-center justify-between text-neutral-400">
-            <span className="font-mono text-[10px] uppercase tracking-widest">STORE VISITORS</span>
+        <div className="bg-white border border-neutral-200/80 p-6 space-y-3 rounded-xl shadow-sm">
+          <div className="flex items-center justify-between text-neutral-500">
+            <span className="font-mono text-[10px] uppercase tracking-widest font-bold">STORE VISITORS</span>
             <Eye className="h-4 w-4 text-[#D71921]" />
           </div>
-          <div className="font-mono text-3xl font-black text-white">1,280</div>
-          <div className="font-mono text-[10px] text-emerald-500 uppercase">LIVE TRAFFIC ACTIVE</div>
+          <div className="font-mono text-3xl font-black text-neutral-900">1,280</div>
+          <div className="font-mono text-[10px] text-emerald-600 uppercase font-bold">LIVE TRAFFIC ACTIVE</div>
         </div>
       </div>
     </div>

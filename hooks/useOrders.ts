@@ -14,6 +14,7 @@ export interface OrderItem {
 export interface Order {
   id: string;
   _id?: string;
+  customId?: string;
   fullName: string;
   address: string;
   city: string;
@@ -126,7 +127,7 @@ export function useOrders() {
     doc.setFontSize(9);
     doc.setTextColor(100, 100, 100);
     doc.text("Official SMC-Private Limited Incorporation Certificate CUIN: 0337422", 20, 27);
-    doc.text("United Bank Limited (UBL) Payment Settlement Gateway", 20, 32);
+    doc.text("Bank Alfalah Payment Settlement Gateway", 20, 32);
 
     // Order Info block (right-aligned header)
     doc.setTextColor(17, 17, 17);
@@ -137,7 +138,7 @@ export function useOrders() {
     doc.setFont("helvetica", "normal");
     doc.setFontSize(8);
     doc.setTextColor(80, 80, 80);
-    doc.text(`Reference ID: ${order.id}`, 150, 20);
+    doc.text(`Reference ID: ${order.customId || order.id}`, 150, 20);
     doc.text(`Order Date: ${new Date(order.createdAt).toLocaleDateString()}`, 150, 25);
     doc.text(`Payment: ${order.paymentMethod === "bank_transfer" ? "Bank Transfer" : "Cash on Delivery (COD)"}`, 150, 30);
     doc.text(`Status: ${order.status.toUpperCase()}`, 150, 35);
@@ -249,7 +250,7 @@ export function useOrders() {
     doc.text("Thank you for shopping at Nothing. For delivery tracking updates, connect on WhatsApp helpline.", 20, 275);
 
     // Save File
-    doc.save(`Invoice_${order.id}.pdf`);
+    doc.save(`Invoice_${order.customId || order.id}.pdf`);
   };
 
   // Generate All Filtered Orders PDF Report

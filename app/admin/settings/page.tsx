@@ -54,18 +54,18 @@ export default function AdminSettingsPage() {
   };
 
   return (
-    <div className=" space-y-6 font-lattera text-xs text-white">
+    <div className="space-y-6 font-lattera text-xs text-neutral-900 select-none">
       {/* Header */}
-      <div className="border-b border-[#26262A] pb-6 space-y-2">
+      <div className="border-b border-neutral-200 pb-6 space-y-2">
         <div className="flex items-center space-x-3">
-          <div className="p-2 bg-[#D71921]/10 rounded border border-[#D71921]/30">
+          <div className="p-2 bg-[#D71921]/10 rounded border border-[#D71921]/30 animate-pulse">
             <Shield className="h-5 w-5 text-[#D71921]" />
           </div>
           <div>
-            <h2 className="font-ndot text-lg font-normal uppercase tracking-wider text-white">
+            <h2 className="font-ndot text-lg font-normal uppercase tracking-wider text-neutral-900">
               ADMIN SECURITY SETTINGS
             </h2>
-            <p className="text-xs text-neutral-400 font-sans">
+            <p className="text-xs text-neutral-500 font-sans">
               Update admin security credentials for your Nothing control panel.
             </p>
           </div>
@@ -77,8 +77,8 @@ export default function AdminSettingsPage() {
         <div
           className={`p-4 border font-lattera text-xs flex items-center space-x-3 rounded-lg ${
             message.type === "success"
-              ? "bg-green-950/40 border-green-800 text-green-400"
-              : "bg-red-950/40 border-red-800 text-red-400"
+              ? "bg-green-50 border-green-200 text-green-700"
+              : "bg-red-50 border-red-200 text-red-700"
           }`}
         >
           {message.type === "success" ? (
@@ -91,8 +91,8 @@ export default function AdminSettingsPage() {
       )}
 
       {/* Change Password Form Only */}
-      <div className="bg-[#0F0F10] border border-[#26262A] p-6 sm:p-8 space-y-6 rounded-xl shadow-2xl">
-        <div className="flex items-center space-x-2 text-neutral-300 font-bold border-b border-[#26262A] pb-4">
+      <div className="bg-white border border-neutral-200 p-6 sm:p-8 space-y-6 rounded-xl shadow-sm">
+        <div className="flex items-center space-x-2 text-neutral-800 font-bold border-b border-neutral-200 pb-4">
           <Key className="h-4 w-4 text-[#D71921]" />
           <span className="uppercase tracking-wider">CHANGE ADMIN PASSWORD</span>
         </div>

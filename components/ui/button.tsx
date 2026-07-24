@@ -10,12 +10,12 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary: "bg-white text-black hover:bg-neutral-200 border border-white",
-        secondary: "bg-[#1C1C1E] text-white hover:bg-[#2C2C2E] border border-[#2C2C2E]",
+        primary: "bg-neutral-900 text-white hover:bg-neutral-800 border border-neutral-900 dark:bg-white dark:text-black dark:hover:bg-neutral-200 dark:border-white",
+        secondary: "bg-neutral-100 text-neutral-900 hover:bg-neutral-200 border border-neutral-200 dark:bg-[#1C1C1E] dark:text-white dark:hover:bg-[#2C2C2E] dark:border-[#2C2C2E]",
         red: "bg-[#D71921] text-white hover:bg-[#B51219] shadow-[0_0_20px_rgba(215,25,33,0.35)]",
-        outline: "bg-transparent text-white border border-[#3A3A40] hover:border-white hover:bg-white/5",
-        ghost: "bg-transparent text-neutral-400 hover:text-white hover:bg-white/5",
-        ndot: "bg-transparent text-white border border-[#D71921] font-ndot hover:bg-[#D71921]/10 text-red-500",
+        outline: "bg-transparent text-neutral-900 border border-neutral-300 hover:bg-neutral-50 dark:text-white dark:border-[#3A3A40] dark:hover:border-white dark:hover:bg-white/5",
+        ghost: "bg-transparent text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:text-white dark:hover:bg-white/5",
+        ndot: "bg-transparent text-[#D71921] border border-[#D71921] font-ndot hover:bg-[#D71921]/10 dark:text-red-500",
       },
       size: {
         sm: "h-9 px-4 text-[10px]",
