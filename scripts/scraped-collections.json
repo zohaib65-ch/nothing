@@ -1,0 +1,58 @@
+[
+  {
+    "id": "gid://shopify/Collection/279099408523",
+    "handle": "products",
+    "title": "UK All products",
+    "description": "",
+    "image": null
+  },
+  {
+    "id": "gid://shopify/Collection/282579239051",
+    "handle": "gmc",
+    "title": "GMC",
+    "description": "",
+    "image": null
+  },
+  {
+    "id": "gid://shopify/Collection/672709411200",
+    "handle": "phones",
+    "title": "Phones",
+    "description": "",
+    "image": null
+  },
+  {
+    "id": "gid://shopify/Collection/672709443968",
+    "handle": "accessories",
+    "title": "Accessories",
+    "description": "",
+    "image": null
+  },
+  {
+    "id": "gid://shopify/Collection/672709509504",
+    "handle": "watches",
+    "title": "Watches",
+    "description": "",
+    "image": null
+  },
+  {
+    "id": "gid://shopify/Collection/672709607808",
+    "handle": "audio",
+    "title": "Audio",
+    "description": "",
+    "image": null
+  },
+  {
+    "id": "gid://shopify/Collection/673059537280",
+    "handle": "shop-all",
+    "title": "Shop All",
+    "description": "",
+    "image": null
+  },
+  {
+    "id": "gid://shopify/Collection/673087684992",
+    "handle": "cmf",
+    "title": "CMF",
+    "description": "",
+    "image": null
+  }
+]

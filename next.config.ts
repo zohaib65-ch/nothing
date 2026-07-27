@@ -19,6 +19,14 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "res.cloudinary.com",
       },
+      {
+        protocol: "https",
+        hostname: "cdn.shopify.com",
+      },
+      {
+        protocol: "https",
+        hostname: "cdn.sanity.io",
+      },
     ],
   },
 };

@@ -84,7 +84,7 @@ function LoginForm() {
 
 export default function AdminLoginPage() {
   return (
-    <div className="min-h-[85vh] flex items-center justify-center p-4 relative overflow-hidden text-neutral-900">
+    <div className="min-h-[100vh] flex items-center justify-center p-4 relative overflow-hidden text-neutral-900">
       <React.Suspense fallback={<div className="font-lattera text-xs text-neutral-500 animate-pulse">LOADING LOGIN PORTAL...</div>}>
         <LoginForm />
       </React.Suspense>

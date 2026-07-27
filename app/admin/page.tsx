@@ -46,8 +46,8 @@ export default function AdminDashboardPage() {
       {/* Header & Quick Action Buttons */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-200 pb-6">
         <div>
-          <h2 className="font-mono text-lg sm:text-xl font-bold uppercase tracking-wider text-neutral-900">OVERVIEW & ANALYTICS</h2>
-          <p className="text-xs text-neutral-500 font-sans">Real-time management of product catalog, categories, and WhatsApp storefront settings.</p>
+          <h2 className="font-mono text-lg sm:text-xl font-bold uppercase tracking-wider text-neutral-900"> OVERVIEW & ANALYTICS </h2>
+          <p className="text-xs text-neutral-500 font-sans"> Real - time management of product catalog, categories, and WhatsApp storefront settings.</p>
         </div>
 
         <div className="flex items-center space-x-3">
@@ -68,10 +68,10 @@ export default function AdminDashboardPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div className="bg-white border border-neutral-200/80 p-6 space-y-3 rounded-xl shadow-sm">
           <div className="flex items-center justify-between text-neutral-500">
-            <span className="font-mono text-[10px] uppercase tracking-widest font-bold">TOTAL PRODUCTS</span>
+            <span className="font-mono text-[10px] uppercase tracking-widest font-bold"> TOTAL PRODUCTS </span>
             <Package className="h-4 w-4 text-[#D71921]" />
           </div>
-          <div className="font-mono text-3xl font-black text-neutral-900">{products.length}</div>
+          <div className="font-mono text-3xl font-black text-neutral-900"> {products.length} </div>
           <div className="font-mono text-[10px] text-emerald-600 uppercase font-bold">
             {totalPublished} PUBLISHED • {totalFeatured} FEATURED
           </div>
@@ -79,31 +79,11 @@ export default function AdminDashboardPage() {
 
         <div className="bg-white border border-neutral-200/80 p-6 space-y-3 rounded-xl shadow-sm">
           <div className="flex items-center justify-between text-neutral-500">
-            <span className="font-mono text-[10px] uppercase tracking-widest font-bold">CATEGORIES</span>
+            <span className="font-mono text-[10px] uppercase tracking-widest font-bold"> CATEGORIES </span>
             <FolderTree className="h-4 w-4 text-[#D71921]" />
           </div>
-          <div className="font-mono text-3xl font-black text-neutral-900">{categories.length}</div>
-          <div className="font-mono text-[10px] text-neutral-500 uppercase font-bold">ACTIVE CATALOG SECTIONS</div>
-        </div>
-
-        <div className="bg-white border border-neutral-200/80 p-6 space-y-3 rounded-xl shadow-sm">
-          <div className="flex items-center justify-between text-neutral-500">
-            <span className="font-mono text-[10px] uppercase tracking-widest font-bold"> ORDERS</span>
-            <MessageSquare className="h-4 w-4 text-[#D71921]" />
-          </div>
-          <div className="font-mono text-3xl font-black text-neutral-900">{orders.length}</div>
-          <div className="font-mono text-[10px] text-emerald-600 uppercase font-bold">
-            {pendingOrdersCount} PENDING • {deliveredOrdersCount} DELIVERED
-          </div>
-        </div>
-
-        <div className="bg-white border border-neutral-200/80 p-6 space-y-3 rounded-xl shadow-sm">
-          <div className="flex items-center justify-between text-neutral-500">
-            <span className="font-mono text-[10px] uppercase tracking-widest font-bold">STORE VISITORS</span>
-            <Eye className="h-4 w-4 text-[#D71921]" />
-          </div>
-          <div className="font-mono text-3xl font-black text-neutral-900">1,280</div>
-          <div className="font-mono text-[10px] text-emerald-600 uppercase font-bold">LIVE TRAFFIC ACTIVE</div>
+          <div className="font-mono text-3xl font-black text-neutral-900"> {categories.length} </div>
+          <div className="font-mono text-[10px] text-neutral-500 uppercase font-bold"> ACTIVE CATALOG SECTIONS </div>
         </div>
       </div>
     </div>

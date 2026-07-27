@@ -82,7 +82,7 @@ export default function CollectionSlugPage() {
                 >
                   <article className="flex h-full flex-col">
                     {/* Image Wrap */}
-                    <div className="relative overflow-hidden aspect-[4/5] bg-black/[0.02] rounded-xl flex items-center justify-center p-4">
+                    <div className="relative overflow-hidden aspect-[4/5] rounded-xl flex items-center justify-center p-4">
                       {product.warranty && (
                         <span className="absolute z-20 right-2 top-2 h-10 w-10 sm:right-3 sm:top-3 sm:h-12 sm:w-12 rounded-full bg-[#D71921] border border-white/20 flex flex-col items-center justify-center text-center font-mono leading-[1.15] text-white uppercase shadow-sm select-none">
                           <span className="text-[8px] sm:text-[9px] font-bold tracking-tighter">{product.warranty.split(" ")[0]}</span>

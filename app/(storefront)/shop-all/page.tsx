@@ -53,14 +53,20 @@ export default function ShopAllPage() {
                 <Link key={product.id} href={`/products/${product.slug}`} className="group block">
                   <article className="flex h-full flex-col">
                     {/* Image Wrap */}
-                    <div className="relative overflow-hidden aspect-[4/5] bg-black/[0.02] rounded-xl flex items-center justify-center p-4">
+                    <div className="relative overflow-hidden aspect-[4/5] rounded-xl flex items-center justify-center p-4">
                       {product.warranty && (
                         <span className="absolute z-20 right-2 top-2 h-10 w-10 sm:right-3 sm:top-3 sm:h-12 sm:w-12 rounded-full bg-[#D71921] border border-white/20 flex flex-col items-center justify-center text-center font-mono leading-[1.15] text-white uppercase shadow-sm select-none">
                           <span className="text-[8px] sm:text-[9px] font-bold tracking-tighter">{product.warranty.split(" ")[0]}</span>
                           <span className="text-[5px] sm:text-[6px] text-white/80 font-normal tracking-wider">{product.warranty.split(" ")[1] || "WARRANTY"}</span>
                         </span>
                       )}
-                      <img alt={product.name} src={product.images[0]} className="h-full w-full object-contain transition-transform duration-500 ease-out group-hover:scale-[1.02]" />
+                      {product.images[0] ? (
+                        <img alt={product.name} src={product.images[0]} className="h-full w-full object-contain transition-transform duration-500 ease-out group-hover:scale-[1.02]" />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center text-black/10">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                        </div>
+                      )}
                     </div>
 
                     {/* Info Wrap */}

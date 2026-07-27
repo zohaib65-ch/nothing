@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { ProductService } from "@/services/productService";
 import { Product } from "@/types";
 import { formatPrice, slugify, getValidImageUrl, cn } from "@/lib/utils";
@@ -204,9 +205,11 @@ export default function AdminProductsPage() {
           </p>
         </div>
 
-        <Button variant="red" size="md" onClick={handleOpenCreateModal} leftIcon={<Plus className="h-4 w-4" />}>
-          CREATE PRODUCT
-        </Button>
+        <Link href="/admin/products/new">
+          <Button variant="red" size="md" leftIcon={<Plus className="h-4 w-4" />}>
+            CREATE PRODUCT
+          </Button>
+        </Link>
       </div>
 
       {/* Search Bar */}
@@ -300,7 +303,7 @@ export default function AdminProductsPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <Input
-                label="PRICE ($)"
+                label="PRICE (RS)"
                 type="number"
                 value={editingProduct.price || 0}
                 onChange={(e) =>
@@ -309,7 +312,7 @@ export default function AdminProductsPage() {
                 required
               />
               <Input
-                label="SALE PRICE ($)"
+                label="SALE PRICE (RS)"
                 type="number"
                 value={editingProduct.salePrice || 0}
                 onChange={(e) =>

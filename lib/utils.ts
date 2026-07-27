@@ -7,12 +7,10 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatPrice(price: number): string {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
+  return `Rs ${new Intl.NumberFormat("en-PK", {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
-  }).format(price);
+  }).format(price)}`;
 }
 
 export function slugify(text: string): string {

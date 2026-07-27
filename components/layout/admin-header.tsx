@@ -3,14 +3,18 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LogOut, ExternalLink, Menu } from "lucide-react";
+import { LogOut, ExternalLink, Menu, AlertTriangle } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { AdminSidebarContent } from "./admin-sidebar";
+import { Modal } from "@/components/ui/modal";
+import { Button } from "@/components/ui/button";
 
 export function AdminHeader() {
   const pathname = usePathname();
   const router = useRouter();
   const [isOpen, setIsOpen] = React.useState(false);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = React.useState(false);
+  const [isLoggingOut, setIsLoggingOut] = React.useState(false);
 
   const getTitle = () => {
     if (pathname === "/admin") return "ANALYTICS OVERVIEW";
@@ -21,13 +25,18 @@ export function AdminHeader() {
     return "ADMIN PANEL";
   };
 
-  const handleLogout = async () => {
+  const handleConfirmLogout = async () => {
+    setIsLoggingOut(true);
     try {
       await fetch("/api/auth/logout", { method: "POST" });
+      setIsLogoutModalOpen(false);
       router.push("/admin/login");
       router.refresh();
     } catch {
+      setIsLogoutModalOpen(false);
       router.push("/admin/login");
+    } finally {
+      setIsLoggingOut(false);
     }
   };
 
@@ -66,14 +75,54 @@ export function AdminHeader() {
         </Link>
 
         <button
-          onClick={handleLogout}
-          className="inline-flex items-center space-x-1 font-mono text-[9px] sm:text-[10px] uppercase tracking-wider px-2 sm:px-3 py-1.5 bg-red-50 border border-red-100 text-[#D71921] hover:bg-[#D71921] hover:text-white transition-colors rounded-lg"
+          onClick={() => setIsLogoutModalOpen(true)}
+          className="inline-flex items-center space-x-1 font-mono text-[9px] sm:text-[10px] uppercase tracking-wider px-2 sm:px-3 py-1.5 bg-red-50 border border-red-100 text-[#D71921] hover:bg-[#D71921] hover:text-white transition-colors rounded-lg cursor-pointer"
           title="Sign Out of Admin Session"
         >
           <LogOut className="h-3 w-3" />
           <span>LOGOUT</span>
         </button>
       </div>
+
+      {isLogoutModalOpen && (
+        <Modal
+          isOpen={isLogoutModalOpen}
+          onClose={() => setIsLogoutModalOpen(false)}
+          title="CONFIRM LOGOUT"
+          maxWidth="sm"
+        >
+          <div className="space-y-4 font-mono text-xs text-neutral-900 dark:text-white">
+            <div className="flex items-center space-x-3 p-4 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/30 rounded-lg text-red-700 dark:text-red-400">
+              <AlertTriangle className="h-6 w-6 text-red-500 flex-shrink-0" />
+              <div>
+                <p className="font-bold uppercase text-red-800 dark:text-red-300">ADMIN SESSION END</p>
+                <p className="text-[11px] text-neutral-600 dark:text-neutral-400 font-sans mt-0.5">
+                  Are you sure you want to end your current administrator session?
+                </p>
+              </div>
+            </div>
+
+            <div className="pt-4 flex justify-end space-x-3 border-t border-neutral-200 dark:border-[#26262A]">
+              <Button
+                variant="outline"
+                type="button"
+                onClick={() => setIsLogoutModalOpen(false)}
+              >
+                CANCEL
+              </Button>
+              <Button
+                variant="red"
+                type="button"
+                isLoading={isLoggingOut}
+                onClick={handleConfirmLogout}
+                leftIcon={<LogOut className="h-4 w-4" />}
+              >
+                LOGOUT
+              </Button>
+            </div>
+          </div>
+        </Modal>
+      )}
     </header>
   );
 }
