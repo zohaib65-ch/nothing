@@ -42,8 +42,6 @@ export default function AdminProductsPage() {
   React.useEffect(() => {
     setMounted(true);
     loadProducts();
-    window.addEventListener("products_updated", loadProducts);
-    return () => window.removeEventListener("products_updated", loadProducts);
   }, [loadProducts]);
 
 

@@ -23,19 +23,19 @@ export function Modal({
   maxWidth = "md",
   className,
 }: ModalProps) {
+  const dialogRef = React.useRef<HTMLDialogElement>(null);
+
   React.useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    if (isOpen) {
+    const dialog = dialogRef.current;
+    if (dialog && isOpen) {
+      dialog.showModal();
       document.body.style.overflow = "hidden";
-      window.addEventListener("keydown", handleKeyDown);
     }
+
     return () => {
       document.body.style.overflow = "unset";
-      window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isOpen, onClose]);
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -48,17 +48,23 @@ export function Modal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
+    <dialog
+      ref={dialogRef}
+      onClose={onClose}
+      className={cn(
+        "fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-transparent overflow-hidden border-none outline-none w-full h-full max-w-none max-h-none backdrop:bg-black/80 backdrop:backdrop-blur-md open:animate-in open:fade-in duration-200",
+        className
+      )}
+    >
       <div
-        className="fixed inset-0"
+        className="fixed inset-0 cursor-default"
         onClick={onClose}
         aria-hidden="true"
       />
       <div
         className={cn(
           "relative w-full bg-white border border-neutral-200 shadow-2xl p-6 sm:p-8 z-10 space-y-6 text-neutral-900 max-h-[90vh] overflow-y-auto no-scrollbar rounded-xl dark:bg-[#0F0F10] dark:border-[#26262A] dark:text-white",
-          maxWidthClasses[maxWidth],
-          className
+          maxWidthClasses[maxWidth]
         )}
       >
         <div className="flex items-start justify-between border-b border-neutral-200 dark:border-[#26262A] pb-4">
@@ -82,6 +88,6 @@ export function Modal({
         </div>
         <div>{children}</div>
       </div>
-    </div>
+    </dialog>
   );
 }

@@ -23,8 +23,6 @@ export default function ProductsCatalogPage() {
     };
 
     loadProducts();
-    window.addEventListener("products_updated", loadProducts);
-    return () => window.removeEventListener("products_updated", loadProducts);
   }, []);
 
   const filteredProducts = React.useMemo(() => {

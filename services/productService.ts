@@ -80,7 +80,6 @@ export class ProductService {
 
     if (this.isBrowser()) {
       localStorage.setItem("nothing_products_v1", JSON.stringify(updated));
-      window.dispatchEvent(new Event("products_updated"));
     }
     return product;
   }
@@ -96,7 +95,6 @@ export class ProductService {
     const filtered = products.filter((p) => p.id !== id);
     if (this.isBrowser()) {
       localStorage.setItem("nothing_products_v1", JSON.stringify(filtered));
-      window.dispatchEvent(new Event("products_updated"));
     }
     return true;
   }
@@ -139,7 +137,6 @@ export class ProductService {
     }
     if (this.isBrowser()) {
       localStorage.setItem("nothing_categories_v1", JSON.stringify(updated));
-      window.dispatchEvent(new Event("categories_updated"));
     }
     return category;
   }
@@ -161,7 +158,6 @@ export class ProductService {
     );
     if (this.isBrowser()) {
       localStorage.setItem("nothing_categories_v1", JSON.stringify(filtered));
-      window.dispatchEvent(new Event("categories_updated"));
     }
     return true;
   }

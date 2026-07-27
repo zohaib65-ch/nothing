@@ -4,43 +4,31 @@ import * as React from "react";
 import Link from "next/link";
 import { ProductService } from "@/services/productService";
 import { Product, CategoryInfo } from "@/types";
-import { Package, FolderTree, MessageSquare, Eye, Plus, Settings, ArrowUpRight } from "lucide-react";
+import { Package, FolderTree, Plus, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function AdminDashboardPage() {
   const [products, setProducts] = React.useState<Product[]>([]);
   const [categories, setCategories] = React.useState<CategoryInfo[]>([]);
-  const [orders, setOrders] = React.useState<any[]>([]);
 
   React.useEffect(() => {
     const loadData = async () => {
       try {
-        const [productsData, categoriesData, ordersRes] = await Promise.all([
+        const [productsData, categoriesData] = await Promise.all([
           ProductService.fetchProductsFromApi(),
           ProductService.fetchCategoriesFromApi(),
-          fetch("/api/orders").then((res) => (res.ok ? res.json() : [])),
         ]);
         setProducts(productsData);
         setCategories(categoriesData);
-        setOrders(ordersRes);
       } catch (err) {
         console.error("Failed to load dashboard data:", err);
       }
     };
     loadData();
-    window.addEventListener("products_updated", loadData);
-    window.addEventListener("categories_updated", loadData);
-    return () => {
-      window.removeEventListener("products_updated", loadData);
-      window.removeEventListener("categories_updated", loadData);
-    };
   }, []);
 
   const totalPublished = products.filter((p) => p.status === "published").length;
   const totalFeatured = products.filter((p) => p.isFeatured).length;
-  const pendingOrdersCount = orders.filter((o) => o.status === "pending" || o.status === "processing").length;
-  const deliveredOrdersCount = orders.filter((o) => o.status === "delivered").length;
-
   return (
     <div className="space-y-8 select-none">
       {/* Header & Quick Action Buttons */}
