@@ -22,6 +22,12 @@ const ProductHighlightSchema = new Schema({
   subtitle: { type: String, required: true },
 });
 
+const CustomSectionItemSchema = new Schema({
+  title: { type: String, default: "" },
+  description: { type: String, default: "" },
+  image: { type: String, default: "" },
+});
+
 const ProductFeatureSchema = new Schema({
   id: { type: String, required: true },
   title: { type: String, required: true },
@@ -61,6 +67,12 @@ const ProductSchema = new Schema<IProductDocument>(
     specifications: [SpecificationGroupSchema],
     features: [ProductFeatureSchema],
     highlights: [ProductHighlightSchema],
+    heroLeftSections: { type: [CustomSectionItemSchema], default: [] },
+    heroRightSections: { type: [CustomSectionItemSchema], default: [] },
+    bentoSections: { type: [CustomSectionItemSchema], default: [] },
+    threeColumnSections: { type: [CustomSectionItemSchema], default: [] },
+    fourColumnSections: { type: [CustomSectionItemSchema], default: [] },
+    fiveColumnSections: { type: [CustomSectionItemSchema], default: [] },
     seo: {
       metaTitle: { type: String },
       metaDescription: { type: String },

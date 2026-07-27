@@ -74,7 +74,7 @@ export function generateWhatsAppCartLink(
 
 export function getValidImageUrl(
   src?: string,
-  fallback = "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=800&q=80"
+  fallback = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='800' height='800' viewBox='0 0 800 800'><rect width='100%' height='100%' fill='%23121214'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%2355555e' font-family='monospace' font-size='22' letter-spacing='2'>NO IMAGE UPLOADED</text></svg>"
 ): string {
   if (!src || typeof src !== "string") return fallback;
   const trimmed = src.trim();

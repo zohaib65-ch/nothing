@@ -5,7 +5,7 @@ import { ProductService } from "@/services/productService";
 import { Product } from "@/types";
 import { ProductCard } from "@/components/features/products/product-card";
 import { Container } from "@/components/ui/container";
-import { SlidersHorizontal, ChevronUp } from "lucide-react";
+import { ChevronUp } from "lucide-react";
 import { EmptyState } from "@/components/ui/empty-state";
 
 export default function ProductsCatalogPage() {
@@ -27,11 +27,8 @@ export default function ProductsCatalogPage() {
 
   const filteredProducts = React.useMemo(() => {
     return products.filter((product) => {
-      const matchesCategory =
-        selectedCategory === "all" || product.category === selectedCategory;
-      const matchesSearch =
-        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.subcategory.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesCategory = selectedCategory === "all" || product.category === selectedCategory;
+      const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) || product.subcategory.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesCategory && matchesSearch;
     });
   }, [products, selectedCategory, searchQuery]);
@@ -41,9 +38,7 @@ export default function ProductsCatalogPage() {
       <Container className="space-y-12">
         {/* Main Headline - Matches Reference Screenshot */}
         <div className="text-center pt-8 space-y-4">
-          <h1 className="font-ndot text-4xl sm:text-6xl uppercase tracking-[0.2em] text-black">
-            ALL PRODUCTS
-          </h1>
+          <h1 className="font-ndot text-4xl sm:text-6xl uppercase tracking-[0.2em] text-black">ALL PRODUCTS</h1>
         </div>
 
         {/* Filter Bar Modal / Quick Category Pills */}
@@ -54,9 +49,7 @@ export default function ProductsCatalogPage() {
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
                 className={`px-4 py-1.5 rounded-full font-lattera text-xs uppercase tracking-wider transition-all ${
-                  selectedCategory === cat
-                    ? "bg-black text-white"
-                    : "bg-neutral-100 text-black hover:bg-neutral-200"
+                  selectedCategory === cat ? "bg-black text-white" : "bg-neutral-100 text-black hover:bg-neutral-200"
                 }`}
               >
                 {cat}
@@ -67,9 +60,7 @@ export default function ProductsCatalogPage() {
 
         {/* Product Grid - Matches Reference Screenshot (4-5 columns) */}
         {isLoading ? (
-          <div className="py-24 text-center font-lattera text-xs text-neutral-500 animate-pulse">
-            LOADING CATALOG...
-          </div>
+          <div className="py-24 text-center font-lattera text-xs text-neutral-500 animate-pulse">LOADING CATALOG...</div>
         ) : filteredProducts.length === 0 ? (
           <EmptyState />
         ) : (

@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { ColumnDef } from "@tanstack/react-table";
 import { Product } from "@/types";
 import { formatPrice, getValidImageUrl } from "@/lib/utils";
@@ -12,7 +13,7 @@ export const getColumns = (
   handleToggleFeatured: (prod: Product) => void,
   handleToggleStatus: (prod: Product) => void,
   handleEdit: (prod: Product) => void,
-  handlePromptDelete: (prod: Product) => void
+  handlePromptDelete: (prod: Product) => void,
 ): ColumnDef<Product>[] => [
   {
     accessorKey: "images",
@@ -22,13 +23,7 @@ export const getColumns = (
       const imageUrl = getValidImageUrl(prod.images?.[0]);
       return (
         <div className="relative h-12 w-12 bg-white border border-neutral-200 rounded">
-          <Image
-            src={imageUrl}
-            alt={prod.name}
-            fill
-            sizes="48px"
-            className="object-contain p-1"
-          />
+          <Image src={imageUrl} alt={prod.name} fill sizes="48px" className="object-contain p-1" />
         </div>
       );
     },
@@ -49,20 +44,14 @@ export const getColumns = (
   {
     accessorKey: "category",
     header: "CATEGORY",
-    cell: ({ row }) => (
-      <span className="uppercase text-neutral-600">{row.original.category}</span>
-    ),
+    cell: ({ row }) => <span className="uppercase text-neutral-600">{row.original.category}</span>,
   },
   {
     accessorKey: "price",
     header: "PRICE",
     cell: ({ row }) => {
       const prod = row.original;
-      return (
-        <span className="font-bold text-neutral-900">
-          {formatPrice(prod.salePrice || prod.price)}
-        </span>
-      );
+      return <span className="font-bold text-neutral-900">{formatPrice(prod.salePrice || prod.price)}</span>;
     },
   },
   {
@@ -73,11 +62,7 @@ export const getColumns = (
       return (
         <button
           onClick={() => handleToggleFeatured(prod)}
-          className={`p-1.5 rounded transition-colors cursor-pointer ${
-            prod.isFeatured
-              ? "text-[#D71921] bg-[#D71921]/10"
-              : "text-neutral-400 hover:text-neutral-900"
-          }`}
+          className={`p-1.5 rounded transition-colors cursor-pointer ${prod.isFeatured ? "text-[#D71921] bg-[#D71921]/10" : "text-neutral-400 hover:text-neutral-900"}`}
           title="Toggle Featured Status"
         >
           <Star className="h-4 w-4 fill-current" />
@@ -92,11 +77,7 @@ export const getColumns = (
       const prod = row.original;
       return (
         <button onClick={() => handleToggleStatus(prod)} className="cursor-pointer">
-          {prod.status === "published" ? (
-            <Badge variant="red">PUBLISHED</Badge>
-          ) : (
-            <Badge variant="outline">DRAFT</Badge>
-          )}
+          {prod.status === "published" ? <Badge variant="red">PUBLISHED</Badge> : <Badge variant="outline">DRAFT</Badge>}
         </button>
       );
     },
@@ -108,13 +89,13 @@ export const getColumns = (
       const prod = row.original;
       return (
         <div className="text-right flex space-x-1 sm:space-x-2">
-          <button
-            onClick={() => handleEdit(prod)}
+          <Link
+            href={`/admin/products/${prod.id}/edit`}
             className="p-2 bg-neutral-50 text-neutral-600 hover:text-neutral-955 border border-neutral-200 hover:border-neutral-400 transition-colors rounded cursor-pointer"
             title="Edit Product"
           >
             <Edit2 className="h-3.5 w-3.5" />
-          </button>
+          </Link>
           <button
             onClick={() => handlePromptDelete(prod)}
             className="p-2 bg-red-50/50 text-red-500 hover:text-red-700 border border-red-100 hover:border-red-300 transition-colors rounded cursor-pointer"

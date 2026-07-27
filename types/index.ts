@@ -38,6 +38,12 @@ export interface ProductHighlight {
   subtitle: string;
 }
 
+export interface CustomSectionItem {
+  title: string;
+  description: string;
+  image?: string;
+}
+
 export interface ProductFAQ {
   question: string;
   answer: string;
@@ -80,6 +86,12 @@ export interface Product {
   status: 'draft' | 'published';
   createdAt: string;
   updatedAt: string;
+  heroLeftSections?: CustomSectionItem[];
+  heroRightSections?: CustomSectionItem[];
+  bentoSections?: CustomSectionItem[];
+  threeColumnSections?: CustomSectionItem[];
+  fourColumnSections?: CustomSectionItem[];
+  fiveColumnSections?: CustomSectionItem[];
 }
 
 export interface CategoryInfo {

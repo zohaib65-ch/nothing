@@ -1,7 +1,4 @@
 import { NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import path from "path";
-import { randomUUID } from "crypto";
 
 export async function POST(request: Request) {
   try {
@@ -15,23 +12,14 @@ export async function POST(request: Request) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Determine file extension from mime type
-    const ext = file.name?.split(".").pop() || "png";
-    const uniqueName = `${randomUUID()}.${ext}`;
-
-    // Write file to public/uploads directory on disk
-    const uploadsDir = path.join(process.cwd(), "public", "uploads");
-    await mkdir(uploadsDir, { recursive: true });
-
-    const filePath = path.join(uploadsDir, uniqueName);
-    await writeFile(filePath, buffer);
-
-    // Return a short URL path (not base64)
-    const url = `/uploads/${uniqueName}`;
+    // Convert file directly to Base64 Data URL string to store directly in MongoDB (no local disk files created)
+    const mimeType = file.type || "image/png";
+    const base64Data = buffer.toString("base64");
+    const dataUrl = `data:${mimeType};base64,${base64Data}`;
 
     return NextResponse.json({
       success: true,
-      url,
+      url: dataUrl,
       size: file.size,
       type: file.type,
     });

@@ -1,3 +1,5 @@
+export {};
+
 // Quick test of the Shopify Storefront GraphQL API
 const STORE = "avicii-dev.myshopify.com";
 const TOKEN = "50421efc038884899e6d9f6c370a1061";

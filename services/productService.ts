@@ -18,6 +18,18 @@ export class ProductService {
     return [];
   }
 
+  public static async fetchProductByIdFromApi(id: string): Promise<Product | null> {
+    try {
+      const res = await fetch(`/api/products/${id}`);
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch {
+      // Fallback
+    }
+    return this.getProductsLocal().find((p) => p.id === id || p.slug === id) || null;
+  }
+
   public static getProductsLocal(): Product[] {
     if (!this.isBrowser()) return [];
     try {
