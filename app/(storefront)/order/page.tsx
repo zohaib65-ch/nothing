@@ -35,9 +35,16 @@ type CheckoutFormValues = z.infer<typeof checkoutSchema>;
 
 export default function CartCheckoutPage() {
   const router = useRouter();
-  const { items, getTotalPrice, clearCart } = useCartStore();
+  const { items, getTotalPrice, clearCart, _hasHydrated } = useCartStore();
+  const [hasMounted, setHasMounted] = React.useState(false);
 
   const [isSubmitPending, setIsSubmitPending] = React.useState<boolean>(false);
+
+  React.useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  const isCartReady = hasMounted && _hasHydrated;
 
   // Payment method state
   const [paymentMethod, setPaymentMethod] = React.useState<"bank_transfer" | "cod">("bank_transfer");
@@ -69,12 +76,12 @@ export default function CartCheckoutPage() {
     },
   });
 
-  // Redirect if cart is empty
+  // Redirect if cart is empty ONLY AFTER hydration is ready!
   React.useEffect(() => {
-    if (items.length === 0 && !isSubmitPending) {
+    if (isCartReady && items.length === 0 && !isSubmitPending) {
       router.push("/cart");
     }
-  }, [items, router, isSubmitPending]);
+  }, [isCartReady, items, router, isSubmitPending]);
 
   // Copy helpers
   const handleCopyText = async (text: string, type: "account" | "iban") => {
@@ -94,10 +101,18 @@ export default function CartCheckoutPage() {
     }
   };
 
+  if (!isCartReady) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center py-24">
+        <div className="font-ntype text-sm animate-pulse text-slate-500">LOADING CHECKOUT...</div>
+      </div>
+    );
+  }
+
   if (items.length === 0) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center py-24">
-      <div className="font-ntype text-sm animate-pulse text-slate-500">REDIRECTING TO BAG...</div>
+        <div className="font-ntype text-sm animate-pulse text-slate-500">REDIRECTING TO BAG...</div>
       </div>
     );
   }

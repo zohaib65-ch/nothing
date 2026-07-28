@@ -11,7 +11,14 @@ import { Trash2, Plus, Minus, ArrowLeft, ArrowRight, ShoppingBag, ShieldCheck } 
 
 export default function CartPage() {
   const router = useRouter();
-  const { items, updateQuantity, removeItem, getTotalPrice, getTotalItems } = useCartStore();
+  const { items, updateQuantity, removeItem, getTotalPrice, getTotalItems, _hasHydrated } = useCartStore();
+  const [hasMounted, setHasMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  const isCartReady = hasMounted && _hasHydrated;
 
   const totalPrice = getTotalPrice();
   const totalItems = getTotalItems();
@@ -23,6 +30,14 @@ export default function CartPage() {
     }).format(amount)}`;
   };
 
+  if (!isCartReady) {
+    return (
+      <div className="bg-slate-50 min-h-screen text-slate-900 py-24 flex items-center justify-center font-ntype">
+        <div className="text-sm animate-pulse text-slate-500">LOADING YOUR BAG...</div>
+      </div>
+    );
+  }
+
   if (items.length === 0) {
     return (
       <div className="bg-slate-50 min-h-screen text-slate-900 py-24 flex items-center justify-center">
@@ -33,7 +48,9 @@ export default function CartPage() {
             </div>
           </div>
           <div className="space-y-2">
-            <Heading size="md" className="font-lattera font-bold tracking-wider uppercase">YOUR BAG IS EMPTY</Heading>
+            <Heading size="md" className="font-lattera font-bold tracking-wider uppercase text-black">
+              YOUR BAG IS EMPTY
+            </Heading>
             <p className="text-sm text-slate-500 max-w-sm mx-auto leading-relaxed">
               Looks like you haven't added anything to your cart yet. Explore our latest products and exclusive accessories.
             </p>
@@ -53,9 +70,7 @@ export default function CartPage() {
           {/* Headline */}
           <div className="border-b border-slate-200/80 pb-6">
             <h1 className="text-3xl font-black tracking-tight text-slate-900">Your Bag</h1>
-            <p className="text-xs text-slate-500 mt-1 font-ntype">
-              Review items in your bag before proceeding to checkout.
-            </p>
+            <p className="text-xs text-slate-500 mt-1 font-ntype">Review items in your bag before proceeding to checkout.</p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -78,10 +93,7 @@ export default function CartPage() {
                         />
                       </div>
                       <div className="space-y-1">
-                        <Link
-                          href={`/products/${item.product.slug}`}
-                          className="text-sm font-bold text-slate-900 hover:underline line-clamp-1"
-                        >
+                        <Link href={`/products/${item.product.slug}`} className="text-sm font-bold text-slate-900 hover:underline line-clamp-1">
                           {item.product.name}
                         </Link>
                         <p className="text-xs text-slate-500 font-ntype">
