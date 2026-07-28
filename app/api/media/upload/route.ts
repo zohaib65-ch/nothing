@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { uploadToCloudinary } from "@/lib/cloudinary";
 
 export async function POST(request: Request) {
   try {
@@ -12,18 +13,17 @@ export async function POST(request: Request) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Convert file directly to Base64 Data URL string to store directly in MongoDB (no local disk files created)
-    const mimeType = file.type || "image/png";
-    const base64Data = buffer.toString("base64");
-    const dataUrl = `data:${mimeType};base64,${base64Data}`;
+    // Upload to Cloudinary instead of storing base64 in MongoDB
+    const cloudinaryUrl = await uploadToCloudinary(buffer, "nothing-store");
 
     return NextResponse.json({
       success: true,
-      url: dataUrl,
+      url: cloudinaryUrl,
       size: file.size,
       type: file.type,
     });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message || "Failed to process image" }, { status: 500 });
+    console.error("Cloudinary upload error:", error);
+    return NextResponse.json({ error: error.message || "Failed to upload image to Cloudinary" }, { status: 500 });
   }
 }

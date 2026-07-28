@@ -60,8 +60,8 @@ export default function AdminMediaPage() {
   };
 
   const handleCopyUrl = (url: string) => {
-    const fullUrl = `${window.location.origin}${url}`;
-    navigator.clipboard.writeText(fullUrl);
+    // Cloudinary URLs are already full URLs
+    navigator.clipboard.writeText(url);
     setCopiedUrl(url);
     setTimeout(() => setCopiedUrl(null), 2000);
   };
@@ -124,6 +124,7 @@ export default function AdminMediaPage() {
                   src={media.url}
                   alt={media.filename}
                   fill
+                  unoptimized
                   sizes="200px"
                   className="object-contain p-2"
                 />

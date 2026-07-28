@@ -1,8 +1,6 @@
 /**
  * Patch missing product images with REAL Spigen & Nothing Shopify/Sanity CDN URLs
  */
-import { connectToDatabase } from "../lib/mongodb";
-import { ProductModel } from "../models/Product";
 import { readFileSync, writeFileSync } from "fs";
 import { join } from "path";
 
@@ -66,35 +64,7 @@ const IMAGE_MAP: Record<string, string[]> = {
   ],
 };
 
-async function main() {
-  console.log("Connecting to MongoDB...");
-  await connectToDatabase();
-  console.log("✓ Connected to MongoDB\n");
-
-  let updatedCount = 0;
-
-  for (const [slug, images] of Object.entries(IMAGE_MAP)) {
-    const result = await ProductModel.findOneAndUpdate(
-      { slug },
-      {
-        $set: {
-          images,
-          gallery: images,
-          "variants.$[].image": images[0],
-        },
-      },
-      { returnDocument: "after" }
-    );
-
-    if (result) {
-      console.log(`✓ Patched DB: ${slug} (${images.length} images)`);
-      updatedCount++;
-    } else {
-      console.log(`✗ Slug not found in DB: ${slug}`);
-    }
-  }
-
-  // Also update scraped-products.json so re-seeding won't lose these images
+function main() {
   const jsonPath = join(__dirname, "scraped-products.json");
   try {
     const scrapedProducts = JSON.parse(readFileSync(jsonPath, "utf-8"));
@@ -110,17 +80,10 @@ async function main() {
     }
 
     writeFileSync(jsonPath, JSON.stringify(scrapedProducts, null, 2), "utf-8");
-    console.log(`\n✓ Updated ${jsonUpdated} products in scraped-products.json`);
+    console.log(`\n✓ Patched ${jsonUpdated} products in scraped-products.json`);
   } catch (err: any) {
-    console.error("Warning: Could not update scraped-products.json:", err.message);
+    console.error("Error patching scraped-products.json:", err.message);
   }
-
-  console.log(`\n═══ SEED PATCH COMPLETE ═══`);
-  console.log(`Successfully updated ${updatedCount} products in MongoDB.`);
-  process.exit(0);
 }
 
-main().catch((err) => {
-  console.error("Fatal patch error:", err);
-  process.exit(1);
-});
+main();
