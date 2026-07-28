@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
 import { HeroSpecShowcase } from "@/components/features/products/hero-spec-showcase";
 import { BentoFeatureGrid } from "@/components/features/products/bento-feature-grid";
+import { ProductShowcaseImages } from "@/components/features/products/product-showcase-images";
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -22,7 +23,6 @@ export default function ProductDetailPage() {
 
   const [product, setProduct] = React.useState<Product | null>(null);
   const [selectedVariant, setSelectedVariant] = React.useState<ProductVariant | null>(null);
-  const [relatedProducts, setRelatedProducts] = React.useState<Product[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
   const [isSpecsModalOpen, setIsSpecsModalOpen] = React.useState(false);
 
@@ -35,12 +35,6 @@ export default function ProductDetailPage() {
 
       setProduct(item);
       setSelectedVariant(item?.variants[0] || null);
-
-      if (item) {
-        setRelatedProducts(all.filter((p) => p.id !== item.id && p.category === item.category && p.status === "published").slice(0, 3));
-      } else {
-        setRelatedProducts([]);
-      }
 
       setIsLoading(false);
     };
@@ -89,6 +83,9 @@ export default function ProductDetailPage() {
 
       {/* Bento 7-Feature Grid Section */}
       <BentoFeatureGrid product={product} />
+
+      {/* Large Column Grid Detail Showcase Sections (3-Column, 4-Column, 5-Column Images) */}
+      <ProductShowcaseImages product={product} />
       <Modal
         isOpen={isSpecsModalOpen}
         onClose={() => setIsSpecsModalOpen(false)}

@@ -89,6 +89,7 @@ export function ProductBuyCard({ product, selectedVariant, onSelectVariant, onAd
                 src={getValidImageUrl(selectedVariant?.image || product.images?.[0] || "")}
                 alt={currentColor}
                 fill
+                unoptimized
                 className="object-contain p-1"
               />
             </div>

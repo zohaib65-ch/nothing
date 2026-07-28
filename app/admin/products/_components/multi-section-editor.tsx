@@ -91,6 +91,7 @@ export function MultiSectionEditor({ sectionKey, label, count, items, onUpdateIt
                       src={getValidImageUrl(item.image)}
                       alt={`Preview Section ${idx + 1}`}
                       fill
+                      unoptimized
                       sizes="250px"
                       className="object-contain p-1.5"
                     />

@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { Product } from "@/types";
-import { slugify, getValidImageUrl } from "@/lib/utils";
+import { slugify, getValidImageUrl, compressImageFile } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Save, ChevronRight, ChevronLeft } from "lucide-react";
@@ -58,25 +58,14 @@ export function ProductForm({ initialProduct, isEditMode = false, onSave, isSubm
     setUploadError(null);
 
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const res = await fetch("/api/media/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || "Upload failed");
-      }
+      // Compress image to lightweight Base64 data URL for direct MongoDB storage (no files saved to disk)
+      const compressedDataUrl = await compressImageFile(file);
 
       const currentImages = getValues("images") || [];
-      setValue("images", [data.url, ...currentImages.slice(1)]);
-      toast.success("Image uploaded successfully.");
+      setValue("images", [compressedDataUrl, ...currentImages.slice(1)]);
+      toast.success("Image compressed and stored in DB successfully.");
     } catch (err: any) {
-      const errorMsg = err.message || "Failed to upload image";
+      const errorMsg = err.message || "Failed to process image";
       setUploadError(errorMsg);
       toast.error(errorMsg);
     } finally {
@@ -92,30 +81,19 @@ export function ProductForm({ initialProduct, isEditMode = false, onSave, isSubm
 
     setUploadingIndex({ section, idx });
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const res = await fetch("/api/media/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || "Upload failed");
-      }
+      // Compress section image to lightweight Base64 data URL for direct MongoDB storage
+      const compressedDataUrl = await compressImageFile(file);
 
       const currentSections = (getValues(section as keyof ProductFormValues) as any[]) || [];
       while (currentSections.length <= idx) {
         currentSections.push({ title: "", description: "", image: "" });
       }
-      currentSections[idx] = { ...currentSections[idx], image: data.url };
+      currentSections[idx] = { ...currentSections[idx], image: compressedDataUrl };
       setValue(section as keyof ProductFormValues, currentSections);
 
-      toast.success("Section image uploaded successfully.");
+      toast.success("Section image stored in DB successfully.");
     } catch (err: any) {
-      toast.error(err.message || "Failed to upload image");
+      toast.error(err.message || "Failed to process image");
     } finally {
       setUploadingIndex(null);
     }
@@ -136,11 +114,8 @@ export function ProductForm({ initialProduct, isEditMode = false, onSave, isSubm
   };
 
   const onInvalidForm = (errors: any) => {
-    console.error("Validation Errors:", errors);
     const fieldNames = Object.keys(errors);
-    const errorMsg = fieldNames.length > 0 
-      ? `Validation error in: ${fieldNames.join(", ")}`
-      : "Please fill out all required fields.";
+    const errorMsg = fieldNames.length > 0 ? `Validation error in: ${fieldNames.join(", ")}` : "Please fill out all required fields.";
     toast.error(errorMsg);
   };
 

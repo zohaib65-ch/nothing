@@ -73,7 +73,7 @@ export function SingleImageSectionEditor({
 
         {image && (
           <div className="relative h-48 sm:h-64 w-full bg-neutral-50 border border-neutral-200 rounded-lg overflow-hidden flex items-center justify-center group">
-            <Image src={getValidImageUrl(image)} alt={`${label} Preview`} fill sizes="800px" className="object-contain p-3" />
+            <Image src={getValidImageUrl(image)} alt={`${label} Preview`} fill unoptimized sizes="800px" className="object-contain p-3" />
             <button
               type="button"
               onClick={() => onUpdateImage("")}

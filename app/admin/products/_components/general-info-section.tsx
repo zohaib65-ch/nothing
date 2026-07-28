@@ -132,7 +132,7 @@ export function GeneralInfoSection({ fileInputRef, handleFileUpload, isUploading
             <div className="relative h-48 bg-neutral-50 border border-dashed border-neutral-300 rounded-lg overflow-hidden flex flex-col items-center justify-center p-4">
               {firstImage ? (
                 <div className="relative w-full h-full">
-                  <Image src={getValidImageUrl(firstImage)} alt="Product Preview" fill className="object-contain" />
+                  <Image src={getValidImageUrl(firstImage)} alt="Product Preview" fill unoptimized className="object-contain" />
                 </div>
               ) : (
                 <div className="text-center space-y-2">

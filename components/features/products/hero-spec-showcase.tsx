@@ -44,7 +44,7 @@ const renderMediaContainer = (url: string | undefined, title: string, containerC
     <div
       className={`relative overflow-hidden rounded-xl shadow-md border border-neutral-300/80 bg-white transition-transform group-hover:scale-105 ${containerClassName}`}
     >
-      <Image src={getValidImageUrl(url)} alt={title || "Showcase Media"} fill className="object-cover" />
+      <Image src={getValidImageUrl(url)} alt={title || "Showcase Media"} fill unoptimized className="object-cover" />
     </div>
   );
 };
@@ -60,7 +60,7 @@ export function HeroSpecShowcase({ product, selectedVariant, onSelectVariant, on
   const heroMainImage = getValidImageUrl((product as any).heroImage || selectedVariant?.image || product.images?.[0] || "");
 
   return (
-    <div className="relative w-full bg-white text-neutral-900 py-8 px-4 sm:px-8 select-none flex flex-col justify-between overflow-hidden">
+    <div className="relative z-30 w-full bg-white text-neutral-900 py-8 px-4 sm:px-8 select-none flex flex-col justify-between">
       <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-6 items-center relative z-10 my-auto">
         <div className="lg:col-span-3 flex flex-col gap-8 items-center lg:items-start">
           {(item0Left?.image || item0Left?.title) && (
@@ -93,6 +93,7 @@ export function HeroSpecShowcase({ product, selectedVariant, onSelectVariant, on
                 alt={product.name}
                 fill
                 priority
+                unoptimized
                 className="object-contain hover:scale-102 transition-transform duration-500"
               />
             ) : (
