@@ -10,6 +10,7 @@ export default function StorefrontLayout({ children }: { children: React.ReactNo
   return (
     <LenisProvider>
       <div className="min-h-screen flex flex-col bg-white text-[#111]">
+        <div className="site-dot-overlay" />
         <Navbar />
         <main className="flex-1">{children}</main>
         <Footer />

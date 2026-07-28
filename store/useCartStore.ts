@@ -69,7 +69,30 @@ export const useCartStore = create<CartState>()(
     }),
     {
       name: "nothing_cart_v1",
-      partialize: (state) => ({ items: state.items }),
+      partialize: (state) => ({
+        items: state.items.map((item) => ({
+          id: item.id,
+          quantity: item.quantity,
+          selectedVariant: {
+            id: item.selectedVariant.id,
+            color: item.selectedVariant.color,
+            colorHex: item.selectedVariant.colorHex || "",
+            storage: item.selectedVariant.storage,
+            price: item.selectedVariant.price,
+            salePrice: item.selectedVariant.salePrice,
+            image: item.selectedVariant.image || "",
+          },
+          product: {
+            id: item.product.id || item.product.slug,
+            name: item.product.name,
+            slug: item.product.slug,
+            price: item.product.price,
+            salePrice: item.product.salePrice,
+            category: item.product.category,
+            images: [item.product.images?.[0] || ""].filter(Boolean),
+          } as Product,
+        })),
+      }),
       onRehydrateStorage: () => (state) => {
         state?.setHasHydrated(true);
       },

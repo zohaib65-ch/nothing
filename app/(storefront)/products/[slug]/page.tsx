@@ -9,6 +9,7 @@ import { SpecsTable } from "@/components/features/products/specs-table";
 import { Heading } from "@/components/ui/heading";
 import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
+import { Loader } from "@/components/ui/loader";
 import { HeroSpecShowcase } from "@/components/features/products/hero-spec-showcase";
 import { BentoFeatureGrid } from "@/components/features/products/bento-feature-grid";
 import { ProductShowcaseImages } from "@/components/features/products/product-showcase-images";
@@ -51,8 +52,8 @@ export default function ProductDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="py-24 text-center bg-[#050505] text-white">
-        <div className="font-mono text-sm animate-pulse">LOADING PRODUCT DETAILS...</div>
+      <div className="min-h-screen bg-white text-slate-900 flex items-center justify-center py-24">
+        <Loader />
       </div>
     );
   }
