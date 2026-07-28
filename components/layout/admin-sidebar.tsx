@@ -5,6 +5,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LayoutDashboard, Package, FolderTree, Settings, LogOut, Shield, ShoppingBag, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Modal } from "@/components/ui/modal";
+import { Button } from "@/components/ui/button";
 
 export interface AdminSidebarContentProps {
   onClose?: () => void;
@@ -12,6 +14,7 @@ export interface AdminSidebarContentProps {
 
 export function AdminSidebarContent({ onClose }: AdminSidebarContentProps) {
   const pathname = usePathname();
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = React.useState(false);
 
   const navItems = [
     { name: "DASHBOARD", href: "/admin", icon: LayoutDashboard },
@@ -84,16 +87,43 @@ export function AdminSidebarContent({ onClose }: AdminSidebarContentProps) {
 
         <button
           type="button"
-          onClick={() => {
-            if (onClose) onClose();
-            handleLogout();
-          }}
+          onClick={() => setIsLogoutModalOpen(true)}
           className="w-full flex items-center space-x-2 px-3 py-2.5 rounded-lg bg-red-50 border border-red-100 text-[#D71921] hover:bg-[#D71921] hover:text-white transition-colors font-mono text-xs font-bold uppercase tracking-wider cursor-pointer"
         >
           <LogOut className="h-4 w-4" />
           <span>LOGOUT</span>
         </button>
       </div>
+
+      <Modal
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+        title="Logout Confirmation"
+        subtitle="Are you sure you want to log out of the admin panel?"
+        maxWidth="sm"
+      >
+        <div className="space-y-4">
+          <p className="text-xs text-neutral-500 font-sans">
+            You will need to sign in again to access the admin control panel and manage products, categories, or orders.
+          </p>
+          <div className="flex justify-end gap-3 pt-2">
+            <Button type="button" variant="secondary" size="sm" onClick={() => setIsLogoutModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              variant="red"
+              size="sm"
+              onClick={() => {
+                if (onClose) onClose();
+                handleLogout();
+              }}
+            >
+              Log Out
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
