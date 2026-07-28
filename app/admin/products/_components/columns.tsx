@@ -34,9 +34,9 @@ export const getColumns = (
     cell: ({ row }) => {
       const prod = row.original;
       return (
-        <div>
-          <div className="font-bold text-neutral-900">{prod.name}</div>
-          <div className="text-[10px] text-neutral-500">{prod.tagline}</div>
+        <div className="space-y-1 py-1 min-w-[180px]">
+          <div className="text-xs sm:text-sm sm:font-bold font-medium text-neutral-900 leading-snug">{prod.name}</div>
+          {prod.tagline && <div className="text-[9px] sm:text-[11px] text-neutral-500 leading-normal font-sans">{prod.tagline}</div>}
         </div>
       );
     },

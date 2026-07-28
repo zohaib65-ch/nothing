@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Package, FolderTree, Settings, Store, LogOut, Shield, ShoppingBag } from "lucide-react";
+import { LayoutDashboard, Package, FolderTree, Settings, LogOut, Shield, ShoppingBag, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface AdminSidebarContentProps {
@@ -66,6 +66,33 @@ export function AdminSidebarContent({ onClose }: AdminSidebarContentProps) {
             );
           })}
         </nav>
+      </div>
+
+      {/* Bottom Actions: View Site & Logout */}
+      <div className="p-6 border-t border-neutral-200 space-y-2">
+        <Link
+          href="/"
+          target="_blank"
+          onClick={onClose}
+          className="flex items-center justify-between px-3 py-2.5 rounded-lg border border-neutral-200 bg-neutral-50 text-neutral-600 hover:border-neutral-400 hover:text-neutral-900 transition-colors font-mono text-xs font-bold uppercase tracking-wider"
+        >
+          <div className="flex items-center space-x-2">
+            <ExternalLink className="h-4 w-4" />
+            <span>VIEW SITE</span>
+          </div>
+        </Link>
+
+        <button
+          type="button"
+          onClick={() => {
+            if (onClose) onClose();
+            handleLogout();
+          }}
+          className="w-full flex items-center space-x-2 px-3 py-2.5 rounded-lg bg-red-50 border border-red-100 text-[#D71921] hover:bg-[#D71921] hover:text-white transition-colors font-mono text-xs font-bold uppercase tracking-wider cursor-pointer"
+        >
+          <LogOut className="h-4 w-4" />
+          <span>LOGOUT</span>
+        </button>
       </div>
     </div>
   );

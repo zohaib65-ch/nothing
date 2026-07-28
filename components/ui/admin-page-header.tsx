@@ -16,7 +16,7 @@ export function AdminPageHeader({ breadcrumbs, title, backLink = "/admin", backL
     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-neutral-200">
       <div className="space-y-1.5">
         <AppBreadcrumb items={breadcrumbs} />
-        <h1 className="font-mono text-xl font-bold uppercase tracking-wider text-neutral-900 flex items-center gap-2">{title}</h1>
+        <h1 className="text-xl sm:text-2xl font-bold uppercase tracking-wider text-neutral-900 flex items-center gap-2">{title}</h1>
       </div>
 
       {backLink && (

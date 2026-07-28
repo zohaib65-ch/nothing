@@ -175,7 +175,9 @@ export function ProductForm({ initialProduct, isEditMode = false, onSave, isSubm
             type="button"
             onClick={() => setCurrentStep(step.id)}
             className={`px-5 py-3 font-bold border-b-2 uppercase transition-colors -mb-px flex items-center gap-2 ${
-              currentStep === step.id ? "border-[#D71921] text-[#D71921] bg-neutral-50/50" : "border-transparent text-neutral-500 hover:text-neutral-900"
+              currentStep === step.id
+                ? "border-[#D71921] text-[#D71921] bg-neutral-50/50"
+                : "border-transparent text-neutral-500 hover:text-neutral-900"
             }`}
           >
             <span
@@ -190,33 +192,55 @@ export function ProductForm({ initialProduct, isEditMode = false, onSave, isSubm
 
       <FormProvider {...methods}>
         <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-6">
-          {currentStep === 1 && <GeneralInfoSection fileInputRef={fileInputRef} handleFileUpload={handleFileUpload} isUploading={isUploading} uploadError={uploadError} />}
+          {currentStep === 1 && (
+            <GeneralInfoSection fileInputRef={fileInputRef} handleFileUpload={handleFileUpload} isUploading={isUploading} uploadError={uploadError} />
+          )}
           {currentStep === 2 && <HeroShowcaseSection onFileUpload={handleSectionImageUpload} uploadingIndex={uploadingIndex} />}
           {currentStep === 3 && <BentoGridSection onFileUpload={handleSectionImageUpload} uploadingIndex={uploadingIndex} />}
           {currentStep === 4 && <ColumnGridsSection onFileUpload={handleSectionImageUpload} uploadingIndex={uploadingIndex} />}
 
-          <div className="flex justify-between items-center pt-6 px-6 border-t border-neutral-200 bg-white sticky bottom-0 py-4 shadow-[0_-10px_20px_rgba(0,0,0,0.05)] rounded-b-lg px-2 z-10">
-            <div>
+          <div className="flex sm:flex-row flex-col w-full gap-2 justify-between items-center pt-6 px-6 border-t border-neutral-200 bg-white sticky bottom-0 py-4 shadow-[0_-10px_20px_rgba(0,0,0,0.05)] rounded-b-lg px-2 z-10">
+            <div className="w-full ">
               {currentStep > 1 ? (
-                <Button type="button" variant="outline" size="md" onClick={handlePrev} leftIcon={<ChevronLeft className="h-4 w-4" />}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="sm:w-auto w-full"
+                  size="md"
+                  onClick={handlePrev}
+                  leftIcon={<ChevronLeft className="h-4 w-4" />}
+                >
                   PREVIOUS
                 </Button>
               ) : (
                 <Link href="/admin/products">
-                  <Button type="button" variant="outline" size="md">
+                  <Button type="button" variant="outline" className="sm:w-auto w-full" size="md">
                     CANCEL
                   </Button>
                 </Link>
               )}
             </div>
 
-            <div>
+            <div className="w-full sm:w-auto sm:ml-auto">
               {currentStep < 4 ? (
-                <Button type="button" variant="primary" size="md" onClick={handleNext} className="bg-neutral-900 flex  text-white hover:bg-neutral-800">
+                <Button
+                  type="button"
+                  variant="primary"
+                  size="md"
+                  onClick={handleNext}
+                  className="bg-neutral-900 flex sm:w-auto w-full text-white hover:bg-neutral-800 whitespace-nowrap"
+                >
                   NEXT STEP
                 </Button>
               ) : (
-                <Button type="submit" variant="red" size="md" isLoading={isSubmitting} leftIcon={<Save className="h-4 w-4" />}>
+                <Button
+                  type="submit"
+                  className="flex sm:w-auto w-full"
+                  variant="red"
+                  size="md"
+                  isLoading={isSubmitting}
+                  leftIcon={<Save className="h-4 w-4" />}
+                >
                   {isEditMode ? "SAVE CHANGES" : "SAVE PRODUCT"}
                 </Button>
               )}

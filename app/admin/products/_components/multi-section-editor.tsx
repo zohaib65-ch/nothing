@@ -67,7 +67,7 @@ export function MultiSectionEditor({ sectionKey, label, count, items, onUpdateIt
 
               <div className="space-y-1">
                 <label className="text-[9px] font-bold text-neutral-500 uppercase tracking-wider block">IMAGE URL / UPLOAD</label>
-                <div className="flex gap-2 items-center">
+                <div className="flex sm:flex-row flex-col sm:items-center gap-2">
                   <input
                     type="text"
                     placeholder="e.g. /uploads/image.png"
@@ -78,7 +78,7 @@ export function MultiSectionEditor({ sectionKey, label, count, items, onUpdateIt
 
                   <label
                     htmlFor={`upload-${sectionKey}-${idx}`}
-                    className="cursor-pointer bg-white border border-neutral-300 hover:border-neutral-400 p-2 text-[10px] rounded flex items-center justify-center flex-shrink-0 transition-colors select-none h-9 w-9"
+                    className="cursor-pointer bg-white border sm:w-auto w-full  border-neutral-300 hover:border-neutral-400 p-2 text-[10px] rounded flex items-center justify-center flex-shrink-0 transition-colors select-none h-9 w-9"
                     title="Upload Image"
                   >
                     {uploadingIndex?.section === sectionKey && uploadingIndex?.idx === idx ? (
@@ -87,12 +87,24 @@ export function MultiSectionEditor({ sectionKey, label, count, items, onUpdateIt
                       <Upload className="h-3.5 w-3.5 text-neutral-600" />
                     )}
                   </label>
-                  <input id={`upload-${sectionKey}-${idx}`} type="file" accept="image/*" onChange={(e) => onFileUpload(e, sectionKey, idx)} className="hidden" />
+                  <input
+                    id={`upload-${sectionKey}-${idx}`}
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => onFileUpload(e, sectionKey, idx)}
+                    className="hidden"
+                  />
                 </div>
 
                 {item.image && (
                   <div className="relative h-24 w-full mt-2 bg-white border border-neutral-200 rounded overflow-hidden flex items-center justify-center group">
-                    <Image src={getValidImageUrl(item.image)} alt={`Preview Section ${idx + 1}`} fill sizes="250px" className="object-contain p-1.5" />
+                    <Image
+                      src={getValidImageUrl(item.image)}
+                      alt={`Preview Section ${idx + 1}`}
+                      fill
+                      sizes="250px"
+                      className="object-contain p-1.5"
+                    />
                     <button
                       type="button"
                       onClick={() => onUpdateItem(idx, "image", "")}

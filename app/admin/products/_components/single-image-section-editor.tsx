@@ -24,7 +24,7 @@ export function SingleImageSectionEditor({
 }: SingleImageSectionEditorProps) {
   return (
     <div className="bg-white border border-neutral-200 rounded-lg p-6 shadow-sm space-y-4 font-mono text-xs">
-      <div className="border-b border-neutral-100 pb-3 mb-2 flex justify-between items-center">
+      <div className="border-b border-neutral-100 pb-3 mb-2 flex sm:flex-row flex-col gap-2 items-center justify-between items-center">
         <h2 className="text-xs font-bold uppercase tracking-wider text-neutral-800 flex items-center gap-2">
           <Sparkles className="h-4 w-4 text-[#D71921]" />
           {label}
@@ -39,18 +39,18 @@ export function SingleImageSectionEditor({
       </div>
 
       <div className="space-y-3">
-        <div className="flex gap-2 items-center">
+        <div className="flex sm:flex-row flex-col gap-2 items-center">
           <input
             type="text"
             placeholder="Upload image file or enter image URL..."
             value={image}
             onChange={(e) => onUpdateImage(e.target.value)}
-            className="flex-1 bg-white border border-neutral-300 rounded p-2 text-neutral-900 font-mono text-[11px] focus:outline-none focus:border-[#D71921]"
+            className="flex-1 sm:w-auto w-full bg-white border border-neutral-300 rounded p-2 text-neutral-900 font-mono text-[11px] focus:outline-none focus:border-[#D71921]"
           />
 
           <label
             htmlFor={`upload-single-${sectionKey}`}
-            className="cursor-pointer bg-white border border-neutral-300 hover:border-neutral-400 p-2 text-[10px] rounded flex items-center justify-center flex-shrink-0 transition-colors select-none h-9 px-3 gap-1.5 font-bold font-mono"
+            className="cursor-pointer sm:w-auto w-full bg-white border border-neutral-300 hover:border-neutral-400 p-2 text-[10px] rounded flex items-center justify-center flex-shrink-0 transition-colors select-none h-9 px-3 gap-1.5 font-bold font-mono"
             title="Upload Image"
           >
             {isUploading ? (
@@ -67,19 +67,13 @@ export function SingleImageSectionEditor({
             type="file"
             accept="image/*"
             onChange={(e) => onFileUpload(e, sectionKey, 0)}
-            className="hidden"
+            className="hidden "
           />
         </div>
 
         {image && (
           <div className="relative h-48 sm:h-64 w-full bg-neutral-50 border border-neutral-200 rounded-lg overflow-hidden flex items-center justify-center group">
-            <Image
-              src={getValidImageUrl(image)}
-              alt={`${label} Preview`}
-              fill
-              sizes="800px"
-              className="object-contain p-3"
-            />
+            <Image src={getValidImageUrl(image)} alt={`${label} Preview`} fill sizes="800px" className="object-contain p-3" />
             <button
               type="button"
               onClick={() => onUpdateImage("")}

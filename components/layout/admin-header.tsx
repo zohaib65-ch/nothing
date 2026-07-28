@@ -64,7 +64,7 @@ export function AdminHeader() {
         </h1>
       </div>
 
-      <div className="flex items-center space-x-2 sm:space-x-4">
+      <div className="hidden sm:flex items-center space-x-2 sm:space-x-4">
         <Link
           href="/"
           target="_blank"
