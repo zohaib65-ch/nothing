@@ -1,15 +1,38 @@
 import { v2 as cloudinary, UploadApiResponse } from "cloudinary";
 
+// Helper to clean process.env values (strip quotes, carriage returns, trailing spaces)
+function cleanEnv(val?: string): string {
+  if (!val) return "";
+  return val.trim().replace(/^["']|["']$/g, "").trim();
+}
+
 // ── Configure Cloudinary ─────────────────────────────────
 
 export function configureCloudinary() {
-  const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
-  const apiKey = process.env.CLOUDINARY_API_KEY;
-  const apiSecret = process.env.CLOUDINARY_API_SECRET;
+  // Check official CLOUDINARY_URL string if provided
+  const cloudinaryUrl = cleanEnv(process.env.CLOUDINARY_URL);
+  if (cloudinaryUrl && cloudinaryUrl.startsWith("cloudinary://")) {
+    cloudinary.config({
+      cloudinary_url: cloudinaryUrl,
+      secure: true,
+    });
+    return;
+  }
 
-  if (!cloudName || !apiKey || !apiSecret || cloudName === "your_cloud_name_here" || apiKey === "your_api_key_here") {
+  // Check individual keys (support standard + NEXT_PUBLIC fallback)
+  const cloudName = cleanEnv(process.env.CLOUDINARY_CLOUD_NAME || process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME);
+  const apiKey = cleanEnv(process.env.CLOUDINARY_API_KEY || process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY);
+  const apiSecret = cleanEnv(process.env.CLOUDINARY_API_SECRET || process.env.NEXT_PUBLIC_CLOUDINARY_API_SECRET);
+
+  const missing: string[] = [];
+  if (!cloudName || cloudName === "your_cloud_name_here") missing.push("CLOUDINARY_CLOUD_NAME");
+  if (!apiKey || apiKey === "your_api_key_here") missing.push("CLOUDINARY_API_KEY");
+  if (!apiSecret || apiSecret === "your_api_secret_here") missing.push("CLOUDINARY_API_SECRET");
+
+  if (missing.length > 0) {
     throw new Error(
-      "Missing Cloudinary credentials. Set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET in your .env or .env.local file."
+      `Missing Cloudinary credentials in Environment Variables: [ ${missing.join(", ")} ]. ` +
+      `Please add these keys to your production environment settings (Vercel / hosting dashboard).`
     );
   }
 
