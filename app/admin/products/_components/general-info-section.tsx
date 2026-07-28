@@ -85,8 +85,8 @@ export function GeneralInfoSection({ fileInputRef, handleFileUpload, isUploading
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 font-mono text-xs">
-            <Input label="PRICE (RS)" type="number" placeholder="199" error={errors.price?.message} {...register("price", { valueAsNumber: true })} />
-            <Input label="SALE PRICE (RS) (OPTIONAL)" type="number" placeholder="e.g. 179" error={errors.salePrice?.message} {...register("salePrice", { valueAsNumber: true })} />
+            <Input label="PRICE (RS)" type="number" placeholder="199" error={errors.price?.message} {...register("price", { setValueAs: (v) => (v === "" || v === null || v === undefined || isNaN(v) ? 0 : Number(v)) })} />
+            <Input label="SALE PRICE (RS) (OPTIONAL)" type="number" placeholder="e.g. 179" error={errors.salePrice?.message} {...register("salePrice", { setValueAs: (v) => (v === "" || v === null || v === undefined || isNaN(v) ? undefined : Number(v)) })} />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 font-mono text-xs">

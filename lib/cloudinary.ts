@@ -3,7 +3,10 @@ import { v2 as cloudinary, UploadApiResponse } from "cloudinary";
 // Helper to clean process.env values (strip quotes, carriage returns, trailing spaces)
 function cleanEnv(val?: string): string {
   if (!val) return "";
-  return val.trim().replace(/^["']|["']$/g, "").trim();
+  return val
+    .trim()
+    .replace(/^["']|["']$/g, "")
+    .trim();
 }
 
 // ── Configure Cloudinary ─────────────────────────────────
@@ -21,24 +24,18 @@ export function configureCloudinary() {
 
   // Check individual keys with multiple fallbacks
   const cloudName = cleanEnv(
-    process.env.CLOUDINARY_CLOUD_NAME || 
-    process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 
-    process.env.CLOUD_NAME ||
-    "mdbbmid2" // Fallback default
+    process.env.CLOUDINARY_CLOUD_NAME || process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || process.env.CLOUD_NAME || "mdbbmid2", // Fallback default
   );
 
   const apiKey = cleanEnv(
-    process.env.CLOUDINARY_API_KEY || 
-    process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY || 
-    process.env.CLOUDINARY_KEY ||
-    "697671926947687" // Fallback default
+    process.env.CLOUDINARY_API_KEY || process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY || process.env.CLOUDINARY_KEY || "697671926947687", // Fallback default
   );
 
   const apiSecret = cleanEnv(
-    process.env.CLOUDINARY_API_SECRET || 
-    process.env.NEXT_PUBLIC_CLOUDINARY_API_SECRET || 
-    process.env.CLOUDINARY_SECRET ||
-    "_RHzI2dIFdtdTenVPs_thB6cwUE" // Fallback default
+    process.env.CLOUDINARY_API_SECRET ||
+      process.env.NEXT_PUBLIC_CLOUDINARY_API_SECRET ||
+      process.env.CLOUDINARY_SECRET ||
+      "_RHzI2dIFdtdTenVPs_thB6cwUE", // Fallback default
   );
 
   cloudinary.config({
@@ -55,10 +52,7 @@ export function configureCloudinary() {
  * Upload an image to Cloudinary from a Buffer, base64 string, or remote URL.
  * Returns the secure Cloudinary URL.
  */
-export async function uploadToCloudinary(
-  source: Buffer | string,
-  folder = "nothing-store"
-): Promise<string> {
+export async function uploadToCloudinary(source: Buffer | string, folder = "nothing-store"): Promise<string> {
   configureCloudinary();
 
   // If source is a remote URL (http/https), use upload directly
@@ -115,7 +109,7 @@ export async function deleteFromCloudinary(publicId: string): Promise<void> {
  */
 export async function listCloudinaryImages(
   folder = "nothing-store",
-  maxResults = 100
+  maxResults = 100,
 ): Promise<{ filename: string; url: string; size: number; createdAt: string }[]> {
   configureCloudinary();
 
