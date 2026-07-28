@@ -65,8 +65,12 @@ export class ProductService {
         this.saveProductLocal(saved);
         return saved;
       }
-    } catch {
-      // Fallback local save
+      const errData = await res.json();
+      throw new Error(errData.error || errData.message || "Failed to save product to server");
+    } catch (err: any) {
+      if (err.message && !err.message.includes("Failed to fetch")) {
+        throw err;
+      }
     }
     return this.saveProductLocal(product);
   }
@@ -91,7 +95,11 @@ export class ProductService {
     }
 
     if (this.isBrowser()) {
-      localStorage.setItem("nothing_products_v1", JSON.stringify(updated));
+      try {
+        localStorage.setItem("nothing_products_v1", JSON.stringify(updated));
+      } catch {
+        // Quota exceeded in localStorage, safe to ignore as MongoDB handles primary storage
+      }
     }
     return product;
   }
@@ -106,7 +114,11 @@ export class ProductService {
     const products = this.getProductsLocal();
     const filtered = products.filter((p) => p.id !== id);
     if (this.isBrowser()) {
-      localStorage.setItem("nothing_products_v1", JSON.stringify(filtered));
+      try {
+        localStorage.setItem("nothing_products_v1", JSON.stringify(filtered));
+      } catch {
+        // Quota exceeded in localStorage
+      }
     }
     return true;
   }
@@ -137,9 +149,7 @@ export class ProductService {
 
   public static saveCategory(category: CategoryInfo): CategoryInfo {
     const categories = this.getCategories();
-    const index = categories.findIndex(
-      (c) => (c as any)._id === (category as any)._id || c.id === category.id || c.slug === category.slug
-    );
+    const index = categories.findIndex((c) => (c as any)._id === (category as any)._id || c.id === category.id || c.slug === category.slug);
     let updated: CategoryInfo[];
     if (index >= 0) {
       updated = [...categories];
@@ -161,13 +171,7 @@ export class ProductService {
     }
 
     const categories = this.getCategories();
-    const filtered = categories.filter(
-      (c) =>
-        (c as any)._id !== idOrSlug &&
-        c.id !== idOrSlug &&
-        c.slug !== idOrSlug &&
-        (!slug || c.slug !== slug)
-    );
+    const filtered = categories.filter((c) => (c as any)._id !== idOrSlug && c.id !== idOrSlug && c.slug !== idOrSlug && (!slug || c.slug !== slug));
     if (this.isBrowser()) {
       localStorage.setItem("nothing_categories_v1", JSON.stringify(filtered));
     }

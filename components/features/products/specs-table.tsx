@@ -12,7 +12,7 @@ export function SpecsTable({ specifications }: SpecsTableProps) {
     <div className="space-y-6">
       <div className="flex items-center space-x-2">
         <span className="h-2 w-2 bg-[#D71921]" />
-        <h3 className="font-mono text-lg font-bold uppercase tracking-widest text-white">
+        <h3 className="font-mono text-lg font-bold uppercase tracking-widest text-neutral-900 dark:text-white">
           TECHNICAL SPECIFICATIONS
         </h3>
       </div>
@@ -28,12 +28,12 @@ export function SpecsTable({ specifications }: SpecsTableProps) {
               {group.items.map((item, itemIdx) => (
                 <div
                   key={itemIdx}
-                  className="flex flex-col space-y-1 pb-3 border-b border-[#26262A]"
+                  className="flex flex-col space-y-1 pb-3 border-b border-neutral-200 dark:border-[#26262A]"
                 >
-                  <span className="font-mono text-[10px] text-neutral-500 uppercase tracking-widest">
+                  <span className="font-mono text-[10px] text-neutral-500 dark:text-neutral-400 uppercase tracking-widest font-bold">
                     {item.name}
                   </span>
-                  <span className="font-sans text-xs font-semibold text-neutral-200">
+                  <span className="font-sans text-xs font-semibold text-neutral-900 dark:text-neutral-200">
                     {item.value}
                   </span>
                 </div>

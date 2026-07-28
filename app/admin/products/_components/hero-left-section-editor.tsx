@@ -48,11 +48,9 @@ export function HeroLeftSectionEditor({ items, onUpdateItem, onFileUpload, uploa
         {normalizedItems.map((item, idx) => {
           if (idx === 1) {
             return (
-              <div key={idx} className="border border-neutral-200 rounded-lg p-4 bg-neutral-50/50 flex flex-col justify-between min-h-[340px] relative">
+              <div key={idx} className="border border-neutral-200 rounded-lg p-4 bg-neutral-50/50 flex flex-col justify-between  relative">
                 <div className="flex justify-between items-center border-b border-neutral-200/60 pb-2">
-                  <span className="text-[10px] font-bold text-neutral-500 uppercase">
-                    SECTION {idx + 1} (SPECS)
-                  </span>
+                  <span className="text-[10px] font-bold text-neutral-500 uppercase">SECTION {idx + 1} (SPECS)</span>
                   {filledSpecsCount > 0 ? (
                     <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" title="Active Specs" />
                   ) : (
@@ -61,14 +59,8 @@ export function HeroLeftSectionEditor({ items, onUpdateItem, onFileUpload, uploa
                 </div>
 
                 <div className="flex-1 flex flex-col justify-center items-center text-center space-y-4 my-6">
-                  <div className="p-4 bg-neutral-100 rounded-full border border-neutral-200">
-                    <FileText className="h-10 w-10 text-[#D71921]" />
-                  </div>
                   <div className="space-y-1">
                     <h3 className="font-bold text-neutral-800 text-[13px] uppercase">PRODUCT SPECIFICATIONS</h3>
-                    <p className="text-[10px] text-neutral-400 max-w-[200px] leading-relaxed font-sans">
-                      Configure colours, capacity, dimensions, operating system, and more.
-                    </p>
                   </div>
                 </div>
 
@@ -114,17 +106,6 @@ export function HeroLeftSectionEditor({ items, onUpdateItem, onFileUpload, uploa
                     value={item.title || ""}
                     onChange={(e) => onUpdateItem(idx, "title", e.target.value)}
                     className="w-full bg-white border border-neutral-300 rounded p-2 text-neutral-900 font-mono text-[11px] focus:outline-none focus:border-[#D71921]"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-[9px] font-bold text-neutral-500 uppercase tracking-wider block">DESCRIPTION</label>
-                  <textarea
-                    rows={2}
-                    placeholder="Enter description text..."
-                    value={item.description || ""}
-                    onChange={(e) => onUpdateItem(idx, "description", e.target.value)}
-                    className="w-full bg-white border border-neutral-300 rounded p-2 text-neutral-900 font-mono text-[11px] focus:outline-none focus:border-[#D71921] resize-none"
                   />
                 </div>
 
@@ -189,12 +170,7 @@ export function HeroLeftSectionEditor({ items, onUpdateItem, onFileUpload, uploa
         })}
       </div>
 
-      <SpecsModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        specifications={specifications}
-        onSave={handleSaveSpecs}
-      />
+      <SpecsModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} specifications={specifications} onSave={handleSaveSpecs} />
     </div>
   );
 }

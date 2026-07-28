@@ -4,22 +4,22 @@ import { Product } from "@/types";
 export interface IProductDocument extends Omit<Product, "id">, Document {}
 
 const ProductVariantSchema = new Schema({
-  id: { type: String, required: true },
-  name: { type: String, required: true },
-  storage: { type: String },
-  color: { type: String, required: true },
-  colorHex: { type: String, required: true },
-  price: { type: Number, required: true },
+  id: { type: String, default: () => `var-${Date.now()}` },
+  name: { type: String, default: "Standard Variant" },
+  storage: { type: String, default: "" },
+  color: { type: String, default: "Standard" },
+  colorHex: { type: String, default: "#000000" },
+  price: { type: Number, default: 0 },
   salePrice: { type: Number },
-  sku: { type: String, required: true },
+  sku: { type: String, default: () => `SKU-${Date.now()}` },
   inStock: { type: Boolean, default: true },
-  image: { type: String },
+  image: { type: String, default: "" },
 });
 
 const ProductHighlightSchema = new Schema({
-  title: { type: String, required: true },
-  value: { type: String, required: true },
-  subtitle: { type: String, required: true },
+  title: { type: String, default: "" },
+  value: { type: String, default: "" },
+  subtitle: { type: String, default: "" },
 });
 
 const CustomSectionItemSchema = new Schema({
@@ -29,34 +29,34 @@ const CustomSectionItemSchema = new Schema({
 });
 
 const ProductFeatureSchema = new Schema({
-  id: { type: String, required: true },
-  title: { type: String, required: true },
-  description: { type: String, required: true },
-  tagline: { type: String },
-  icon: { type: String },
-  image: { type: String },
+  id: { type: String, default: () => `feat-${Date.now()}` },
+  title: { type: String, default: "" },
+  description: { type: String, default: "" },
+  tagline: { type: String, default: "" },
+  icon: { type: String, default: "" },
+  image: { type: String, default: "" },
 });
 
 const SpecificationItemSchema = new Schema({
-  name: { type: String, required: true },
-  value: { type: String, required: true },
+  name: { type: String, default: "" },
+  value: { type: String, default: "" },
 });
 
 const SpecificationGroupSchema = new Schema({
-  category: { type: String, required: true },
+  category: { type: String, default: "" },
   items: [SpecificationItemSchema],
 });
 
 const ProductSchema = new Schema<IProductDocument>(
   {
     name: { type: String, required: true, trim: true },
-    slug: { type: String, required: true, unique: true, index: true },
+    slug: { type: String, required: true, index: true },
     tagline: { type: String, default: "" },
-    description: { type: String, required: true },
+    description: { type: String, default: "" },
     shortDescription: { type: String, default: "" },
-    price: { type: Number, required: true },
+    price: { type: Number, default: 0 },
     salePrice: { type: Number },
-    category: { type: String, required: true, index: true },
+    category: { type: String, default: "phones", index: true },
     subcategory: { type: String, default: "General" },
     images: [{ type: String }],
     gallery: [{ type: String }],
@@ -74,8 +74,8 @@ const ProductSchema = new Schema<IProductDocument>(
     fourColumnSections: { type: [CustomSectionItemSchema], default: [] },
     fiveColumnSections: { type: [CustomSectionItemSchema], default: [] },
     seo: {
-      metaTitle: { type: String },
-      metaDescription: { type: String },
+      metaTitle: { type: String, default: "" },
+      metaDescription: { type: String, default: "" },
       keywords: [{ type: String }],
     },
     isFeatured: { type: Boolean, default: false, index: true },

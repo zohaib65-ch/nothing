@@ -61,8 +61,8 @@ export default function EditProductPage() {
       await ProductService.saveProductApi(fullProduct);
       toast.success("Product updated successfully!");
       router.push("/admin/products");
-    } catch {
-      toast.error("Failed to save product.");
+    } catch (err: any) {
+      toast.error(err?.message || "Failed to save product.");
     } finally {
       setIsSubmitting(false);
     }

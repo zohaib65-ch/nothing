@@ -135,6 +135,15 @@ export function ProductForm({ initialProduct, isEditMode = false, onSave, isSubm
     setCurrentStep((prev) => Math.max(prev - 1, 1));
   };
 
+  const onInvalidForm = (errors: any) => {
+    console.error("Validation Errors:", errors);
+    const fieldNames = Object.keys(errors);
+    const errorMsg = fieldNames.length > 0 
+      ? `Validation error in: ${fieldNames.join(", ")}`
+      : "Please fill out all required fields.";
+    toast.error(errorMsg);
+  };
+
   const onSubmitForm = async (data: ProductFormValues) => {
     const finalSlug = data.slug || slugify(data.name || "");
     const validImage = getValidImageUrl(data.images?.[0]);
@@ -191,7 +200,7 @@ export function ProductForm({ initialProduct, isEditMode = false, onSave, isSubm
       </div>
 
       <FormProvider {...methods}>
-        <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmitForm, onInvalidForm)} className="space-y-6">
           {currentStep === 1 && (
             <GeneralInfoSection fileInputRef={fileInputRef} handleFileUpload={handleFileUpload} isUploading={isUploading} uploadError={uploadError} />
           )}
@@ -199,8 +208,8 @@ export function ProductForm({ initialProduct, isEditMode = false, onSave, isSubm
           {currentStep === 3 && <BentoGridSection onFileUpload={handleSectionImageUpload} uploadingIndex={uploadingIndex} />}
           {currentStep === 4 && <ColumnGridsSection onFileUpload={handleSectionImageUpload} uploadingIndex={uploadingIndex} />}
 
-          <div className="flex sm:flex-row flex-col w-full gap-2 justify-between items-center pt-6 px-6 border-t border-neutral-200 bg-white sticky bottom-0 py-4 shadow-[0_-10px_20px_rgba(0,0,0,0.05)] rounded-b-lg px-2 z-10">
-            <div className="w-full ">
+          <div className="flex sm:flex-row flex-col w-full gap-3 justify-between items-center pt-6 px-6 border-t border-neutral-200 bg-white sticky bottom-0 py-4 shadow-[0_-10px_20px_rgba(0,0,0,0.05)] rounded-b-lg px-2 z-10">
+            <div className="w-full sm:w-auto">
               {currentStep > 1 ? (
                 <Button
                   type="button"
@@ -221,29 +230,30 @@ export function ProductForm({ initialProduct, isEditMode = false, onSave, isSubm
               )}
             </div>
 
-            <div className="w-full sm:w-auto sm:ml-auto">
-              {currentStep < 4 ? (
+            <div className="flex sm:flex-row flex-col items-center gap-3 w-full sm:w-auto sm:ml-auto">
+              {currentStep < 4 && (
                 <Button
                   type="button"
                   variant="primary"
                   size="md"
                   onClick={handleNext}
-                  className="bg-neutral-900 flex sm:w-auto w-full text-white hover:bg-neutral-800 whitespace-nowrap"
+                  className="bg-neutral-900 sm:w-auto w-full text-white hover:bg-neutral-800 whitespace-nowrap"
+                  rightIcon={<ChevronRight className="h-4 w-4" />}
                 >
                   NEXT STEP
                 </Button>
-              ) : (
-                <Button
-                  type="submit"
-                  className="flex sm:w-auto w-full"
-                  variant="red"
-                  size="md"
-                  isLoading={isSubmitting}
-                  leftIcon={<Save className="h-4 w-4" />}
-                >
-                  {isEditMode ? "SAVE CHANGES" : "SAVE PRODUCT"}
-                </Button>
               )}
+
+              <Button
+                type="submit"
+                className="sm:w-auto w-full"
+                variant="red"
+                size="md"
+                isLoading={isSubmitting}
+                leftIcon={<Save className="h-4 w-4" />}
+              >
+                {isEditMode ? "SAVE CHANGES" : "SAVE PRODUCT"}
+              </Button>
             </div>
           </div>
         </form>

@@ -7,15 +7,15 @@ export const CustomSectionItemSchema = z.object({
 });
 
 export const ProductVariantSchema = z.object({
-  id: z.string(),
-  name: z.string(),
+  id: z.string().optional(),
+  name: z.string().optional(),
   storage: z.string().optional(),
-  color: z.string(),
-  colorHex: z.string(),
-  price: z.number().min(0),
-  salePrice: z.number().optional(),
-  sku: z.string(),
-  inStock: z.boolean(),
+  color: z.string().optional(),
+  colorHex: z.string().optional(),
+  price: z.coerce.number().optional().default(0),
+  salePrice: z.coerce.number().optional().nullable(),
+  sku: z.string().optional(),
+  inStock: z.boolean().optional().default(true),
   image: z.string().optional(),
 });
 
@@ -30,41 +30,39 @@ export const SpecificationGroupSchema = z.object({
 });
 
 export const ProductFeatureSchema = z.object({
-  id: z.string(),
-  title: z.string(),
-  description: z.string(),
+  id: z.string().optional(),
+  title: z.string().optional(),
+  description: z.string().optional(),
   icon: z.string().optional(),
   image: z.string().optional(),
   tagline: z.string().optional(),
 });
 
 export const ProductHighlightSchema = z.object({
-  title: z.string(),
-  value: z.string(),
-  subtitle: z.string(),
+  title: z.string().optional(),
+  value: z.string().optional(),
+  subtitle: z.string().optional(),
 });
 
 export const ProductSEOSchema = z.object({
-  metaTitle: z.string(),
-  metaDescription: z.string(),
-  keywords: z.array(z.string()),
+  metaTitle: z.string().optional(),
+  metaDescription: z.string().optional(),
+  keywords: z.array(z.string()).optional(),
 });
 
 export const ProductSchema = z.object({
-  id: z.string(),
+  id: z.string().optional(),
   name: z.string().min(1, "Product name is required"),
   slug: z.string().optional(),
-  tagline: z.string().min(1, "Tagline is required"),
-  description: z.string().min(1, "Description is required"),
-  shortDescription: z.string().min(1, "Short description is required"),
-  price: z.number({
-    message: "Price is required",
-  }).min(1, "Price is required"),
-  salePrice: z.number().optional(),
-  originalPrice: z.number().optional(),
-  category: z.string().min(1, "Category is required"),
-  subcategory: z.string().min(1, "Subcategory is required"),
-  images: z.array(z.string()),
+  tagline: z.string().optional(),
+  description: z.string().optional(),
+  shortDescription: z.string().optional(),
+  price: z.coerce.number().optional().default(0),
+  salePrice: z.coerce.number().optional().nullable(),
+  originalPrice: z.coerce.number().optional().nullable(),
+  category: z.string().optional(),
+  subcategory: z.string().optional(),
+  images: z.array(z.string()).optional().default([]),
   gallery: z.array(z.string()).optional(),
   videos: z.array(z.string()).optional(),
   variants: z.array(ProductVariantSchema).optional(),

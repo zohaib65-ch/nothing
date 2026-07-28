@@ -55,17 +55,6 @@ export function MultiSectionEditor({ sectionKey, label, count, items, onUpdateIt
               </div>
 
               <div className="space-y-1">
-                <label className="text-[9px] font-bold text-neutral-500 uppercase tracking-wider block">DESCRIPTION</label>
-                <textarea
-                  rows={2}
-                  placeholder="Enter description text..."
-                  value={item.description || ""}
-                  onChange={(e) => onUpdateItem(idx, "description", e.target.value)}
-                  className="w-full bg-white border border-neutral-300 rounded p-2 text-neutral-900 font-mono text-[11px] focus:outline-none focus:border-[#D71921] resize-none"
-                />
-              </div>
-
-              <div className="space-y-1">
                 <label className="text-[9px] font-bold text-neutral-500 uppercase tracking-wider block">IMAGE URL / UPLOAD</label>
                 <div className="flex sm:flex-row flex-col sm:items-center gap-2">
                   <input
