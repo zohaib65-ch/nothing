@@ -4,7 +4,6 @@ import * as React from "react";
 import Link from "next/link";
 import { ProductService } from "@/services/productService";
 import { Product } from "@/types";
-import { ArrowLeft } from "lucide-react";
 import { useParams } from "next/navigation";
 import { Loader } from "@/components/ui/loader";
 
@@ -18,7 +17,6 @@ export default function CollectionSlugPage() {
     const loadProducts = async () => {
       setIsLoading(true);
       try {
-        // Build query: always filter published; add category unless viewing shop-all
         const params = new URLSearchParams({ status: "published" });
         if (slug !== "shop-all") params.set("category", slug);
         const data = await ProductService.fetchProductsFromApi(params.toString());
