@@ -152,6 +152,7 @@ export function ProductForm({ initialProduct, isEditMode = false, onSave, isSubm
       const st = v.storage || (v as any).capacity || "Standard";
       return {
         ...v,
+        specifications: v.specifications || [],
         storage: st,
         capacity: st,
         color: v.color || "Standard",
@@ -180,18 +181,15 @@ export function ProductForm({ initialProduct, isEditMode = false, onSave, isSubm
           sku: `SKU-${Date.now()}`,
           inStock: true,
           image: validImage || "",
+          specifications: [],
         },
       ];
     }
 
     // Always extract storageOptions and colors directly from variants
-    const finalStorageOptions = Array.from(
-      new Set(updatedVariants.map((v) => v.storage || (v as any).capacity).filter(Boolean))
-    ) as string[];
+    const finalStorageOptions = Array.from(new Set(updatedVariants.map((v) => v.storage || (v as any).capacity).filter(Boolean))) as string[];
 
-    const finalColors = Array.from(
-      new Set(updatedVariants.map((v) => v.color).filter(Boolean))
-    ).map((c) => ({
+    const finalColors = Array.from(new Set(updatedVariants.map((v) => v.color).filter(Boolean))).map((c) => ({
       name: c,
       hex: updatedVariants.find((v) => v.color === c)?.colorHex || "#000000",
     }));

@@ -46,8 +46,7 @@ const renderMediaContainer = (url: string | undefined, title: string, containerC
 
 export function HeroSpecShowcase({ product, selectedVariant, onSelectVariant, onAddToCart, onOpenSpecs }: HeroSpecShowcaseProps) {
   const item0Left = product.heroLeftSections?.[0];
-  const item1Left = product.heroLeftSections?.[1];
-  const item2Left = product.heroLeftSections?.[2];
+  const item2Left = product.heroLeftSections?.[1] || product.heroLeftSections?.[2];
   const item0Right = product.heroRightSections?.[0];
   const item1Right = product.heroRightSections?.[1];
   const item2Right = product.heroRightSections?.[2];
@@ -68,7 +67,7 @@ export function HeroSpecShowcase({ product, selectedVariant, onSelectVariant, on
           <div className="flex gap-6">
             <div onClick={onOpenSpecs} className="group flex flex-col items-center lg:items-start gap-2 cursor-pointer">
               <img src="/specs.svg" alt="" className="h-16 w-16" />
-              <span className="font-ntype text-base text-neutral-800 tracking-wide">{item1Left?.title || "Specs"}</span>
+              <span className="font-ntype text-base text-neutral-800 tracking-wide">Specs</span>
             </div>
 
             {(item2Left?.image || item2Left?.title) && (

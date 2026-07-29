@@ -2,14 +2,14 @@
 
 import * as React from "react";
 import Image from "next/image";
-import { Layers, Plus, Trash2, Upload } from "lucide-react";
-import { useFormContext, useFieldArray, Controller } from "react-hook-form";
+import { Layers, Plus, Trash2, Upload, FileText } from "lucide-react";
+import { useFormContext, useFieldArray } from "react-hook-form";
 import { ProductFormValues } from "@/lib/validations/product.schema";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { getValidImageUrl } from "@/lib/utils";
+import { SpecsModal } from "./specs-modal";
 
 const QUICK_COLOR_PRESETS = [
   { name: "Dark Grey", hex: "#1C1C1E" },
@@ -30,6 +30,7 @@ export function VariantsInfoSection() {
   const baseSalePrice = watch("salePrice");
 
   const [uploadingVariantIndex, setUploadingVariantIndex] = React.useState<number | null>(null);
+  const [editingSpecsIndex, setEditingSpecsIndex] = React.useState<number | null>(null);
 
   const {
     fields: variantFields,
@@ -85,7 +86,6 @@ export function VariantsInfoSection() {
 
   return (
     <div className="space-y-6 font-mono text-xs">
-      {/* Product Variants Management Card */}
       <div className="bg-white border border-neutral-200 rounded-lg p-6 shadow-sm space-y-5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-neutral-100 pb-3 mb-2">
           <div className="flex items-center gap-2">
@@ -100,16 +100,17 @@ export function VariantsInfoSection() {
             onClick={() =>
               appendVariant({
                 id: `var-${Date.now()}`,
-                name: `Variant ${variantFields.length + 1}`,
-                color: "Dark Grey",
-                colorHex: "#1C1C1E",
-                storage: "8 + 128",
-                capacity: "8 + 128",
+                name: "",
+                color: "",
+                colorHex: "",
+                storage: "",
+                capacity: "",
                 price: basePrice || 0,
                 salePrice: baseSalePrice,
-                sku: `SKU-${Date.now()}`,
+                sku: "",
                 inStock: true,
                 image: "",
+                specifications: [],
               } as any)
             }
             leftIcon={<Plus className="h-3.5 w-3.5" />}
@@ -152,20 +153,24 @@ export function VariantsInfoSection() {
               const currentColorVal = watch(`variants.${index}.color`);
               const currentColorHex = watch(`variants.${index}.colorHex`) || "#000000";
               const currentStorageVal = watch(`variants.${index}.storage`) || watch(`variants.${index}.capacity`);
+              const variantSpecs = watch(`variants.${index}.specifications` as const);
+              const hasCustomSpecs =
+                Array.isArray(variantSpecs) &&
+                variantSpecs.length > 0 &&
+                variantSpecs.some((g) => g.items?.some((i) => i.value && i.value.trim() !== ""));
 
               return (
                 <div
                   key={field.id}
                   className="bg-neutral-50/80 border border-neutral-200 rounded-xl p-5 font-mono text-xs space-y-5 shadow-sm hover:border-neutral-300 transition-colors"
                 >
-                  {/* Card Header */}
                   <div className="flex items-center justify-between border-b border-neutral-200/80 pb-3">
                     <div className="flex items-center gap-2.5">
                       <span className="w-6 h-6 rounded-full bg-neutral-900 text-white flex items-center justify-center text-[10px] font-bold shadow-sm">
                         #{index + 1}
                       </span>
                       <span className="w-4 h-4 rounded-full border border-neutral-400 shadow-inner" style={{ backgroundColor: currentColorHex }} />
-                      <span className="font-bold text-neutral-900 text-xs uppercase tracking-wider">{currentColorVal || "Color"}</span>
+                      <span className="font-bold text-neutral-900 text-xs uppercase tracking-wider">{currentColorVal || "New Variant"}</span>
                     </div>
 
                     <Button
@@ -349,12 +354,54 @@ export function VariantsInfoSection() {
                       </div>
                     </div>
                   </div>
+
+                  {/* Section 5: Variant Specifications */}
+                  <div className="pt-3 border-t border-neutral-200/80">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white border border-neutral-200 rounded-lg p-3">
+                      <div className="flex items-center gap-2.5 font-mono text-xs">
+                        <FileText className="h-4 w-4 text-neutral-500 shrink-0" />
+                        <div>
+                          <span className="font-bold text-neutral-800 uppercase tracking-wider block text-[11px]">VARIANT SPECIFICATIONS</span>
+                          <span className="text-[10px] text-neutral-400 block">
+                            {hasCustomSpecs ? "Custom specifications configured for this variant" : "No custom specs set for this variant"}
+                          </span>
+                        </div>
+                      </div>
+
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setEditingSpecsIndex(index)}
+                        className={`h-8 px-3 text-[11px] font-mono font-bold uppercase tracking-wider transition-all whitespace-nowrap ${
+                          hasCustomSpecs
+                            ? "bg-emerald-50 border-emerald-300 text-emerald-700 hover:bg-emerald-100"
+                            : "border-neutral-300 hover:bg-neutral-900 hover:text-white"
+                        }`}
+                      >
+                        {hasCustomSpecs ? "EDIT SPECS" : "+ CONFIGURE SPECS"}
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               );
             })}
           </div>
         )}
       </div>
+
+      {editingSpecsIndex !== null && (
+        <SpecsModal
+          isOpen={editingSpecsIndex !== null}
+          onClose={() => setEditingSpecsIndex(null)}
+          specifications={watch(`variants.${editingSpecsIndex}.specifications` as const) || []}
+          onSave={(updatedSpecs) => {
+            setValue(`variants.${editingSpecsIndex}.specifications` as const, updatedSpecs, { shouldDirty: true });
+            toast.success(`Specs saved for Variant #${editingSpecsIndex + 1}`);
+            setEditingSpecsIndex(null);
+          }}
+        />
+      )}
     </div>
   );
 }

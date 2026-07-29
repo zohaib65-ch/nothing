@@ -14,6 +14,7 @@ export interface ProductVariant {
   sku: string;
   inStock?: boolean;
   image?: string;
+  specifications?: SpecificationGroup[];
 }
 
 export interface SpecificationItem {

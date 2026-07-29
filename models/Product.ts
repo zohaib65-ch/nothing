@@ -3,6 +3,16 @@ import { Product } from "@/types";
 
 export interface IProductDocument extends Omit<Product, "id">, Document {}
 
+const SpecificationItemSchema = new Schema({
+  name: { type: String, default: "" },
+  value: { type: String, default: "" },
+});
+
+const SpecificationGroupSchema = new Schema({
+  category: { type: String, default: "" },
+  items: [SpecificationItemSchema],
+});
+
 const ProductVariantSchema = new Schema({
   id: { type: String, default: () => `var-${Date.now()}` },
   name: { type: String, default: "Standard Variant" },
@@ -16,6 +26,7 @@ const ProductVariantSchema = new Schema({
   storagePrices: { type: Schema.Types.Mixed, default: {} },
   sku: { type: String, default: () => `SKU-${Date.now()}` },
   image: { type: String, default: "" },
+  specifications: [SpecificationGroupSchema],
 });
 
 const ProductHighlightSchema = new Schema({
@@ -37,16 +48,6 @@ const ProductFeatureSchema = new Schema({
   tagline: { type: String, default: "" },
   icon: { type: String, default: "" },
   image: { type: String, default: "" },
-});
-
-const SpecificationItemSchema = new Schema({
-  name: { type: String, default: "" },
-  value: { type: String, default: "" },
-});
-
-const SpecificationGroupSchema = new Schema({
-  category: { type: String, default: "" },
-  items: [SpecificationItemSchema],
 });
 
 const ProductSchema = new Schema<IProductDocument>(
@@ -97,10 +98,7 @@ ProductSchema.set("toJSON", {
   },
 });
 
-// Compound index: every storefront list query filters by status + (optionally) category,
-// then sorts by sortOrder. This lets MongoDB satisfy all list queries from the index alone.
 ProductSchema.index({ status: 1, category: 1, sortOrder: 1 });
-// Separate index for slug lookups (product detail page)
 ProductSchema.index({ slug: 1 }, { unique: true });
 
 export const ProductModel: Model<IProductDocument> =

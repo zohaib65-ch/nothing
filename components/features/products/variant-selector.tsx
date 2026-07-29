@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import { Product, ProductVariant } from "@/types";
 import { cn } from "@/lib/utils";
 
@@ -10,26 +9,16 @@ export interface VariantSelectorProps {
   onSelectVariant: (variant: ProductVariant) => void;
 }
 
-export function VariantSelector({
-  product,
-  selectedVariant,
-  onSelectVariant,
-}: VariantSelectorProps) {
-  // Extract unique colors & storage options from product variants
+export function VariantSelector({ product, selectedVariant, onSelectVariant }: VariantSelectorProps) {
   const colors = (product.colors || []).filter((c) => c.name !== "Default Title");
   const storageOptions = (product.storageOptions || []).filter((s) => s !== "Default Title");
-  const selectedStorage =
-    selectedVariant.storage && selectedVariant.storage !== "Default Title" ? selectedVariant.storage : "";
-  const selectedColor =
-    selectedVariant.color && selectedVariant.color !== "Default Title" ? selectedVariant.color : "";
+  const selectedStorage = selectedVariant.storage && selectedVariant.storage !== "Default Title" ? selectedVariant.storage : "";
+  const selectedColor = selectedVariant.color && selectedVariant.color !== "Default Title" ? selectedVariant.color : "";
 
   const handleColorChange = (colorName: string) => {
-    // Find variant with matching color (and matching storage if applicable)
     const match =
       product.variants.find(
-        (v) =>
-          v.color.toLowerCase() === colorName.toLowerCase() &&
-          (!selectedVariant.storage || v.storage === selectedVariant.storage)
+        (v) => v.color.toLowerCase() === colorName.toLowerCase() && (!selectedVariant.storage || v.storage === selectedVariant.storage),
       ) || product.variants.find((v) => v.color.toLowerCase() === colorName.toLowerCase());
 
     if (match) onSelectVariant(match);
@@ -37,18 +26,14 @@ export function VariantSelector({
 
   const handleStorageChange = (storage: string) => {
     const match =
-      product.variants.find(
-        (v) =>
-          v.storage === storage &&
-          v.color.toLowerCase() === selectedVariant.color.toLowerCase()
-      ) || product.variants.find((v) => v.storage === storage);
+      product.variants.find((v) => v.storage === storage && v.color.toLowerCase() === selectedVariant.color.toLowerCase()) ||
+      product.variants.find((v) => v.storage === storage);
 
     if (match) onSelectVariant(match);
   };
 
   return (
     <div className="space-y-6 bg-[#0F0F10] border border-[#26262A] p-5">
-      {/* Storage Selector */}
       {storageOptions.length > 0 && (
         <div className="space-y-2.5">
           <div className="flex items-center justify-between font-mono text-xs uppercase">
@@ -66,7 +51,7 @@ export function VariantSelector({
                     "py-3 px-4 font-mono text-xs font-bold uppercase tracking-wider text-center border transition-all focus:outline-none",
                     isSelected
                       ? "bg-white text-black border-white shadow-[0_0_15px_rgba(255,255,255,0.2)]"
-                      : "bg-[#141416] text-neutral-300 border-[#26262A] hover:border-neutral-500"
+                      : "bg-[#141416] text-neutral-300 border-[#26262A] hover:border-neutral-500",
                   )}
                 >
                   {option}
@@ -86,8 +71,7 @@ export function VariantSelector({
           </div>
           <div className="flex flex-wrap gap-3">
             {colors.map((c) => {
-              const isSelected =
-                selectedVariant.color.toLowerCase() === c.name.toLowerCase();
+              const isSelected = selectedVariant.color.toLowerCase() === c.name.toLowerCase();
               return (
                 <button
                   key={c.name}
@@ -96,13 +80,10 @@ export function VariantSelector({
                     "group flex items-center space-x-2.5 px-3.5 py-2 border font-mono text-xs uppercase tracking-wider transition-all focus:outline-none",
                     isSelected
                       ? "border-[#D71921] bg-[#D71921]/10 text-white"
-                      : "border-[#26262A] bg-[#141416] text-neutral-400 hover:border-neutral-500 hover:text-white"
+                      : "border-[#26262A] bg-[#141416] text-neutral-400 hover:border-neutral-500 hover:text-white",
                   )}
                 >
-                  <span
-                    className="h-4 w-4 rounded-full border border-neutral-700 shadow-inner"
-                    style={{ backgroundColor: c.hex }}
-                  />
+                  <span className="h-4 w-4 rounded-full border border-neutral-700 shadow-inner" style={{ backgroundColor: c.hex }} />
                   <span>{c.name}</span>
                 </button>
               );

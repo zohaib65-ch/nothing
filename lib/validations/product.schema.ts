@@ -12,6 +12,16 @@ export const CustomSectionItemSchema = z.object({
   image: z.string().optional(),
 });
 
+export const SpecificationItemSchema = z.object({
+  name: z.string(),
+  value: z.string(),
+});
+
+export const SpecificationGroupSchema = z.object({
+  category: z.string(),
+  items: z.array(SpecificationItemSchema),
+});
+
 export const ProductVariantSchema = z.object({
   id: z.string().optional(),
   name: z.string().optional(),
@@ -26,16 +36,7 @@ export const ProductVariantSchema = z.object({
   sku: z.string().optional(),
   inStock: z.boolean().optional().default(true),
   image: z.string().optional(),
-});
-
-export const SpecificationItemSchema = z.object({
-  name: z.string(),
-  value: z.string(),
-});
-
-export const SpecificationGroupSchema = z.object({
-  category: z.string(),
-  items: z.array(SpecificationItemSchema),
+  specifications: z.array(SpecificationGroupSchema).optional(),
 });
 
 export const ProductFeatureSchema = z.object({

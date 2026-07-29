@@ -7,6 +7,7 @@ import { Product, ProductVariant } from "@/types";
 import { formatPrice, getValidImageUrl } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useCartStore } from "@/store/useCartStore";
 
 interface ProductBuyCardProps {
   product: Product;
@@ -156,6 +157,23 @@ export function ProductBuyCard({ product, selectedVariant, onSelectVariant, onAd
       ? Number(activePrices.salePrice)
       : Number(activePrices.price) || Number(product.price) || 0;
 
+  const { addItem } = useCartStore();
+
+  const handleAddToCart = () => {
+    const activeVariantToCart: ProductVariant = {
+      ...selectedVariant,
+      id: selectedVariant?.id ? `${selectedVariant.id}-${currentColor}-${currentCapacity}` : `var-${Date.now()}`,
+      color: currentColor,
+      storage: currentCapacity !== "Standard" ? currentCapacity : "",
+      capacity: currentCapacity !== "Standard" ? currentCapacity : "",
+      price: activeDisplayPrice,
+      salePrice: undefined,
+      image: getValidImageUrl(selectedVariant?.image || product.images?.[0] || ""),
+    };
+
+    addItem(product, activeVariantToCart, 1);
+  };
+
   return (
     <div
       className={`fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-[calc(100%-2rem)] max-w-md bg-white/95 backdrop-blur-md border border-neutral-300/90 rounded-2xl p-4 sm:p-5 shadow-2xl space-y-3 transition-all duration-500 ease-in-out dark:bg-[#0F0F10] dark:border-[#26262A] ${className}`}
@@ -212,7 +230,7 @@ export function ProductBuyCard({ product, selectedVariant, onSelectVariant, onAd
         type="button"
         variant="primary"
         size="lg"
-        onClick={onAddToCart}
+        onClick={handleAddToCart}
         className="w-full bg-neutral-950 hover:bg-neutral-800 text-white font-mono text-xs font-bold uppercase tracking-widest py-3 rounded-lg shadow-md cursor-pointer flex items-center justify-center gap-2 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200"
         leftIcon={<ShoppingBag className="h-4 w-4" />}
       >

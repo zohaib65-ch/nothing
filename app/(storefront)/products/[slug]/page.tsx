@@ -48,10 +48,21 @@ export default function ProductDetailPage() {
   }, [slug]);
 
   const handleOpenSpecs = () => {
-    if (product?.specifications) {
-      openSpecs(product.specifications, product.name);
+    if (product) {
+      const activeSpecs = Array.isArray(selectedVariant?.specifications) ? selectedVariant.specifications : product.specifications;
+      openSpecs(activeSpecs || [], product.name);
     }
   };
+
+  React.useEffect(() => {
+    if (product && selectedVariant) {
+      const activeSpecs = Array.isArray(selectedVariant.specifications) ? selectedVariant.specifications : product.specifications;
+      useSpecsStore.setState({
+        specifications: activeSpecs || [],
+        productName: product.name,
+      });
+    }
+  }, [selectedVariant, product]);
 
   if (isLoading) {
     return (
