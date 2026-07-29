@@ -351,9 +351,10 @@ export default function HomePage() {
       .finally(() => setIsLoading(false));
   }, []);
 
-  const selectedGems = products.filter((p) =>
-    ["cmf-buds-pro", "cmf-power-65w-gan", "nothing-usb-c-cable", "cmf-buds-pro-2", "nothing-power-45w", "ear-a"].includes(p.slug),
-  );
+  const selectedGems =
+    products.filter((p) => p.isFeatured).length > 0
+      ? products.filter((p) => p.isFeatured)
+      : products.slice(0, 6);
   const phoneModels = products.filter((p) => p.category === "phones");
 
   const filteredFaqs = allFaqs.filter((f) => f.category === activeFaqCategory);

@@ -1,12 +1,10 @@
 "use client";
 
-import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ColumnDef } from "@tanstack/react-table";
 import { Product } from "@/types";
 import { formatPrice, getValidImageUrl } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Star, Edit2, Trash2 } from "lucide-react";
 
@@ -53,6 +51,21 @@ export const getColumns = (
     cell: ({ row }) => {
       const prod = row.original;
       return <span className="font-bold text-neutral-900">{formatPrice(prod.salePrice || prod.price)}</span>;
+    },
+  },
+  {
+    accessorKey: "isFeatured",
+    header: "FEATURED",
+    cell: ({ row }) => {
+      const prod = row.original;
+      return (
+        <div className="flex items-center gap-2 font-mono text-[11px] font-bold">
+          <Switch checked={Boolean(prod.isFeatured)} onCheckedChange={() => handleToggleFeatured(prod)} />
+          <span className={prod.isFeatured ? "text-amber-600 tracking-wider" : "text-neutral-400 font-normal tracking-wider"}>
+            {prod.isFeatured ? "YES" : "NO"}
+          </span>
+        </div>
+      );
     },
   },
   {

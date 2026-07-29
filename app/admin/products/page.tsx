@@ -10,8 +10,6 @@ import { DataTable } from "@/components/ui/data-table";
 import { ColumnDef } from "@tanstack/react-table";
 import { getColumns } from "./_components/columns";
 import { Plus, Search, Loader2 } from "lucide-react";
-
-// Modular Delete Modal Component
 import { DeleteProductModal } from "./_components/delete-product-modal";
 
 export default function AdminProductsPage() {
@@ -42,14 +40,17 @@ export default function AdminProductsPage() {
     loadProducts(true);
   }, [loadProducts]);
 
-  const handleEdit = (prod: Product) => {
-    router.push(`/admin/products/${prod.id}/edit`);
-  };
+  const handleEdit = React.useCallback(
+    (prod: Product) => {
+      router.push(`/admin/products/${prod.id}/edit`);
+    },
+    [router],
+  );
 
-  const handlePromptDelete = (prod: Product) => {
+  const handlePromptDelete = React.useCallback((prod: Product) => {
     setProductToDelete(prod);
     setIsDeleteModalOpen(true);
-  };
+  }, []);
 
   const handleConfirmDelete = async () => {
     if (!productToDelete) return;
@@ -61,16 +62,18 @@ export default function AdminProductsPage() {
     loadProducts(false);
   };
 
-  const handleToggleFeatured = async (prod: Product) => {
-    await ProductService.saveProductApi({ ...prod, isFeatured: !prod.isFeatured });
-    loadProducts(false);
-  };
+  const handleToggleFeatured = React.useCallback(async (prod: Product) => {
+    const updated: Product = { ...prod, isFeatured: !prod.isFeatured };
+    setProducts((prev) => prev.map((p) => (p.id === prod.id ? updated : p)));
+    await ProductService.saveProductApi(updated);
+  }, []);
 
-  const handleToggleStatus = async (prod: Product) => {
-    const newStatus = prod.status === "published" ? "draft" : "published";
-    await ProductService.saveProductApi({ ...prod, status: newStatus });
-    loadProducts(false);
-  };
+  const handleToggleStatus = React.useCallback(async (prod: Product) => {
+    const newStatus: "published" | "draft" = prod.status === "published" ? "draft" : "published";
+    const updated: Product = { ...prod, status: newStatus };
+    setProducts((prev) => prev.map((p) => (p.id === prod.id ? updated : p)));
+    await ProductService.saveProductApi(updated);
+  }, []);
 
   const filteredProducts = products.filter(
     (p) => p.name.toLowerCase().includes(searchQuery.toLowerCase()) || p.category.toLowerCase().includes(searchQuery.toLowerCase()),
