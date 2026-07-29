@@ -63,7 +63,7 @@ export function BentoFeatureGrid({ product }: BentoFeatureGridProps) {
   };
 
   return (
-    <section className="relative z-10 w-full bg-white text-neutral-900 py-16 sm:py-24 px-4 sm:px-8 overflow-hidden select-none">
+    <section className="relative z-10 w-full bg-transparent text-neutral-900 py-16 sm:py-24 px-4 sm:px-8 overflow-hidden select-none">
       {/* Signature Dark Charcoal Soft Blur Cloud (No Dots, Clean White Canvas) */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-gradient-to-r from-slate-800/30 via-zinc-700/35 to-slate-900/25 rounded-full blur-[120px] pointer-events-none -z-10" />
       <div className="absolute top-1/4 left-1/3 w-[550px] h-[300px] bg-[#3f3f46]/25 rounded-full blur-[100px] pointer-events-none -z-10" />

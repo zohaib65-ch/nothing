@@ -10,6 +10,13 @@ function getProductQuery(id: string) {
   return { $or: [{ id: id }, { slug: id }] };
 }
 
+// .lean() skips Mongoose toJSON transforms, so we replicate _id → id here
+function normalizeLeanDoc(doc: any) {
+  if (!doc) return doc;
+  const { _id, __v, ...rest } = doc;
+  return { id: _id?.toString?.() ?? _id, ...rest };
+}
+
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -19,12 +26,12 @@ export async function GET(
     await connectToDatabase();
 
     const query = getProductQuery(id);
-    const product = await ProductModel.findOne(query).lean();
+    const doc = await ProductModel.findOne(query).lean();
 
-    if (!product) {
+    if (!doc) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
-    return NextResponse.json(product, {
+    return NextResponse.json(normalizeLeanDoc(doc), {
       headers: { "Cache-Control": "s-maxage=60, stale-while-revalidate=300" },
     });
   } catch (error: any) {

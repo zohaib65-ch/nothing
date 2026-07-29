@@ -2,11 +2,18 @@ import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import { CategoryModel } from "@/models/Category";
 
+// .lean() skips Mongoose toJSON transforms, so we replicate _id → id here
+function normalizeLeanDoc(doc: any) {
+  if (!doc) return doc;
+  const { _id, __v, ...rest } = doc;
+  return { id: _id?.toString?.() ?? _id, ...rest };
+}
+
 export async function GET() {
   try {
     await connectToDatabase();
-    const categories = await CategoryModel.find({}).sort({ createdAt: -1 }).lean();
-    return NextResponse.json(categories, {
+    const docs = await CategoryModel.find({}).sort({ createdAt: -1 }).lean();
+    return NextResponse.json(docs.map(normalizeLeanDoc), {
       headers: { "Cache-Control": "s-maxage=120, stale-while-revalidate=600" },
     });
   } catch (error: any) {

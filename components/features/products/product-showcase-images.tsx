@@ -29,7 +29,7 @@ export function ProductShowcaseImages({ product }: ProductShowcaseImagesProps) {
   if (sections.length === 0) return null;
 
   return (
-    <div className="w-full space-y-16 py-12 bg-white text-neutral-900 select-none">
+    <div className="w-full space-y-16 py-12 bg-transparent text-neutral-900 select-none">
       {sections.map((item, idx) => {
         if (!item?.image) return null;
         const imageUrl = getValidImageUrl(item.image);

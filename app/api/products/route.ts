@@ -6,6 +6,13 @@ import { ProductModel } from "@/models/Product";
 const LIST_FIELDS =
   "name slug tagline price salePrice category subcategory images status isFeatured isNewArrival sortOrder warranty variants createdAt updatedAt";
 
+// .lean() skips Mongoose toJSON transforms, so we replicate _id → id here
+function normalizeLeanDoc(doc: any) {
+  if (!doc) return doc;
+  const { _id, __v, ...rest } = doc;
+  return { id: _id?.toString?.() ?? _id, ...rest };
+}
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -20,10 +27,11 @@ export async function GET(request: Request) {
 
     let products: any[] = [];
     try {
-      products = await ProductModel.find(query)
+      const docs = await ProductModel.find(query)
         .select(LIST_FIELDS)
         .sort({ sortOrder: 1, createdAt: -1 })
         .lean();
+      products = docs.map(normalizeLeanDoc);
     } catch {
       products = [];
     }

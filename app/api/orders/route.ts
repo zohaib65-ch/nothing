@@ -33,11 +33,18 @@ export async function POST(request: Request) {
   }
 }
 
+// .lean() skips Mongoose toJSON transforms, so we replicate _id → id here
+function normalizeLeanDoc(doc: any) {
+  if (!doc) return doc;
+  const { _id, __v, ...rest } = doc;
+  return { id: _id?.toString?.() ?? _id, ...rest };
+}
+
 export async function GET() {
   try {
     await connectToDatabase();
-    const orders = await OrderModel.find().sort({ createdAt: -1 }).lean();
-    return NextResponse.json(orders);
+    const docs = await OrderModel.find().sort({ createdAt: -1 }).lean();
+    return NextResponse.json(docs.map(normalizeLeanDoc));
   } catch (error: any) {
     return NextResponse.json(
       { error: error.message || "Failed to fetch orders" },

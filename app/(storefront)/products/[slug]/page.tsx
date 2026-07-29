@@ -79,7 +79,7 @@ export default function ProductDetailPage() {
   }
 
   return (
-    <div className="bg-white min-h-screen text-white space-y-0">
+    <div className="bg-[#f6f6f6] min-h-screen text-white space-y-0">
       <HeroSpecShowcase
         product={product}
         selectedVariant={selectedVariant}
@@ -88,10 +88,7 @@ export default function ProductDetailPage() {
         onOpenSpecs={handleOpenSpecs}
       />
 
-      {/* Bento 7-Feature Grid Section */}
       <BentoFeatureGrid product={product} />
-
-      {/* Large Column Grid Detail Showcase Sections (3-Column, 4-Column, 5-Column Images) */}
       <ProductShowcaseImages product={product} />
       <Modal
         isOpen={isSpecsModalOpen}

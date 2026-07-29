@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { FileText } from "lucide-react";
 import { Product, ProductVariant } from "@/types";
 import { getValidImageUrl } from "@/lib/utils";
 import { ProductBuyCard } from "@/components/features/products/product-buy-card";
@@ -32,18 +31,14 @@ const renderMediaContainer = (url: string | undefined, title: string, containerC
 
   if (isVideoMedia(url)) {
     return (
-      <div
-        className={`relative overflow-hidden rounded-xl shadow-md border border-neutral-300/80 bg-neutral-900 transition-transform group-hover:scale-105 ${containerClassName}`}
-      >
+      <div className={`relative overflow-hidden rounded-lg transition-transform group-hover:scale-105 ${containerClassName}`}>
         <video src={getValidImageUrl(url)} autoPlay loop muted playsInline className="w-full h-full object-cover" />
       </div>
     );
   }
 
   return (
-    <div
-      className={`relative overflow-hidden rounded-xl shadow-md border border-neutral-300/80 bg-white transition-transform group-hover:scale-105 ${containerClassName}`}
-    >
+    <div className={`relative overflow-hidden rounded-lg transition-transform group-hover:scale-105 ${containerClassName}`}>
       <Image src={getValidImageUrl(url)} alt={title || "Showcase Media"} fill unoptimized className="object-cover" />
     </div>
   );
@@ -60,32 +55,32 @@ export function HeroSpecShowcase({ product, selectedVariant, onSelectVariant, on
   const heroMainImage = getValidImageUrl(selectedVariant?.image || (product as any).heroImage || product.images?.[0] || "");
 
   return (
-    <div className="relative z-30 w-full bg-white text-neutral-900 py-8 px-4 sm:px-8 select-none flex flex-col justify-between">
-      <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-6 items-center relative z-10 my-auto">
-        <div className="lg:col-span-3 flex flex-col gap-8 items-center lg:items-start">
+    <div className="relative z-30 w-full bg-transparent text-neutral-900 px-4 sm:px-8 select-none flex flex-col justify-between">
+      <div className=" w-full grid grid-cols-1 lg:grid-cols-12 gap-6 items-center relative z-10 my-auto">
+        <div className="lg:col-span-3 flex flex-col gap-8 items-center lg:items-start mt-8 lg:mt-24">
           {(item0Left?.image || item0Left?.title) && (
             <div className="group flex flex-col items-center lg:items-start gap-2 cursor-pointer">
-              {renderMediaContainer(item0Left.image, item0Left.title || "Showcase Media", "w-44 h-28")}
-              {item0Left.title && <span className="font-serif italic text-xs text-neutral-800 tracking-wide">{item0Left.title}</span>}
+              {renderMediaContainer(item0Left.image, item0Left.title || "Showcase Media", "w-52 h-32")}
+              {item0Left.title && <span className="font-ntype text-base text-neutral-800 tracking-wide">{item0Left.title}</span>}
             </div>
           )}
 
-          <div onClick={onOpenSpecs} className="group flex flex-col items-center lg:items-start gap-2 cursor-pointer">
-            <div className="w-16 h-16 rounded-xl bg-white/90 backdrop-blur border border-neutral-300 shadow-sm flex items-center justify-center transition-transform group-hover:scale-105 group-hover:border-neutral-900">
-              <FileText className="h-6 w-6 text-neutral-900" />
+          <div className="flex gap-6">
+            <div onClick={onOpenSpecs} className="group flex flex-col items-center lg:items-start gap-2 cursor-pointer">
+              <img src="/specs.svg" alt="" className="h-16 w-16" />
+              <span className="font-ntype text-base text-neutral-800 tracking-wide">{item1Left?.title || "Specs"}</span>
             </div>
-            <span className="font-serif italic text-xs text-neutral-800 tracking-wide">{item1Left?.title || "Specs"}</span>
+
+            {(item2Left?.image || item2Left?.title) && (
+              <div className="group flex flex-col items-center lg:items-start gap-2 cursor-pointer">
+                {renderMediaContainer(item2Left.image, item2Left.title || "Showcase Media", "w-64 h-48")}
+                {item2Left.title && <span className="font-ntype text-base text-neutral-800 tracking-wide">{item2Left.title}</span>}
+              </div>
+            )}
           </div>
-
-          {(item2Left?.image || item2Left?.title) && (
-            <div className="group flex flex-col items-center lg:items-start gap-2 cursor-pointer">
-              {renderMediaContainer(item2Left.image, item2Left.title || "Showcase Media", "w-48 h-32")}
-              {item2Left.title && <span className="font-serif italic text-xs text-neutral-800 tracking-wide">{item2Left.title}</span>}
-            </div>
-          )}
         </div>
 
-        <div className="lg:col-span-6 flex flex-col items-center justify-center relative py-6">
+        <div className="lg:col-span-6 flex flex-col items-center justify-center relative pb-6">
           <div className="relative w-full max-w-[420px] h-[380px] sm:h-[460px] flex items-center justify-center transition-all duration-300">
             {heroMainImage ? (
               <Image
@@ -110,25 +105,33 @@ export function HeroSpecShowcase({ product, selectedVariant, onSelectVariant, on
           />
         </div>
 
-        <div className="lg:col-span-3 flex flex-col gap-8 items-center lg:items-end">
-          {(item0Right?.image || item0Right?.title) && (
-            <div className="group flex flex-col items-center lg:items-end gap-2 cursor-pointer">
-              {renderMediaContainer(item0Right.image, item0Right.title || "Showcase Media", "w-28 h-28")}
-              {item0Right.title && <span className="font-serif italic text-xs text-neutral-800 tracking-wide">{item0Right.title}</span>}
-            </div>
-          )}
+        <div className="lg:col-span-3 flex flex-col gap-6 w-full items-center lg:items-end mt-8 lg:mt-24">
+          {/* Top Row: item0 on top-left, item1 on top-right (offset down) */}
+          <div className="grid grid-cols-2 gap-4 items-start w-full">
+            {item0Right?.image || item0Right?.title ? (
+              <div className="group flex flex-col items-center gap-2 cursor-pointer justify-self-start">
+                {renderMediaContainer(item0Right.image, item0Right.title || "Showcase Media", "w-28 h-28 sm:w-32 sm:h-32")}
+                {item0Right.title && <span className="font-ntype text-sm text-neutral-800 tracking-wide text-center">{item0Right.title}</span>}
+              </div>
+            ) : (
+              <div />
+            )}
 
-          {(item1Right?.image || item1Right?.title) && (
-            <div className="group flex flex-col items-center lg:items-end gap-2 cursor-pointer">
-              {renderMediaContainer(item1Right.image, item1Right.title || "Showcase Media", "w-24 h-28")}
-              {item1Right.title && <span className="font-serif italic text-xs text-neutral-800 tracking-wide">{item1Right.title}</span>}
-            </div>
-          )}
+            {item1Right?.image || item1Right?.title ? (
+              <div className="group flex flex-col items-center gap-2 cursor-pointer justify-self-end mt-16">
+                {renderMediaContainer(item1Right.image, item1Right.title || "Showcase Media", "w-28 h-28 sm:w-32 sm:h-32")}
+                {item1Right.title && <span className="font-ntype text-sm text-neutral-800 tracking-wide text-center">{item1Right.title}</span>}
+              </div>
+            ) : (
+              <div />
+            )}
+          </div>
 
+          {/* Bottom Row: item2 large display at bottom */}
           {(item2Right?.image || item2Right?.title) && (
-            <div className="group flex flex-col items-center lg:items-end gap-2 cursor-pointer">
-              {renderMediaContainer(item2Right.image, item2Right.title || "Showcase Media", "w-48 h-32")}
-              {item2Right.title && <span className="font-serif italic text-xs text-neutral-800 tracking-wide">{item2Right.title}</span>}
+            <div className="group flex flex-col items-end gap-2 cursor-pointer w-full mt-2 justify-self-center lg:justify-self-end">
+              {renderMediaContainer(item2Right.image, item2Right.title || "Showcase Media", "w-full max-w-[260px] h-52 sm:h-60")}
+              {item2Right.title && <span className="font-ntype text-base text-neutral-800 tracking-wide text-center">{item2Right.title}</span>}
             </div>
           )}
         </div>
