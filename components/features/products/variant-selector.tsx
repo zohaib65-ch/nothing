@@ -16,26 +16,32 @@ export function VariantSelector({
   onSelectVariant,
 }: VariantSelectorProps) {
   // Extract unique colors & storage options from product variants
-  const colors = product.colors || [];
-  const storageOptions = product.storageOptions || [];
+  const colors = (product.colors || []).filter((c) => c.name !== "Default Title");
+  const storageOptions = (product.storageOptions || []).filter((s) => s !== "Default Title");
+  const selectedStorage =
+    selectedVariant.storage && selectedVariant.storage !== "Default Title" ? selectedVariant.storage : "";
+  const selectedColor =
+    selectedVariant.color && selectedVariant.color !== "Default Title" ? selectedVariant.color : "";
 
   const handleColorChange = (colorName: string) => {
     // Find variant with matching color (and matching storage if applicable)
-    const match = product.variants.find(
-      (v) =>
-        v.color.toLowerCase() === colorName.toLowerCase() &&
-        (!selectedVariant.storage || v.storage === selectedVariant.storage)
-    ) || product.variants.find((v) => v.color.toLowerCase() === colorName.toLowerCase());
+    const match =
+      product.variants.find(
+        (v) =>
+          v.color.toLowerCase() === colorName.toLowerCase() &&
+          (!selectedVariant.storage || v.storage === selectedVariant.storage)
+      ) || product.variants.find((v) => v.color.toLowerCase() === colorName.toLowerCase());
 
     if (match) onSelectVariant(match);
   };
 
   const handleStorageChange = (storage: string) => {
-    const match = product.variants.find(
-      (v) =>
-        v.storage === storage &&
-        v.color.toLowerCase() === selectedVariant.color.toLowerCase()
-    ) || product.variants.find((v) => v.storage === storage);
+    const match =
+      product.variants.find(
+        (v) =>
+          v.storage === storage &&
+          v.color.toLowerCase() === selectedVariant.color.toLowerCase()
+      ) || product.variants.find((v) => v.storage === storage);
 
     if (match) onSelectVariant(match);
   };
@@ -47,7 +53,7 @@ export function VariantSelector({
         <div className="space-y-2.5">
           <div className="flex items-center justify-between font-mono text-xs uppercase">
             <span className="text-neutral-400">SELECT STORAGE:</span>
-            <span className="text-white font-bold">{selectedVariant.storage || "N/A"}</span>
+            <span className="text-white font-bold">{selectedStorage || "N/A"}</span>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
             {storageOptions.map((option) => {
@@ -76,7 +82,7 @@ export function VariantSelector({
         <div className="space-y-2.5">
           <div className="flex items-center justify-between font-mono text-xs uppercase">
             <span className="text-neutral-400">FINISH & COLOR:</span>
-            <span className="text-white font-bold">{selectedVariant.color}</span>
+            <span className="text-white font-bold">{selectedColor || "N/A"}</span>
           </div>
           <div className="flex flex-wrap gap-3">
             {colors.map((c) => {

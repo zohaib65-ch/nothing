@@ -7,12 +7,14 @@ const ProductVariantSchema = new Schema({
   id: { type: String, default: () => `var-${Date.now()}` },
   name: { type: String, default: "Standard Variant" },
   storage: { type: String, default: "" },
+  capacity: { type: String, default: "" },
+  ram: { type: String, default: "" },
   color: { type: String, default: "Standard" },
   colorHex: { type: String, default: "#000000" },
   price: { type: Number, default: 0 },
   salePrice: { type: Number },
+  storagePrices: { type: Schema.Types.Mixed, default: {} },
   sku: { type: String, default: () => `SKU-${Date.now()}` },
-  inStock: { type: Boolean, default: true },
   image: { type: String, default: "" },
 });
 

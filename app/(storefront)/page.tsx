@@ -12,7 +12,17 @@ const storeBenefits = [
     title: "7 Days Return Policy",
     desc: "If there is a valid product issue, quick return and replacement support is available.",
     icon: (
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <svg
+        width="26"
+        height="26"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
         <path d="M9 14 4 9l5-5" /> <path d="M4 9h10a6 6 0 1 1 0 12h-3" />
       </svg>
     ),
@@ -21,7 +31,17 @@ const storeBenefits = [
     title: "Free Delivery",
     desc: "Selected orders in major Pakistani cities can qualify for delivery support with clear confirmation before dispatch.",
     icon: (
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <svg
+        width="26"
+        height="26"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
         <path d="M3 7h11v9H3z" /> <path d="M14 10h4l3 3v3h-7" />
         <path d="M7 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" /> <path d="M18 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" />
       </svg>
@@ -31,7 +51,17 @@ const storeBenefits = [
     title: "Cash on Delivery",
     desc: "Cash on delivery keeps checkout simple, familiar, and easier to trust for customers across Pakistan.",
     icon: (
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <svg
+        width="26"
+        height="26"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
         <path d="M4 7h16v10H4z" /> <path d="M8 12h.01" /> <path d="M16 12h.01" />
         <path d="M12 15a3 3 0 0 0 0-6 3 3 0 0 0 0 6Z" />
       </svg>
@@ -41,7 +71,17 @@ const storeBenefits = [
     title: "24/7 Support",
     desc: "Support is available for order updates, product guidance, and after-sales help.",
     icon: (
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <svg
+        width="26"
+        height="26"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
         <path d="M4 12a8 8 0 0 1 16 0" />
         <path d="M4 12v4a2 2 0 0 0 2 2h1v-7H6a2 2 0 0 0-2 2Z" />
         <path d="M20 12v4a2 2 0 0 1-2 2h-1v-7h1a2 2 0 0 1 2 2Z" />
@@ -53,7 +93,17 @@ const storeBenefits = [
     title: "100% Original Products",
     desc: "Listed products are presented with authentic sourcing and careful verification.",
     icon: (
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <svg
+        width="26"
+        height="26"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
         <path d="m12 3 7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z" />
         <path d="m8.5 12 2.2 2.2 4.8-5" />
       </svg>
@@ -66,7 +116,17 @@ const faqCategories = [
     id: "general",
     label: "General",
     icon: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
         {" "}
         <path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z" /> <path d="M12 8v4" /> <path d="M12 16h.01" />{" "}
       </svg>
@@ -76,7 +136,17 @@ const faqCategories = [
     id: "products",
     label: "Products",
     icon: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
         {" "}
         <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />{" "}
       </svg>
@@ -86,9 +156,20 @@ const faqCategories = [
     id: "orders",
     label: "Orders & Delivery",
     icon: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
         {" "}
-        <path d="M3 7h11v9H3z" /> <path d="M14 10h4l3 3v3h-7" /> <path d="M7 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" /> <path d="M18 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" />{" "}
+        <path d="M3 7h11v9H3z" /> <path d="M14 10h4l3 3v3h-7" /> <path d="M7 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" />{" "}
+        <path d="M18 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" />{" "}
       </svg>
     ),
   },
@@ -96,9 +177,20 @@ const faqCategories = [
     id: "support",
     label: "Support",
     icon: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
         {" "}
-        <path d="M4 12a8 8 0 0 1 16 0" /> <path d="M4 12v4a2 2 0 0 0 2 2h1v-7H6a2 2 0 0 0-2 2Z" /> <path d="M20 12v4a2 2 0 0 1-2 2h-1v-7h1a2 2 0 0 1 2 2Z" />{" "}
+        <path d="M4 12a8 8 0 0 1 16 0" /> <path d="M4 12v4a2 2 0 0 0 2 2h1v-7H6a2 2 0 0 0-2 2Z" />{" "}
+        <path d="M20 12v4a2 2 0 0 1-2 2h-1v-7h1a2 2 0 0 1 2 2Z" />{" "}
       </svg>
     ),
   },
@@ -150,7 +242,11 @@ const allFaqs = [
     q: "Does Nothing Pakistan list earbuds and audio products?",
     a: "Yes, audio listings such as Nothing and CMF earbuds are available so users can compare options from one page.",
   },
-  { category: "products", q: "Does Nothing Pakistan offer screen protection options?", a: "Yes, the store includes UV protectors, jelly sheets, and standard protectors for supported phones." },
+  {
+    category: "products",
+    q: "Does Nothing Pakistan offer screen protection options?",
+    a: "Yes, the store includes UV protectors, jelly sheets, and standard protectors for supported phones.",
+  },
   {
     category: "orders",
     q: "How do I place an order on Nothing Pakistan?",
@@ -255,7 +351,9 @@ export default function HomePage() {
       .finally(() => setIsLoading(false));
   }, []);
 
-  const selectedGems = products.filter((p) => ["cmf-buds-pro", "cmf-power-65w-gan", "nothing-usb-c-cable", "cmf-buds-pro-2", "nothing-power-45w", "ear-a"].includes(p.slug));
+  const selectedGems = products.filter((p) =>
+    ["cmf-buds-pro", "cmf-power-65w-gan", "nothing-usb-c-cable", "cmf-buds-pro-2", "nothing-power-45w", "ear-a"].includes(p.slug),
+  );
   const phoneModels = products.filter((p) => p.category === "phones");
 
   const filteredFaqs = allFaqs.filter((f) => f.category === activeFaqCategory);
@@ -271,13 +369,20 @@ export default function HomePage() {
       {/* ═══════ 1 · HERO ═══════ */}
       <section className="relative flex h-screen min-h-[640px] max-h-[100svh] items-end overflow-hidden border-b border-black/10">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img alt="Nothing Phone 3 hero background" src="https://nothingshop.b-cdn.net/banner/nothing_pakistan.avif" className="absolute inset-0 h-full w-full object-cover object-center" />
+        <img
+          alt="Nothing Phone 3 hero background"
+          src="https://nothingshop.b-cdn.net/banner/nothing_pakistan.avif"
+          className="absolute inset-0 h-full w-full object-cover object-center"
+        />
         <div className="relative z-10 flex h-full w-full px-4 pb-7 pt-24 sm:px-6 sm:pb-9 sm:pt-28 md:px-8 lg:pb-6 lg:pt-32">
           <div className="mx-auto flex h-full max-w-screen-2xl items-end">
             <div className="max-w-3xl text-black lg:max-w-2xl">
-              <h1 className="dot-heading text-[1.18rem] leading-[0.98] tracking-[0.1em] text-black sm:text-[1.7rem] lg:text-[1.9rem]">Nothing & CMF Products in Pakistan</h1>
-              <p className="mt-3 max-w-xl font-sans text-[0.82rem] leading-6 text-black sm:mt-3 sm:max-w-xl sm:text-[0.95rem] sm:leading-6 lg:max-w-xl lg:text-[0.88rem] lg:leading-5">
-                Shop Nothing and CMF phones, earbuds, chargers, cables, and accessories with live pricing, product details, and WhatsApp support through Nothing Pakistan.
+              <h1 className="dot-heading text-[1.18rem] leading-[0.98] tracking-[0.1em] text-black sm:text-[1.7rem] lg:text-[1.9rem]">
+                Nothing & CMF Products in Pakistan
+              </h1>
+              <p className="mt-3 max-w-xl text-center font-sans text-[0.82rem] leading-6 text-black sm:mt-3 sm:max-w-xl sm:text-[0.95rem] sm:leading-6 lg:max-w-xl lg:text-[0.88rem] lg:leading-5">
+                Shop Nothing and CMF phones, earbuds, chargers, cables, and accessories with live pricing, product details, and WhatsApp support
+                through Nothing Pakistan.
               </p>
             </div>
           </div>
@@ -334,10 +439,18 @@ export default function HomePage() {
                         />
                       </div>
                       <div className="mt-3 text-center">
-                        <h3 className="font-sans text-[0.98rem] sm:text-[1.04rem] leading-[1.12] text-black font-normal tracking-normal"> {p.name} </h3>
+                        <h3 className="font-sans text-[0.98rem] sm:text-[1.04rem] leading-[1.12] text-black font-normal tracking-normal">
+                          {" "}
+                          {p.name}{" "}
+                        </h3>
                         <div className="mt-1">
                           <p className="text-[11px] text-black/62 font-[system-ui] font-normal"> Rs {p.price.toLocaleString()} </p>
-                          {p.salePrice && <p className="mt-0.5 text-[10px] text-black/65 line-through decoration-black/65 font-[system-ui] font-normal"> {p.salePrice.toLocaleString()} </p>}
+                          {p.salePrice && (
+                            <p className="mt-0.5 text-[10px] text-black/65 line-through decoration-black/65 font-[system-ui] font-normal">
+                              {" "}
+                              {p.salePrice.toLocaleString()}{" "}
+                            </p>
+                          )}
                         </div>
                       </div>
                     </article>
@@ -359,10 +472,18 @@ export default function HomePage() {
                         />
                       </div>
                       <div className="mt-3 text-center">
-                        <h3 className="font-sans text-[0.98rem] sm:text-[1.04rem] leading-[1.12] text-black font-normal tracking-normal"> {p.name} </h3>
+                        <h3 className="font-sans text-[0.98rem] sm:text-[1.04rem] leading-[1.12] text-black font-normal tracking-normal">
+                          {" "}
+                          {p.name}{" "}
+                        </h3>
                         <div className="mt-1">
                           <p className="text-[11px] text-black/62 font-[system-ui] font-normal"> Rs {p.price.toLocaleString()} </p>
-                          {p.salePrice && <p className="mt-0.5 text-[10px] text-black/65 line-through decoration-black/65 font-[system-ui] font-normal"> {p.salePrice.toLocaleString()} </p>}
+                          {p.salePrice && (
+                            <p className="mt-0.5 text-[10px] text-black/65 line-through decoration-black/65 font-[system-ui] font-normal">
+                              {" "}
+                              {p.salePrice.toLocaleString()}{" "}
+                            </p>
+                          )}
                         </div>
                       </div>
                     </article>
@@ -451,9 +572,16 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div ref={reviewsRef} className="mt-8 flex gap-5 overflow-x-auto pb-4 snap-x snap-mandatory" style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
+          <div
+            ref={reviewsRef}
+            className="mt-8 flex gap-5 overflow-x-auto pb-4 snap-x snap-mandatory"
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+          >
             {verifiedReviews.map((r, idx) => (
-              <article key={idx} className="min-w-[300px] sm:min-w-[360px] max-w-[380px] shrink-0 snap-start rounded-[8px] border border-black/8 bg-white p-5 sm:p-6">
+              <article
+                key={idx}
+                className="min-w-[300px] sm:min-w-[360px] max-w-[380px] shrink-0 snap-start rounded-[8px] border border-black/8 bg-white p-5 sm:p-6"
+              >
                 <div className="flex items-center gap-1 text-amber-500">
                   {[...Array(r.rating)].map((_, i) => (
                     <svg key={i} width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">

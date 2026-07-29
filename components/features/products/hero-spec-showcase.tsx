@@ -57,7 +57,7 @@ export function HeroSpecShowcase({ product, selectedVariant, onSelectVariant, on
   const item1Right = product.heroRightSections?.[1];
   const item2Right = product.heroRightSections?.[2];
 
-  const heroMainImage = getValidImageUrl((product as any).heroImage || selectedVariant?.image || product.images?.[0] || "");
+  const heroMainImage = getValidImageUrl(selectedVariant?.image || (product as any).heroImage || product.images?.[0] || "");
 
   return (
     <div className="relative z-30 w-full bg-white text-neutral-900 py-8 px-4 sm:px-8 select-none flex flex-col justify-between">

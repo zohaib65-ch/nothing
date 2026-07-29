@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useFormContext, Controller } from "react-hook-form";
 import { ProductFormValues } from "@/lib/validations/product.schema";
+import { VariantsInfoSection } from "./variants-info-section";
 
 interface GeneralInfoSectionProps {
   fileInputRef: React.RefObject<HTMLInputElement | null>;
@@ -117,6 +118,9 @@ export function GeneralInfoSection({ fileInputRef, handleFileUpload, isUploading
             <Input label="SUBCATEGORY" placeholder="e.g. Smartphones, Earbuds" error={errors.subcategory?.message} {...register("subcategory")} />
           </div>
         </div>
+
+        {/* Variants, Colors & Storage Options Card */}
+        <VariantsInfoSection />
       </div>
 
       {/* Right Side: Media, Visibility (1 Col) */}

@@ -32,31 +32,129 @@ export function ProductBuyCard({ product, selectedVariant, onSelectVariant, onAd
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const colors = Array.from(new Set(product.variants?.map((v) => v.color).filter(Boolean))) as string[];
-  const capacities = Array.from(new Set(product.variants?.map((v) => (v as any).capacity || v.storage || v.name).filter(Boolean))) as string[];
+  const getVariantCapacityStr = (v: any) => {
+    if (!v) return "";
+    if (v.ram && v.storage) return `${v.ram} + ${v.storage}`;
+    return v.capacity || v.storage || (v.name !== "Default Title" ? v.name : "");
+  };
 
-  const currentColor = selectedVariant?.color || colors[0] || "Standard";
-  const currentCapacity = (selectedVariant as any)?.capacity || selectedVariant?.storage || selectedVariant?.name || capacities[0] || "Default";
+  const getUniqueCaseInsensitive = (arr: string[]) => {
+    const map = new Map<string, string>();
+    for (const item of arr) {
+      if (!item || item === "Default Title") continue;
+      const subItems = item.includes(",") ? item.split(",") : [item];
+      for (const subItem of subItems) {
+        const trimmed = subItem.trim();
+        if (!trimmed) continue;
+        const lower = trimmed.toLowerCase();
+        if (!map.has(lower)) {
+          map.set(lower, trimmed);
+        }
+      }
+    }
+    return Array.from(map.values());
+  };
+
+  const rawColors = (product.colors?.map((c) => c.name) || []).concat(product.variants?.map((v) => v.color).filter(Boolean) || []);
+  const colors = getUniqueCaseInsensitive(rawColors);
+  const displayColors = colors.length > 0 ? colors : ["Standard"];
+  const rawVariantColor = selectedVariant?.color || "";
+  const matchedColorInDisplay = displayColors.find((c) => c.toLowerCase() === rawVariantColor.toLowerCase());
+  const currentColor = matchedColorInDisplay || displayColors[0] || "Standard";
+  const colorVariants = product.variants?.filter((v) => v.color && v.color.toLowerCase() === currentColor.toLowerCase()) || [];
+  const rawCapacitiesForColor = colorVariants.map((v) => getVariantCapacityStr(v)).filter(Boolean);
+  const availableCapacitiesForColor = getUniqueCaseInsensitive(rawCapacitiesForColor);
+  const allCapacitiesRaw = (product.storageOptions || []).concat(product.variants?.map((v) => getVariantCapacityStr(v)).filter(Boolean) || []);
+  const capacities = getUniqueCaseInsensitive(allCapacitiesRaw);
+  const displayCapacities = availableCapacitiesForColor.length > 0 ? availableCapacitiesForColor : capacities.length > 0 ? capacities : ["Standard"];
+  const rawCapStr = selectedVariant?.capacity || selectedVariant?.storage || getVariantCapacityStr(selectedVariant);
+  const matchedCapInDisplay = displayCapacities.find((cap) => cap.toLowerCase() === rawCapStr.toLowerCase());
+  const currentCapacity = matchedCapInDisplay || displayCapacities[0] || "Standard";
 
   const handleColorChange = (newColor: string) => {
-    const matched =
-      product.variants?.find((v) => v.color === newColor && ((v as any).capacity || v.storage || v.name) === currentCapacity) ||
-      product.variants?.find((v) => v.color === newColor) ||
-      selectedVariant;
+    const matchedColorObj = product.colors?.find((c) => c.name.toLowerCase() === newColor.toLowerCase());
+    const variantsForColor = product.variants?.filter((v) => v.color && v.color.toLowerCase() === newColor.toLowerCase()) || [];
+    const matchedSameStorage = variantsForColor.find((v) => getVariantCapacityStr(v).toLowerCase() === currentCapacity.toLowerCase());
+    const matchedInVariants =
+      matchedSameStorage || variantsForColor[0] || product.variants?.find((v) => v.color.toLowerCase() === newColor.toLowerCase());
 
-    if (matched) onSelectVariant(matched);
+    if (matchedInVariants) {
+      onSelectVariant(matchedInVariants);
+    } else {
+      const fallbackVariant: ProductVariant = {
+        id: `var-${Date.now()}`,
+        name: `${newColor} - ${currentCapacity}`,
+        color: newColor,
+        colorHex: matchedColorObj?.hex || "#000000",
+        storage: currentCapacity !== "Standard" ? currentCapacity : "",
+        capacity: currentCapacity !== "Standard" ? currentCapacity : "",
+        price: selectedVariant?.price || product.price || 0,
+        salePrice: selectedVariant?.salePrice || product.salePrice,
+        sku: selectedVariant?.sku || `SKU-${Date.now()}`,
+        inStock: true,
+        image: selectedVariant?.image || product.images?.[0] || "",
+      };
+      onSelectVariant(fallbackVariant);
+    }
+  };
+
+  const getEffectiveVariantPrices = (v: ProductVariant | undefined, capStr: string) => {
+    if (!v) {
+      return {
+        price: product.price || 0,
+        salePrice: product.salePrice,
+      };
+    }
+
+    if (v.storagePrices && capStr) {
+      // Direct exact match or trim match from storagePrices object
+      const trimmedCap = capStr.trim();
+      const exactKey = Object.keys(v.storagePrices).find((k) => k.trim().toLowerCase() === trimmedCap.toLowerCase());
+      if (exactKey && v.storagePrices[exactKey]) {
+        const sp = v.storagePrices[exactKey];
+        return {
+          price: sp.price ?? 0,
+          salePrice: sp.salePrice,
+        };
+      }
+    }
+
+    return {
+      price: v.price ?? product.price ?? 0,
+      salePrice: v.salePrice ?? product.salePrice,
+    };
   };
 
   const handleCapacityChange = (newCap: string) => {
-    const matched =
-      product.variants?.find((v) => ((v as any).capacity || v.storage || v.name) === newCap && v.color === currentColor) ||
-      product.variants?.find((v) => ((v as any).capacity || v.storage || v.name) === newCap) ||
-      selectedVariant;
+    const matchedInVariants =
+      product.variants?.find(
+        (v) => getVariantCapacityStr(v).toLowerCase().includes(newCap.toLowerCase()) && v.color.toLowerCase() === currentColor.toLowerCase(),
+      ) || product.variants?.find((v) => getVariantCapacityStr(v).toLowerCase().includes(newCap.toLowerCase()));
 
-    if (matched) onSelectVariant(matched);
+    if (matchedInVariants) {
+      const prices = getEffectiveVariantPrices(matchedInVariants, newCap);
+      onSelectVariant({
+        ...matchedInVariants,
+        capacity: newCap,
+        price: prices.price,
+        salePrice: prices.salePrice,
+      });
+    } else if (selectedVariant) {
+      const prices = getEffectiveVariantPrices(selectedVariant, newCap);
+      onSelectVariant({
+        ...selectedVariant,
+        capacity: newCap,
+        price: prices.price,
+        salePrice: prices.salePrice,
+      });
+    }
   };
 
-  const highlightsList = product.highlights?.length ? product.highlights.map((h) => (typeof h === "string" ? h : `${h.title}: ${h.value}`)) : [];
+  const activePrices = getEffectiveVariantPrices(selectedVariant, currentCapacity);
+  const activeDisplayPrice =
+    activePrices.salePrice !== undefined && activePrices.salePrice !== null && !isNaN(activePrices.salePrice) && Number(activePrices.salePrice) > 0
+      ? Number(activePrices.salePrice)
+      : Number(activePrices.price) || Number(product.price) || 0;
 
   return (
     <div
@@ -69,21 +167,7 @@ export function ProductBuyCard({ product, selectedVariant, onSelectVariant, onAd
       >
         <div className="overflow-hidden">
           <div className="flex justify-between items-start pt-1 pb-1">
-            <div className="space-y-3">
-              <h2 className="font-ndot text-base sm:text-lg tracking-wider text-neutral-900 dark:text-white lowercase">{product.name}</h2>
-              {highlightsList.length > 0 && (
-                <ul className="space-y-1 font-mono text-[10px] sm:text-[11px] text-neutral-700 dark:text-neutral-300 font-medium">
-                  {highlightsList.slice(0, 3).map((item, idx) => (
-                    <li key={idx} className="flex items-center gap-1.5 uppercase">
-                      {idx === 0 && <Sparkles className="h-3 w-3 text-neutral-500 flex-shrink-0" />}
-                      {idx === 1 && <Camera className="h-3 w-3 text-neutral-500 flex-shrink-0" />}
-                      {idx === 2 && <Zap className="h-3 w-3 text-neutral-500 flex-shrink-0" />}
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
+            <h2 className="dot-heading text-base sm:text-lg tracking-wider text-neutral-900 dark:text-white lowercase">{product.name}</h2>
             <div className="relative w-20 h-24 flex-shrink-0 bg-neutral-50 dark:bg-neutral-900 rounded-lg p-1 border border-neutral-200 dark:border-neutral-800">
               <Image
                 src={getValidImageUrl(selectedVariant?.image || product.images?.[0] || "")}
@@ -103,17 +187,11 @@ export function ProductBuyCard({ product, selectedVariant, onSelectVariant, onAd
             <SelectValue placeholder="SELECT COLOR" />
           </SelectTrigger>
           <SelectContent>
-            {colors.length > 0 ? (
-              colors.map((c) => (
-                <SelectItem key={c} value={c} className="font-mono text-xs uppercase">
-                  {c}
-                </SelectItem>
-              ))
-            ) : (
-              <SelectItem value={currentColor} className="font-mono text-xs uppercase">
-                {currentColor}
+            {displayColors.map((c) => (
+              <SelectItem key={c} value={c} className="font-mono text-xs uppercase">
+                {c}
               </SelectItem>
-            )}
+            ))}
           </SelectContent>
         </Select>
 
@@ -122,17 +200,11 @@ export function ProductBuyCard({ product, selectedVariant, onSelectVariant, onAd
             <SelectValue placeholder="SELECT CAPACITY" />
           </SelectTrigger>
           <SelectContent>
-            {capacities.length > 0 ? (
-              capacities.map((cap) => (
-                <SelectItem key={cap} value={cap} className="font-mono text-xs uppercase">
-                  {cap}
-                </SelectItem>
-              ))
-            ) : (
-              <SelectItem value={currentCapacity} className="font-mono text-xs uppercase">
-                {currentCapacity}
+            {displayCapacities.map((cap) => (
+              <SelectItem key={cap} value={cap} className="font-mono text-xs uppercase">
+                {cap}
               </SelectItem>
-            )}
+            ))}
           </SelectContent>
         </Select>
       </div>
@@ -144,7 +216,7 @@ export function ProductBuyCard({ product, selectedVariant, onSelectVariant, onAd
         className="w-full bg-neutral-950 hover:bg-neutral-800 text-white font-mono text-xs font-bold uppercase tracking-widest py-3 rounded-lg shadow-md cursor-pointer flex items-center justify-center gap-2 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200"
         leftIcon={<ShoppingBag className="h-4 w-4" />}
       >
-        <span>ADD TO BAG - {formatPrice(selectedVariant?.salePrice || selectedVariant?.price || product.price)}</span>
+        <span>ADD TO BAG — {formatPrice(activeDisplayPrice)}</span>
       </Button>
     </div>
   );

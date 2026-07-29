@@ -147,24 +147,62 @@ export function ProductForm({ initialProduct, isEditMode = false, onSave, isSubm
     const finalSlug = data.slug || slugify(data.name || "");
     const validImage = getValidImageUrl(data.images?.[0]);
 
-    // Sync primary price to standard variant
-    const updatedVariants =
-      data.variants?.map((v, i) => {
-        if (i === 0) {
-          return {
-            ...v,
-            price: data.price || 199,
-            salePrice: data.salePrice,
-          };
-        }
-        return v;
-      }) || [];
+    // Ensure variants array is formatted properly
+    let updatedVariants = (data.variants || []).map((v) => {
+      const st = v.storage || (v as any).capacity || "Standard";
+      return {
+        ...v,
+        storage: st,
+        capacity: st,
+        color: v.color || "Standard",
+        colorHex: v.colorHex || "#000000",
+        price: v.price !== undefined && v.price !== null ? Number(v.price) : Number(data.price) || 0,
+        salePrice: v.salePrice !== undefined && v.salePrice !== null ? Number(v.salePrice) : data.salePrice,
+        storagePrices: v.storagePrices || {},
+      };
+    });
+
+    if (updatedVariants.length === 0) {
+      const st = data.storageOptions?.[0] || "Standard";
+      const cl = data.colors?.[0]?.name || "Standard";
+      const clHex = data.colors?.[0]?.hex || "#000000";
+      updatedVariants = [
+        {
+          id: `var-${Date.now()}`,
+          name: `${cl} - ${st}`,
+          storage: st,
+          capacity: st,
+          color: cl,
+          colorHex: clHex,
+          price: Number(data.price) || 0,
+          salePrice: data.salePrice,
+          storagePrices: {},
+          sku: `SKU-${Date.now()}`,
+          inStock: true,
+          image: validImage || "",
+        },
+      ];
+    }
+
+    // Always extract storageOptions and colors directly from variants
+    const finalStorageOptions = Array.from(
+      new Set(updatedVariants.map((v) => v.storage || (v as any).capacity).filter(Boolean))
+    ) as string[];
+
+    const finalColors = Array.from(
+      new Set(updatedVariants.map((v) => v.color).filter(Boolean))
+    ).map((c) => ({
+      name: c,
+      hex: updatedVariants.find((v) => v.color === c)?.colorHex || "#000000",
+    }));
 
     const now = new Date().toISOString();
     const fullProduct = {
       ...data,
       slug: finalSlug,
       images: [validImage],
+      storageOptions: finalStorageOptions,
+      colors: finalColors,
       variants: updatedVariants,
       createdAt: data.createdAt || now,
       updatedAt: now,

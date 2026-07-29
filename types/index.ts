@@ -1,15 +1,18 @@
-export type ProductCategory = 'phones' | 'audio' | 'cmf' | 'accessories' | string;
+export type ProductCategory = "phones" | "audio" | "cmf" | "accessories" | string;
 
 export interface ProductVariant {
   id: string;
   name: string; // e.g. "12GB RAM + 256GB Storage"
   storage?: string; // e.g. "256GB"
+  capacity?: string; // e.g. "8 + 128" or "12 + 256"
+  ram?: string; // e.g. "8GB" or "8"
   color: string; // e.g. "Dark Grey"
   colorHex: string; // e.g. "#1C1C1E"
   price: number;
   salePrice?: number;
+  storagePrices?: Record<string, { price?: number; salePrice?: number }>;
   sku: string;
-  inStock: boolean;
+  inStock?: boolean;
   image?: string;
 }
 
@@ -83,7 +86,7 @@ export interface Product {
   isNewArrival: boolean;
   sortOrder: number;
   warranty?: string;
-  status: 'draft' | 'published';
+  status: "draft" | "published";
   createdAt: string;
   updatedAt: string;
   heroLeftSections?: CustomSectionItem[];
@@ -155,4 +158,3 @@ export interface Order {
   createdAt?: string;
   updatedAt?: string;
 }
-
