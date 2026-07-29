@@ -7,6 +7,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Product } from "@/types";
 import { formatPrice, getValidImageUrl } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
 import { Star, Edit2, Trash2 } from "lucide-react";
 
 export const getColumns = (
@@ -55,30 +56,18 @@ export const getColumns = (
     },
   },
   {
-    accessorKey: "isFeatured",
-    header: "FEATURED",
-    cell: ({ row }) => {
-      const prod = row.original;
-      return (
-        <button
-          onClick={() => handleToggleFeatured(prod)}
-          className={`p-1.5 rounded transition-colors cursor-pointer ${prod.isFeatured ? "text-[#D71921] bg-[#D71921]/10" : "text-neutral-400 hover:text-neutral-900"}`}
-          title="Toggle Featured Status"
-        >
-          <Star className="h-4 w-4 fill-current" />
-        </button>
-      );
-    },
-  },
-  {
     accessorKey: "status",
     header: "STATUS",
     cell: ({ row }) => {
       const prod = row.original;
+      const isPublished = prod.status === "published";
       return (
-        <button onClick={() => handleToggleStatus(prod)} className="cursor-pointer">
-          {prod.status === "published" ? <Badge variant="red">PUBLISHED</Badge> : <Badge variant="outline">DRAFT</Badge>}
-        </button>
+        <div className="flex items-center gap-2 font-mono text-[11px] font-bold">
+          <Switch checked={isPublished} onCheckedChange={() => handleToggleStatus(prod)} />
+          <span className={isPublished ? "text-emerald-600 tracking-wider" : "text-neutral-400 font-normal tracking-wider"}>
+            {isPublished ? "ACTIVE" : "HIDDEN"}
+          </span>
+        </div>
       );
     },
   },

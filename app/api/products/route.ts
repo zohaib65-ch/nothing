@@ -2,11 +2,7 @@ import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import { ProductModel } from "@/models/Product";
 
-// Fields needed for list/card views — excludes heavy nested arrays
-const LIST_FIELDS =
-  "name slug tagline price salePrice category subcategory images status isFeatured isNewArrival sortOrder warranty variants createdAt updatedAt";
-
-// .lean() skips Mongoose toJSON transforms, so we replicate _id → id here
+const LIST_FIELDS = "name slug price salePrice category images status isFeatured isNewArrival sortOrder warranty variants createdAt updatedAt";
 function normalizeLeanDoc(doc: any) {
   if (!doc) return doc;
   const { _id, __v, ...rest } = doc;
@@ -27,10 +23,7 @@ export async function GET(request: Request) {
 
     let products: any[] = [];
     try {
-      const docs = await ProductModel.find(query)
-        .select(LIST_FIELDS)
-        .sort({ sortOrder: 1, createdAt: -1 })
-        .lean();
+      const docs = await ProductModel.find(query).select(LIST_FIELDS).sort({ sortOrder: 1, createdAt: -1 }).lean();
       products = docs.map(normalizeLeanDoc);
     } catch {
       products = [];
@@ -48,6 +41,15 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     await connectToDatabase();
+
+    if (body.variants && body.variants.length > 0) {
+      if (!body.price && body.variants[0].price) {
+        body.price = Number(body.variants[0].price);
+      }
+      if (body.salePrice === undefined && body.variants[0].salePrice !== undefined) {
+        body.salePrice = Number(body.variants[0].salePrice);
+      }
+    }
 
     const product = await ProductModel.create(body);
     return NextResponse.json(product, { status: 201 });

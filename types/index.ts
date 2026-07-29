@@ -63,14 +63,14 @@ export interface Product {
   id: string;
   name: string;
   slug: string;
-  tagline: string;
-  description: string;
-  shortDescription: string;
+  tagline?: string;
+  description?: string;
+  shortDescription?: string;
   price: number;
   salePrice?: number;
   originalPrice?: number;
   category: ProductCategory;
-  subcategory: string;
+  subcategory?: string;
   images: string[];
   gallery: string[];
   videos?: string[];

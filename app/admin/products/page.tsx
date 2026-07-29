@@ -72,7 +72,9 @@ export default function AdminProductsPage() {
     loadProducts(false);
   };
 
-  const filteredProducts = products.filter((p) => p.name.toLowerCase().includes(searchQuery.toLowerCase()) || p.category.toLowerCase().includes(searchQuery.toLowerCase()));
+  const filteredProducts = products.filter(
+    (p) => p.name.toLowerCase().includes(searchQuery.toLowerCase()) || p.category.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
 
   const columns = React.useMemo<ColumnDef<Product>[]>(
     () => getColumns(handleToggleFeatured, handleToggleStatus, handleEdit, handlePromptDelete),
@@ -124,7 +126,13 @@ export default function AdminProductsPage() {
         <DataTable columns={columns} data={filteredProducts} showPagination={true} pageSize={8} />
       )}
 
-      <DeleteProductModal isOpen={isDeleteModalOpen} onClose={() => setIsDeleteModalOpen(false)} product={productToDelete} isDeleting={isDeleting} onConfirmDelete={handleConfirmDelete} />
+      <DeleteProductModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        product={productToDelete}
+        isDeleting={isDeleting}
+        onConfirmDelete={handleConfirmDelete}
+      />
     </div>
   );
 }

@@ -48,6 +48,15 @@ export async function PUT(
     const body = await request.json();
     await connectToDatabase();
 
+    if (body.variants && body.variants.length > 0) {
+      if (!body.price && body.variants[0].price) {
+        body.price = Number(body.variants[0].price);
+      }
+      if (body.salePrice === undefined && body.variants[0].salePrice !== undefined) {
+        body.salePrice = Number(body.variants[0].salePrice);
+      }
+    }
+
     const query = getProductQuery(id);
     let product = await ProductModel.findOneAndUpdate(query, body, {
       returnDocument: "after",

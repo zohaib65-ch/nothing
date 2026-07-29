@@ -3,7 +3,7 @@ import { z } from "zod";
 // Helper for optional numeric inputs (handles empty strings, null, undefined gracefully without NaN errors)
 const optionalNumber = z.preprocess(
   (val) => (val === "" || val === null || val === undefined || Number.isNaN(Number(val)) ? undefined : Number(val)),
-  z.number().optional()
+  z.number().optional(),
 );
 
 export const CustomSectionItemSchema = z.object({
@@ -64,14 +64,10 @@ export const ProductSchema = z.object({
   id: z.string().optional(),
   name: z.string().min(1, "Product name is required"),
   slug: z.string().optional(),
-  tagline: z.string().optional(),
-  description: z.string().optional(),
-  shortDescription: z.string().optional(),
   price: z.coerce.number().optional().default(0),
   salePrice: optionalNumber,
   originalPrice: optionalNumber,
   category: z.string().optional(),
-  subcategory: z.string().optional(),
   images: z.array(z.string()).optional().default([]),
   gallery: z.array(z.string()).optional(),
   videos: z.array(z.string()).optional(),

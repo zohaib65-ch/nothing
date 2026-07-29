@@ -54,13 +54,9 @@ const ProductSchema = new Schema<IProductDocument>(
   {
     name: { type: String, required: true, trim: true },
     slug: { type: String, required: true, index: true },
-    tagline: { type: String, default: "" },
-    description: { type: String, default: "" },
-    shortDescription: { type: String, default: "" },
     price: { type: Number, default: 0 },
     salePrice: { type: Number },
     category: { type: String, default: "phones", index: true },
-    subcategory: { type: String, default: "General" },
     images: [{ type: String }],
     gallery: [{ type: String }],
     videos: [{ type: String }],
@@ -86,7 +82,7 @@ const ProductSchema = new Schema<IProductDocument>(
     sortOrder: { type: Number, default: 0 },
     status: { type: String, enum: ["draft", "published"], default: "published", index: true },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 ProductSchema.set("toJSON", {
@@ -101,5 +97,4 @@ ProductSchema.set("toJSON", {
 ProductSchema.index({ status: 1, category: 1, sortOrder: 1 });
 ProductSchema.index({ slug: 1 }, { unique: true });
 
-export const ProductModel: Model<IProductDocument> =
-  mongoose.models.Product || mongoose.model<IProductDocument>("Product", ProductSchema);
+export const ProductModel: Model<IProductDocument> = mongoose.models.Product || mongoose.model<IProductDocument>("Product", ProductSchema);

@@ -126,7 +126,7 @@ export function ProductForm({ initialProduct, isEditMode = false, onSave, isSubm
   const handleNext = async () => {
     let isValid = true;
     if (currentStep === 1) {
-      isValid = await trigger(["name", "tagline", "shortDescription", "description", "price", "category", "subcategory"]);
+      isValid = await trigger(["name", "category"]);
     }
     if (isValid) {
       setCurrentStep((prev) => Math.min(prev + 1, 4));
@@ -195,9 +195,14 @@ export function ProductForm({ initialProduct, isEditMode = false, onSave, isSubm
     }));
 
     const now = new Date().toISOString();
+    const rootPrice = updatedVariants[0]?.price || 0;
+    const rootSalePrice = updatedVariants[0]?.salePrice;
+
     const fullProduct = {
       ...data,
       slug: finalSlug,
+      price: rootPrice,
+      salePrice: rootSalePrice,
       images: [validImage],
       storageOptions: finalStorageOptions,
       colors: finalColors,
