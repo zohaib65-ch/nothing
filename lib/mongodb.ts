@@ -29,21 +29,29 @@ export async function connectToDatabase(): Promise<typeof mongoose> {
   if (!cache.promise) {
     const opts = {
       bufferCommands: false,
-      serverSelectionTimeoutMS: 1500, // Quick timeout fallback
+      // Atlas free tier needs more time on cold starts — 1500ms was too aggressive
+      serverSelectionTimeoutMS: 5000,
+      // Keep a pool of 2–10 connections so warm instances reuse sockets immediately
+      maxPoolSize: 10,
+      minPoolSize: 2,
+      // Ping Atlas every 10s to prevent idle connection drops between serverless invocations
+      heartbeatFrequencyMS: 10000,
+      socketTimeoutMS: 20000,
     };
 
-    cache.promise = mongoose.connect(MONGODB_URI, opts).then((mongooseInstance) => {
-      return mongooseInstance;
-    }).catch((err) => {
-      cache.promise = null;
-      console.warn("MongoDB Connection Notice (Fallback Active):", err.message);
-      return mongoose;
-    });
+    cache.promise = mongoose
+      .connect(MONGODB_URI, opts)
+      .then((mongooseInstance) => mongooseInstance)
+      .catch((err) => {
+        cache.promise = null;
+        console.warn("MongoDB Connection Notice (Fallback Active):", err.message);
+        return mongoose;
+      });
   }
 
   try {
     cache.conn = await cache.promise;
-  } catch (e) {
+  } catch {
     cache.promise = null;
   }
 

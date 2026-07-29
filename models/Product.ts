@@ -97,5 +97,11 @@ ProductSchema.set("toJSON", {
   },
 });
 
+// Compound index: every storefront list query filters by status + (optionally) category,
+// then sorts by sortOrder. This lets MongoDB satisfy all list queries from the index alone.
+ProductSchema.index({ status: 1, category: 1, sortOrder: 1 });
+// Separate index for slug lookups (product detail page)
+ProductSchema.index({ slug: 1 }, { unique: true });
+
 export const ProductModel: Model<IProductDocument> =
   mongoose.models.Product || mongoose.model<IProductDocument>("Product", ProductSchema);

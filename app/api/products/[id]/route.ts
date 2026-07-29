@@ -19,12 +19,14 @@ export async function GET(
     await connectToDatabase();
 
     const query = getProductQuery(id);
-    const product = await ProductModel.findOne(query);
+    const product = await ProductModel.findOne(query).lean();
 
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
-    return NextResponse.json(product);
+    return NextResponse.json(product, {
+      headers: { "Cache-Control": "s-maxage=60, stale-while-revalidate=300" },
+    });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

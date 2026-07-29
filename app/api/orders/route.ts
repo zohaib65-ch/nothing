@@ -36,7 +36,7 @@ export async function POST(request: Request) {
 export async function GET() {
   try {
     await connectToDatabase();
-    const orders = await OrderModel.find().sort({ createdAt: -1 });
+    const orders = await OrderModel.find().sort({ createdAt: -1 }).lean();
     return NextResponse.json(orders);
   } catch (error: any) {
     return NextResponse.json(

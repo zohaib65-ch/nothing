@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ProductService } from "@/services/productService";
 import { Product, ProductVariant } from "@/types";
 import { useCartStore } from "@/store/useCartStore";
 import { SpecsTable } from "@/components/features/products/specs-table";
@@ -31,13 +30,20 @@ export default function ProductDetailPage() {
     const loadProduct = async () => {
       if (!slug) return;
 
-      const all = await ProductService.fetchProductsFromApi();
-      const item = all.find((product) => product.slug === slug) || null;
-
-      setProduct(item);
-      setSelectedVariant(item?.variants[0] || null);
-
-      setIsLoading(false);
+      try {
+        const res = await fetch(`/api/products/${slug}`);
+        if (res.ok) {
+          const item: Product = await res.json();
+          setProduct(item);
+          setSelectedVariant(item?.variants?.[0] || null);
+        } else {
+          setProduct(null);
+        }
+      } catch {
+        setProduct(null);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     loadProduct();

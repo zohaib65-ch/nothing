@@ -18,8 +18,11 @@ export default function CollectionSlugPage() {
     const loadProducts = async () => {
       setIsLoading(true);
       try {
-        const data = await ProductService.fetchProductsFromApi();
-        setProducts(data.filter((product) => product.status === "published"));
+        // Build query: always filter published; add category unless viewing shop-all
+        const params = new URLSearchParams({ status: "published" });
+        if (slug !== "shop-all") params.set("category", slug);
+        const data = await ProductService.fetchProductsFromApi(params.toString());
+        setProducts(data);
       } catch (error) {
         console.error("Failed to fetch products:", error);
       } finally {
@@ -28,7 +31,7 @@ export default function CollectionSlugPage() {
     };
 
     loadProducts();
-  }, []);
+  }, [slug]);
 
   const titleMap: Record<string, string> = {
     phones: "Nothing & CMF Phones",
@@ -39,10 +42,6 @@ export default function CollectionSlugPage() {
   };
 
   const currentTitle = titleMap[slug] || `Collection: ${slug.toUpperCase()}`;
-
-  const categoryProducts = slug === "shop-all"
-    ? products
-    : products.filter((p) => p.category === slug);
 
   return (
     <div className="min-h-screen bg-[#f4f5f8] text-[#111] pt-24 pb-16 px-4 md:px-6 lg:px-8">
@@ -64,7 +63,7 @@ export default function CollectionSlugPage() {
             {currentTitle}
           </h1>
           <p className="font-sans text-xs sm:text-sm text-black/65">
-            Showing {categoryProducts.length} items available for nationwide delivery across Pakistan.
+            Showing {products.length} items available for nationwide delivery across Pakistan.
           </p>
         </div>
 
@@ -74,7 +73,7 @@ export default function CollectionSlugPage() {
         ) : (
           <>
             <div className="grid grid-cols-2 mt-8 gap-x-4 gap-y-9 md:gap-x-6 md:gap-y-12 lg:grid-cols-5 lg:gap-x-7 lg:gap-y-14">
-              {categoryProducts.map((product) => (
+              {products.map((product) => (
                 <Link 
                   key={product.id} 
                   href={`/products/${product.slug}`} 
@@ -117,7 +116,7 @@ export default function CollectionSlugPage() {
               ))}
             </div>
 
-            {categoryProducts.length === 0 && (
+            {products.length === 0 && (
               <div className="py-20 text-center space-y-3">
                 <p className="dot-heading text-lg text-black/40">NO PRODUCTS IN THIS COLLECTION</p>
                 <Link

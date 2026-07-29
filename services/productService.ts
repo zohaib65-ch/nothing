@@ -5,9 +5,10 @@ export class ProductService {
     return typeof window !== "undefined";
   }
 
-  public static async fetchProductsFromApi(): Promise<Product[]> {
+  public static async fetchProductsFromApi(queryString?: string): Promise<Product[]> {
     try {
-      const res = await fetch("/api/products");
+      const url = queryString ? `/api/products?${queryString}` : "/api/products";
+      const res = await fetch(url);
       if (res.ok) {
         const data = await res.json();
         if (Array.isArray(data)) return data;

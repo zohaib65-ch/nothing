@@ -14,8 +14,8 @@ export default function ShopAllPage() {
     const loadProducts = async () => {
       setIsLoading(true);
       try {
-        const data = await ProductService.fetchProductsFromApi();
-        setProducts(data.filter((product) => product.status === "published"));
+        const data = await ProductService.fetchProductsFromApi("status=published");
+        setProducts(data);
       } catch (error) {
         console.error("Failed to fetch products:", error);
       } finally {

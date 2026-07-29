@@ -17,7 +17,7 @@ export default function ProductsCatalogPage() {
 
   React.useEffect(() => {
     const loadProducts = async () => {
-      const data = await ProductService.fetchProductsFromApi();
+      const data = await ProductService.fetchProductsFromApi("status=published");
       setProducts(data);
       setIsLoading(false);
     };

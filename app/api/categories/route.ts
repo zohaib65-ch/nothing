@@ -5,8 +5,10 @@ import { CategoryModel } from "@/models/Category";
 export async function GET() {
   try {
     await connectToDatabase();
-    const categories = await CategoryModel.find({}).sort({ createdAt: -1 });
-    return NextResponse.json(categories);
+    const categories = await CategoryModel.find({}).sort({ createdAt: -1 }).lean();
+    return NextResponse.json(categories, {
+      headers: { "Cache-Control": "s-maxage=120, stale-while-revalidate=600" },
+    });
   } catch (error: any) {
     return NextResponse.json({ error: error.message || "Failed to fetch categories" }, { status: 500 });
   }

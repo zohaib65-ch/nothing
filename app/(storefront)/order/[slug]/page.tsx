@@ -6,7 +6,6 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { ProductService } from "@/services/productService";
 import { Product, ProductVariant } from "@/types";
 import { Loader } from "@/components/ui/loader";
 import { Container } from "@/components/ui/container";
@@ -86,13 +85,17 @@ export default function CheckoutPage() {
     const loadProduct = async () => {
       if (!slug) return;
       try {
-        const all = await ProductService.fetchProductsFromApi();
-        const item = all.find((p) => p.slug === slug) || null;
-        setProduct(item);
-        if (item && item.variants && item.variants.length > 0) {
-          const variantParam = new URLSearchParams(window.location.search).get("variant");
-          const found = item.variants.find((v) => v.id === variantParam);
-          setSelectedVariant(found || item.variants[0]);
+        const res = await fetch(`/api/products/${slug}`);
+        if (res.ok) {
+          const item = await res.json();
+          setProduct(item);
+          if (item && item.variants && item.variants.length > 0) {
+            const variantParam = new URLSearchParams(window.location.search).get("variant");
+            const found = item.variants.find((v: any) => v.id === variantParam);
+            setSelectedVariant(found || item.variants[0]);
+          }
+        } else {
+          setProduct(null);
         }
       } catch {
         toast.error("Failed to load product details.");

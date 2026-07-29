@@ -21,16 +21,15 @@ export default function CategoryPage() {
     const loadCategory = async () => {
       if (!slug) return;
 
-      const [categories, allProducts] = await Promise.all([
+      // Fetch categories + filtered products in parallel
+      const [categories, catProducts] = await Promise.all([
         ProductService.fetchCategoriesFromApi(),
-        ProductService.fetchProductsFromApi(),
+        ProductService.fetchProductsFromApi(`status=published&category=${slug}`),
       ]);
 
       const cat = categories.find((c) => c.slug === slug || c.id === slug) || null;
       setCategory(cat);
-      setProducts(
-        cat ? allProducts.filter((p) => p.status === "published" && p.category === cat.id) : []
-      );
+      setProducts(catProducts);
       setIsLoading(false);
     };
 

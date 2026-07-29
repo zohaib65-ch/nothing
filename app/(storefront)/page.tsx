@@ -343,9 +343,9 @@ export default function HomePage() {
 
   React.useEffect(() => {
     setIsLoading(true);
-    ProductService.fetchProductsFromApi()
+    ProductService.fetchProductsFromApi("status=published")
       .then((data) => {
-        setProducts(data.filter((p) => p.status === "published"));
+        setProducts(data);
       })
       .catch((err) => console.error(err))
       .finally(() => setIsLoading(false));
