@@ -48,23 +48,17 @@ export default function CollectionSlugPage() {
       <div aria-hidden="true" className="site-dot-overlay" />
 
       <div className="mx-auto max-w-[1680px]">
-        <Link
-          href="/collections/shop-all"
-          className="inline-flex items-center space-x-1.5 text-xs font-mono text-black/60 hover:text-black mb-6 transition-colors"
-        >
-          <ArrowLeft className="h-3.5 w-3.5" />
-          <span>Back to All Collections</span>
-        </Link>
-
-        {/* Collection Header */}
-        <div className="border-b border-black/10 pb-8 space-y-2">
-          <p className="dot-heading text-[11px] tracking-[0.3em] text-black/45">COLLECTION</p>
-          <h1 className="collection-product-name text-3xl sm:text-5xl font-bold text-black">
-            {currentTitle}
-          </h1>
-          <p className="font-sans text-xs sm:text-sm text-black/65">
-            Showing {products.length} items available for nationwide delivery across Pakistan.
-          </p>
+        <div className="pb-4 md:pb-6">
+          <div className="flex items-center justify-center py-2 sm:py-4">
+            <div className="max-w-4xl text-center">
+              <h1 className="font-ndot57 uppercase text-center text-[2.15rem] leading-[0.95] tracking-[0.2em] text-black sm:text-[2.9rem] lg:text-[3.45rem]">
+                {currentTitle}
+              </h1>
+              <p className="mx-auto mt-4 max-w-3xl text-sm leading-7 text-black/62 md:text-base font-sans">
+                Showing {products.length} items available for nationwide delivery across Pakistan.
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Loading Spinner or Product Cards Grid */}
@@ -74,24 +68,22 @@ export default function CollectionSlugPage() {
           <>
             <div className="grid grid-cols-2 mt-8 gap-x-4 gap-y-9 md:gap-x-6 md:gap-y-12 lg:grid-cols-5 lg:gap-x-7 lg:gap-y-14">
               {products.map((product) => (
-                <Link 
-                  key={product.id} 
-                  href={`/products/${product.slug}`} 
-                  className="group block"
-                >
+                <Link key={product.id} href={`/products/${product.slug}`} className="group block">
                   <article className="flex h-full flex-col">
                     {/* Image Wrap */}
                     <div className="relative overflow-hidden aspect-[4/5] rounded-xl flex items-center justify-center p-4">
                       {product.warranty && (
                         <span className="absolute z-20 right-2 top-2 h-10 w-10 sm:right-3 sm:top-3 sm:h-12 sm:w-12 rounded-full bg-[#D71921] border border-white/20 flex flex-col items-center justify-center text-center font-mono leading-[1.15] text-white uppercase shadow-sm select-none">
                           <span className="text-[8px] sm:text-[9px] font-bold tracking-tighter">{product.warranty.split(" ")[0]}</span>
-                          <span className="text-[5px] sm:text-[6px] text-white/80 font-normal tracking-wider">{product.warranty.split(" ")[1] || "WARRANTY"}</span>
+                          <span className="text-[5px] sm:text-[6px] text-white/80 font-normal tracking-wider">
+                            {product.warranty.split(" ")[1] || "WARRANTY"}
+                          </span>
                         </span>
                       )}
-                      <img 
-                        alt={product.name} 
-                        src={product.images[0]} 
-                        className="h-full w-full object-contain transition-transform duration-500 ease-out group-hover:scale-[1.02]" 
+                      <img
+                        alt={product.name}
+                        src={product.images[0]}
+                        className="h-full w-full object-contain transition-transform duration-500 ease-out group-hover:scale-[1.02]"
                       />
                     </div>
 
@@ -101,9 +93,7 @@ export default function CollectionSlugPage() {
                         {product.name}
                       </h3>
                       <div className="mt-1 flex flex-col items-center">
-                        <p className="text-[11px] text-black/62 font-[system-ui] font-normal">
-                          Rs {product.price.toLocaleString()}
-                        </p>
+                        <p className="text-[11px] text-black/62 font-[system-ui] font-normal">Rs {product.price.toLocaleString()}</p>
                         {product.originalPrice && (
                           <p className="mt-0.5 text-[10px] text-black/65 line-through decoration-black/65 font-[system-ui] font-normal">
                             {product.originalPrice.toLocaleString()}
@@ -119,10 +109,7 @@ export default function CollectionSlugPage() {
             {products.length === 0 && (
               <div className="py-20 text-center space-y-3">
                 <p className="dot-heading text-lg text-black/40">NO PRODUCTS IN THIS COLLECTION</p>
-                <Link
-                  href="/collections/shop-all"
-                  className="inline-block rounded-lg bg-black px-4 py-2 text-xs font-bold text-white uppercase"
-                >
+                <Link href="/collections/shop-all" className="inline-block rounded-lg bg-black px-4 py-2 text-xs font-bold text-white uppercase">
                   Browse Shop All
                 </Link>
               </div>
