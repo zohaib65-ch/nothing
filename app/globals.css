@@ -92,7 +92,7 @@
   --font-lettera-regular: 'letteraRegular', 'Arial', monospace;
   --font-inter-light: 'interLight', 'Arial', sans-serif;
   --font-inter-medium: 'interMedium', 'Arial', sans-serif;
-  --font-lattera-mono: 'LatteraMonoLL', sans-serif;
+  --font-lattera-mono: 'LatteraMonoLL';
 
   --font-sans: 'ntype82', 'Arial', sans-serif;
   --font-mono: 'letteraRegular', 'Arial', monospace;
@@ -124,6 +124,10 @@ body {
 }
 .font-lattera {
   font-family: var(--font-lettera-regular) !important;
+}
+
+.font-lattera-mono {
+  font-family: 'LatteraMonoLL' !important;
 }
 
 /* Custom Scrollbar */

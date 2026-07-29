@@ -176,7 +176,7 @@ export function ProductBuyCard({ product, selectedVariant, onSelectVariant, onAd
 
   return (
     <div
-      className={`fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-[calc(100%-2rem)] max-w-md bg-white/95 backdrop-blur-md border border-neutral-300/90 rounded-2xl p-4 sm:p-5 shadow-2xl space-y-3 transition-all duration-500 ease-in-out dark:bg-[#0F0F10] dark:border-[#26262A] ${className}`}
+      className={`fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-[calc(100%-2rem)] max-w-md bg-white/80 backdrop-blur-md rounded-xl p-4 sm:p-5 shadow-2xl space-y-3 transition-all duration-500 ease-in-out dark:bg-[#0F0F10] dark:border-[#26262A] ${className}`}
     >
       <div
         className={`grid transition-all duration-500 ease-in-out overflow-hidden ${
@@ -201,12 +201,12 @@ export function ProductBuyCard({ product, selectedVariant, onSelectVariant, onAd
 
       <div className="grid grid-cols-2 gap-3">
         <Select value={currentColor} onValueChange={handleColorChange}>
-          <SelectTrigger className="w-full font-mono text-[11px] font-bold uppercase">
+          <SelectTrigger className="w-full shadow-none text-[12px] font-medium uppercase" style={{ fontFamily: "var(--font-ntype82), serif" }}>
             <SelectValue placeholder="SELECT COLOR" />
           </SelectTrigger>
           <SelectContent>
             {displayColors.map((c) => (
-              <SelectItem key={c} value={c} className="font-mono text-xs uppercase">
+              <SelectItem key={c} value={c} className=" text-xs uppercase">
                 {c}
               </SelectItem>
             ))}
@@ -214,12 +214,15 @@ export function ProductBuyCard({ product, selectedVariant, onSelectVariant, onAd
         </Select>
 
         <Select value={currentCapacity} onValueChange={handleCapacityChange}>
-          <SelectTrigger className="w-full font-mono text-[11px] font-bold uppercase">
+          <SelectTrigger
+            className="w-full text-[12px]  shadow-none bg-white font-medium uppercase"
+            style={{ fontFamily: "var(--font-ntype82), serif" }}
+          >
             <SelectValue placeholder="SELECT CAPACITY" />
           </SelectTrigger>
           <SelectContent>
             {displayCapacities.map((cap) => (
-              <SelectItem key={cap} value={cap} className="font-mono text-xs uppercase">
+              <SelectItem key={cap} value={cap} className=" text-xs uppercase">
                 {cap}
               </SelectItem>
             ))}
@@ -231,10 +234,11 @@ export function ProductBuyCard({ product, selectedVariant, onSelectVariant, onAd
         variant="primary"
         size="lg"
         onClick={handleAddToCart}
-        className="w-full bg-neutral-950 hover:bg-neutral-800 text-white font-mono text-xs font-bold uppercase tracking-widest py-3 rounded-lg shadow-md cursor-pointer flex items-center justify-center gap-2 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200"
+        style={{ fontFamily: "'LatteraMonoLL', 'letteraRegular', monospace" }}
+        className="w-full bg-neutral-950 hover:bg-neutral-800 text-white font-lattera-mono text-xs font-medium uppercase tracking-widest py-3 rounded-lg shadow-md cursor-pointer flex items-center justify-center gap-2 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200"
         leftIcon={<ShoppingBag className="h-4 w-4" />}
       >
-        <span>ADD TO BAG — {formatPrice(activeDisplayPrice)}</span>
+        <span style={{ fontFamily: "'LatteraMonoLL', 'letteraRegular', monospace" }}>{formatPrice(activeDisplayPrice)} — ADD TO BAG</span>
       </Button>
     </div>
   );
