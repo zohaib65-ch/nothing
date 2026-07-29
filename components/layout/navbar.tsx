@@ -4,9 +4,12 @@ import * as React from "react";
 import Link from "next/link";
 import { X } from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
+import { useSpecsStore } from "@/store/useSpecsStore";
+import { SpecsDropdownOverlay } from "@/components/features/products/specs-dropdown-overlay";
 
 export function Navbar() {
   const { openCart, getTotalItems } = useCartStore();
+  const { isOpen: isSpecsOpen, closeSpecs } = useSpecsStore();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
   const totalItems = getTotalItems();
@@ -31,7 +34,10 @@ export function Navbar() {
             {/* Hamburger Button */}
             <button
               type="button"
-              onClick={() => setIsMenuOpen(true)}
+              onClick={() => {
+                if (isSpecsOpen) closeSpecs();
+                setIsMenuOpen(true);
+              }}
               aria-expanded={false}
               aria-label="Open menu"
               className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-[8px] transition-opacity hover:opacity-65 md:h-8 md:w-8"
@@ -73,6 +79,9 @@ export function Navbar() {
           </div>
         </div>
       </header>
+
+      {/* ─── Specs Dropdown Overlay Component ──────────────────── */}
+      <SpecsDropdownOverlay />
 
       {/* ─── Mobile Menu Modal Overlay ────────────────────────── */}
       {isMenuOpen && (

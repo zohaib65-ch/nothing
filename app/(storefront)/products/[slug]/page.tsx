@@ -4,10 +4,9 @@ import * as React from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Product, ProductVariant } from "@/types";
 import { useCartStore } from "@/store/useCartStore";
-import { SpecsTable } from "@/components/features/products/specs-table";
+import { useSpecsStore } from "@/store/useSpecsStore";
 import { Heading } from "@/components/ui/heading";
 import { Button } from "@/components/ui/button";
-import { Modal } from "@/components/ui/modal";
 import { Loader } from "@/components/ui/loader";
 import { HeroSpecShowcase } from "@/components/features/products/hero-spec-showcase";
 import { BentoFeatureGrid } from "@/components/features/products/bento-feature-grid";
@@ -19,12 +18,11 @@ export default function ProductDetailPage() {
   const slug = params?.slug as string;
 
   const { addItem } = useCartStore();
-  const specsRef = React.useRef<HTMLDivElement>(null);
+  const { openSpecs } = useSpecsStore();
 
   const [product, setProduct] = React.useState<Product | null>(null);
   const [selectedVariant, setSelectedVariant] = React.useState<ProductVariant | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
-  const [isSpecsModalOpen, setIsSpecsModalOpen] = React.useState(false);
 
   React.useEffect(() => {
     const loadProduct = async () => {
@@ -50,9 +48,8 @@ export default function ProductDetailPage() {
   }, [slug]);
 
   const handleOpenSpecs = () => {
-    setIsSpecsModalOpen(true);
-    if (specsRef.current) {
-      specsRef.current.scrollIntoView({ behavior: "smooth" });
+    if (product?.specifications) {
+      openSpecs(product.specifications, product.name);
     }
   };
 
@@ -90,21 +87,6 @@ export default function ProductDetailPage() {
 
       <BentoFeatureGrid product={product} />
       <ProductShowcaseImages product={product} />
-      <Modal
-        isOpen={isSpecsModalOpen}
-        onClose={() => setIsSpecsModalOpen(false)}
-        title={`${product.name} Technical Specifications`}
-        subtitle="Detailed hardware features & performance specifications"
-        maxWidth="2xl"
-      >
-        <div className="py-2 font-mono">
-          {product.specifications && product.specifications.length > 0 ? (
-            <SpecsTable specifications={product.specifications} />
-          ) : (
-            <p className="text-xs text-neutral-400 font-mono text-center py-6">NO TECHNICAL SPECIFICATIONS SPECIFIED FOR THIS PRODUCT.</p>
-          )}
-        </div>
-      </Modal>
     </div>
   );
 }
