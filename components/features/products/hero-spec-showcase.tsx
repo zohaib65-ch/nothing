@@ -67,9 +67,9 @@ export function HeroSpecShowcase({ product, selectedVariant, onSelectVariant, on
             </div>
           )}
 
-          <div className="flex flex-wrap sm:flex-nowrap items-center justify-center lg:justify-start gap-4 sm:gap-6">
+          <div className="flex flex-wrap sm:flex-nowrap items-center justify-center lg:justify-start gap-4 lg:gap-6">
             <div onClick={onOpenSpecs} className="group flex flex-col items-center lg:items-start gap-2 cursor-pointer">
-              <img src="/specs.svg" alt="" className="h-12 w-12 sm:h-16 sm:w-16" />
+              <img src="/specs.svg" alt="" className="h-12 w-12 sm:h-24 sm:w-24" />
               <span className="font-ntype text-sm sm:text-base text-neutral-800 tracking-wide">Specs</span>
             </div>
 
