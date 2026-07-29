@@ -72,6 +72,15 @@
     font-style: normal;
     font-display: swap;
   }
+
+  /* LatteraMonoLL — Custom Monospace */
+  @font-face {
+    font-family: 'LatteraMonoLL';
+    src: url('/fonts/LatteraMonoLL.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
 }
 
 @theme {
@@ -83,6 +92,7 @@
   --font-lettera-regular: 'letteraRegular', 'Arial', monospace;
   --font-inter-light: 'interLight', 'Arial', sans-serif;
   --font-inter-medium: 'interMedium', 'Arial', sans-serif;
+  --font-lattera-mono: 'LatteraMonoLL', sans-serif;
 
   --font-sans: 'ntype82', 'Arial', sans-serif;
   --font-mono: 'letteraRegular', 'Arial', monospace;
