@@ -14,13 +14,7 @@ interface FulfillmentTabsProps {
   onFulfillmentChange: (method: "ship" | "pickup") => void;
 }
 
-export function FulfillmentTabs({
-  register,
-  setValue,
-  errors,
-  fulfillmentMethod,
-  onFulfillmentChange,
-}: FulfillmentTabsProps) {
+export function FulfillmentTabs({ register, setValue, errors, fulfillmentMethod, onFulfillmentChange }: FulfillmentTabsProps) {
   const handleTabChange = (value: string) => {
     const method = value as "ship" | "pickup";
     onFulfillmentChange(method);
@@ -40,9 +34,7 @@ export function FulfillmentTabs({
     <div className="bg-white rounded-[24px] p-6 border border-slate-100 shadow-sm space-y-6">
       <div>
         <h2 className="text-lg font-bold tracking-tight text-slate-900 font-ntype">Fulfillment Method</h2>
-        <p className="text-xs text-slate-500 mt-1 font-ntype">
-          Choose whether you would like express door delivery or free office pickup.
-        </p>
+        <p className="text-xs text-slate-500 mt-1 font-ntype">Choose whether you would like express door delivery or free office pickup.</p>
       </div>
 
       <Tabs value={fulfillmentMethod} onValueChange={handleTabChange}>
