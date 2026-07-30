@@ -45,7 +45,7 @@ export default function TermsOfSalePage() {
               <span className="text-black/80">Updated:</span> May 19, 2026
             </p>
           </div>
-          <nav className="mt-6 border-t border-black/15 pt-4">
+          {/* <nav className="mt-6 border-t border-black/15 pt-4">
             <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-black/55">All Policies</p>
             <ul className="mt-3 space-y-2 text-sm">
               {policies.map((policy) => (
@@ -63,7 +63,7 @@ export default function TermsOfSalePage() {
                 </li>
               ))}
             </ul>
-          </nav>
+          </nav> */}
         </aside>
 
         {/* Main Article */}
