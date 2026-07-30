@@ -13,10 +13,6 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "cdn.nothingshop.pk",
-      },
-      {
-        protocol: "https",
         hostname: "res.cloudinary.com",
       },
       {

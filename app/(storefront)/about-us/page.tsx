@@ -1,4 +1,3 @@
-import * as React from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Inter } from "next/font/google";
@@ -9,7 +8,6 @@ const inter = Inter({
   weight: ["300", "400", "500", "600", "700"],
   display: "swap",
 });
-
 
 /* ── SEO metadata (server component) ───────────────────────── */
 export const metadata: Metadata = {
@@ -42,57 +40,6 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://www.nothingshop.pk/about-us" },
 };
 
-/* ── Structured Data ───────────────────────────────────────── */
-const jsonLd = [
-  {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "@id": "https://www.nothingshop.pk/#organization",
-    name: "Nothing Official Pakistan",
-    alternateName: ["Nothing Pakistan", "Nothingshop.pk", "www.nothingshop.pk"],
-    legalName: "NOTHING OFFICIAL (SMC-PRIVATE) LIMITED",
-    url: "https://www.nothingshop.pk",
-    identifier: "CUIN 0337422",
-    foundingDate: "2026-05-16",
-    founder: {
-      "@type": "Person",
-      name: "Usman Afzal",
-      url: "https://www.nothingshop.pk/authors/usman-afzal",
-      image: "https://cdn.nothingshop.pk/usman_afzal.jpeg",
-    },
-    sameAs: [
-      "https://www.tiktok.com/@nothingshop.pk",
-      "https://www.facebook.com/share/1CDYdBibov/",
-    ],
-    document:
-      "https://cdn.nothingshop.pk/nothing-official-pakistan-secp-certificate.pdf",
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: "https://www.nothingshop.pk/" },
-      { "@type": "ListItem", position: 2, name: "About Us", item: "https://www.nothingshop.pk/about-us" },
-    ],
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "AboutPage",
-    "@id": "https://www.nothingshop.pk/about-us#webpage",
-    name: "About Nothing Official Pakistan | SECP Registered Storefront",
-    url: "https://www.nothingshop.pk/about-us",
-    description:
-      "Learn about Nothing Pakistan, the storefront operated by NOTHING OFFICIAL (SMC-PRIVATE) LIMITED, an SECP registered Pakistani company.",
-    about: {
-      "@id": "https://www.nothingshop.pk/#organization",
-      name: "Nothing Official Pakistan",
-      legalName: "NOTHING OFFICIAL (SMC-PRIVATE) LIMITED",
-      identifier: "CUIN 0337422",
-    },
-  },
-];
-
-/* ── Content sections ──────────────────────────────────────── */
 const sections = [
   {
     title: "Who We Are",
@@ -138,39 +85,24 @@ export default function AboutUsPage() {
   return (
     <div className={inter.className}>
       <div className="min-h-screen overflow-x-hidden bg-[#f4f4f0] text-[#111] pt-20">
-        {/* Structured Data */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
-
-        {/* ─── Hero Section ─────────────────────────────────── */}
         <section className="border-b border-black/10 px-4 py-12 md:px-8 md:py-16">
           <div className="mx-auto grid max-w-screen-2xl gap-8 lg:grid-cols-[minmax(0,1fr)_380px] lg:items-end">
             {/* Left — heading + subtitle */}
             <div className="max-w-4xl">
-              <p className="text-[10px] uppercase tracking-[0.34em] text-black/45">
-                About Nothing Pakistan
-              </p>
+              <p className="text-[10px] uppercase tracking-[0.34em] text-black/45">About Nothing Pakistan</p>
               <h1 className="mt-4 text-5xl font-semibold leading-[0.94] tracking-[-0.04em] text-black sm:text-6xl">
                 A verified storefront for Nothing and CMF shoppers in Pakistan.
               </h1>
               <p className="mt-5 max-w-3xl text-base leading-8 text-black/68">
-                Nothing Pakistan brings product discovery, support, delivery
-                guidance, and company verification into one place. We serve
-                customers who want to shop with clearer business identity,
-                practical product information, and support rooted in Pakistan.
+                Nothing Pakistan brings product discovery, support, delivery guidance, and company verification into one place. We serve customers who
+                want to shop with clearer business identity, practical product information, and support rooted in Pakistan.
               </p>
             </div>
 
             {/* Right — SECP card */}
             <div className="rounded-[8px] border border-black/10 bg-white p-4 text-black">
-              <p className="text-[10px] uppercase tracking-[0.24em] text-black/46">
-                SECP Registered Company
-              </p>
-              <p className="mt-2 text-sm leading-6 text-black/78">
-                NOTHING OFFICIAL (SMC-PRIVATE) LIMITED
-              </p>
+              <p className="text-[10px] uppercase tracking-[0.24em] text-black/46">SECP Registered Company</p>
+              <p className="mt-2 text-sm leading-6 text-black/78">NOTHING OFFICIAL (SMC-PRIVATE) LIMITED</p>
               <p className="mt-1 text-xs text-black/50">CUIN: 0337422</p>
               <Link
                 href="/company-verification"
@@ -189,74 +121,46 @@ export default function AboutUsPage() {
             <article className="space-y-8">
               {/* Direct Answer card */}
               <section className="rounded-[8px] border border-black/10 bg-white p-5">
-                <p className="text-[10px] uppercase tracking-[0.26em] text-black/42">
-                  Direct Answer
-                </p>
-                <h2 className="mt-3 text-xl font-semibold tracking-[-0.02em] text-black">
-                  Who operates Nothing Pakistan?
-                </h2>
+                <p className="text-[10px] uppercase tracking-[0.26em] text-black/42">Direct Answer</p>
+                <h2 className="mt-3 text-xl font-semibold tracking-[-0.02em] text-black">Who operates Nothing Pakistan?</h2>
                 <p className="mt-3 text-sm leading-7 text-black/68">
-                  Nothing Pakistan is operated by{" "}
-                  NOTHING OFFICIAL (SMC-PRIVATE) LIMITED, an SECP registered
-                  Pakistani company with CUIN 0337422. The storefront publishes
-                  company verification, contact information, support routes, and
-                  policy pages so buyers can review business identity before
-                  ordering.
+                  Nothing Pakistan is operated by NOTHING OFFICIAL (SMC-PRIVATE) LIMITED, an SECP registered Pakistani company with CUIN 0337422. The
+                  storefront publishes company verification, contact information, support routes, and policy pages so buyers can review business
+                  identity before ordering.
                 </p>
               </section>
 
               {/* Repeating content sections */}
               {sections.map((s) => (
-                <section
-                  key={s.title}
-                  className="border-t border-black/10 pt-8"
-                >
-                  <h2 className="text-3xl font-semibold tracking-[-0.03em] text-black">
-                    {s.title}
-                  </h2>
-                  <p className="mt-5 text-sm leading-8 text-black/70">
-                    {s.body}
-                  </p>
+                <section key={s.title} className="border-t border-black/10 pt-8">
+                  <h2 className="text-3xl font-semibold tracking-[-0.03em] text-black">{s.title}</h2>
+                  <p className="mt-5 text-sm leading-8 text-black/70">{s.body}</p>
                 </section>
               ))}
 
               {/* What Customers Can Expect (multi-paragraph) */}
               <section className="border-t border-black/10 pt-8">
-                <h2 className="text-3xl font-semibold tracking-[-0.03em] text-black">
-                  What Customers Can Expect
-                </h2>
+                <h2 className="text-3xl font-semibold tracking-[-0.03em] text-black">What Customers Can Expect</h2>
                 <div className="mt-5 space-y-5 text-sm leading-8 text-black/70">
                   <p>
-                    Customers can expect product pages that explain pricing, key
-                    features, compatibility, delivery notes, WhatsApp ordering,
-                    and return expectations. Collections are organized around
-                    phones, audio, chargers, protectors, accessories, CMF
-                    products, and the full catalog so shoppers can move from a
-                    broad category to a specific product with fewer dead ends.
+                    Customers can expect product pages that explain pricing, key features, compatibility, delivery notes, WhatsApp ordering, and
+                    return expectations. Collections are organized around phones, audio, chargers, protectors, accessories, CMF products, and the full
+                    catalog so shoppers can move from a broad category to a specific product with fewer dead ends.
                   </p>
                   <p>
-                    We also maintain a company verification page because brand
-                    trust is not just visual design. It is built through
-                    consistent identity, support details, policy clarity, and
-                    responsible wording. Customers should verify seller
-                    authenticity before buying from any online technology store,
-                    and we make that easier by linking our SECP certificate and
-                    company details from key pages.
+                    We also maintain a company verification page because brand trust is not just visual design. It is built through consistent
+                    identity, support details, policy clarity, and responsible wording. Customers should verify seller authenticity before buying from
+                    any online technology store, and we make that easier by linking our SECP certificate and company details from key pages.
                   </p>
                 </div>
               </section>
 
               {/* Operating Principles */}
               <section className="border-t border-black/10 pt-8">
-                <h2 className="text-3xl font-semibold tracking-[-0.03em] text-black">
-                  Operating Principles
-                </h2>
+                <h2 className="text-3xl font-semibold tracking-[-0.03em] text-black">Operating Principles</h2>
                 <ul className="mt-6 grid gap-3">
                   {operatingPrinciples.map((p) => (
-                    <li
-                      key={p}
-                      className="rounded-[8px] border border-black/10 bg-white p-4 text-sm leading-7 text-black/68"
-                    >
+                    <li key={p} className="rounded-[8px] border border-black/10 bg-white p-4 text-sm leading-7 text-black/68">
                       {p}
                     </li>
                   ))}
@@ -265,14 +169,10 @@ export default function AboutUsPage() {
 
               {/* Verification and Certificate */}
               <section className="border-t border-black/10 pt-8">
-                <h2 className="text-3xl font-semibold tracking-[-0.03em] text-black">
-                  Verification and Certificate
-                </h2>
+                <h2 className="text-3xl font-semibold tracking-[-0.03em] text-black">Verification and Certificate</h2>
                 <p className="mt-5 text-sm leading-8 text-black/70">
-                  The company verification page lists the legal company name,
-                  CUIN, registered authority, incorporation date, company type,
-                  country, website, CEO details, and certificate access. Customers
-                  can open the certificate directly from the verification page.
+                  The company verification page lists the legal company name, CUIN, registered authority, incorporation date, company type, country,
+                  website, CEO details, and certificate access. Customers can open the certificate directly from the verification page.
                 </p>
                 <div className="mt-6 flex flex-wrap gap-3">
                   <Link
@@ -305,20 +205,14 @@ export default function AboutUsPage() {
             <aside className="space-y-5 lg:sticky lg:top-24 lg:self-start">
               {/* Legal Identity */}
               <section className="rounded-[8px] border border-black/10 bg-white p-5">
-                <p className="text-[10px] uppercase tracking-[0.24em] text-black/42">
-                  Legal Identity
-                </p>
-                <p className="mt-3 text-sm leading-7 text-black/74">
-                  NOTHING OFFICIAL (SMC-PRIVATE) LIMITED
-                </p>
+                <p className="text-[10px] uppercase tracking-[0.24em] text-black/42">Legal Identity</p>
+                <p className="mt-3 text-sm leading-7 text-black/74">NOTHING OFFICIAL (SMC-PRIVATE) LIMITED</p>
                 <p className="mt-2 text-sm text-black/58">CUIN 0337422</p>
               </section>
 
               {/* Helpful Links */}
               <section className="rounded-[8px] border border-black/10 bg-white p-5">
-                <p className="text-[10px] uppercase tracking-[0.24em] text-black/42">
-                  Helpful Links
-                </p>
+                <p className="text-[10px] uppercase tracking-[0.24em] text-black/42">Helpful Links</p>
                 <div className="mt-4 grid gap-2">
                   {helpfulLinks.map((link) => (
                     <Link
