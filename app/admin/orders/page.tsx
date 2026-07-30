@@ -89,10 +89,16 @@ export default function AdminOrdersPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-neutral-200 pb-5">
         <div>
           <h2 className="font-mono text-lg font-bold uppercase tracking-wider text-neutral-900">ORDERS REGISTRY</h2>
-          <p className="font-lattera text-[10px] text-neutral-500 uppercase tracking-wider mt-1">Displaying placed client checkout transactions and invoice records.</p>
+          <p className="font-lattera text-[10px] text-neutral-500 uppercase tracking-wider mt-1">
+            Displaying placed client checkout transactions and invoice records.
+          </p>
         </div>
         <div className="flex sm:flex-row flex-col items-center gap-3">
-          <Button variant="secondary" onClick={refetch} className="font-lattera text-xs sm:w-auto w-full font-bold uppercase tracking-wider h-10 shrink-0 cursor-pointer">
+          <Button
+            variant="secondary"
+            onClick={refetch}
+            className="font-lattera text-xs sm:w-auto w-full font-bold uppercase tracking-wider h-10 shrink-0 cursor-pointer"
+          >
             REFRESH
           </Button>
           <Button
@@ -131,10 +137,26 @@ export default function AdminOrdersPage() {
       />
 
       {/* Database table listings */}
-      <OrdersTable isLoading={isLoading} orders={filteredOrders} copiedOrderId={copiedOrderId} copyOrderId={copyOrderId} onViewDetails={handleViewDetails} onDownloadInvoice={generateInvoicePDF} />
+      <OrdersTable
+        isLoading={isLoading}
+        orders={filteredOrders}
+        copiedOrderId={copiedOrderId}
+        copyOrderId={copyOrderId}
+        onViewDetails={handleViewDetails}
+        onDownloadInvoice={generateInvoicePDF}
+        onUpdateStatus={handleUpdateStatus}
+      />
 
       {/* Selected Order Detailed View */}
-      <OrderDetailsModal isOpen={isDetailsOpen} onClose={() => setIsDetailsOpen(false)} order={selectedOrder} onUpdateStatus={handleUpdateStatus} />
+      <OrderDetailsModal
+        isOpen={isDetailsOpen}
+        onClose={() => {
+          setIsDetailsOpen(false);
+          refetch();
+        }}
+        order={selectedOrder}
+        onUpdateStatus={handleUpdateStatus}
+      />
     </div>
   );
 }

@@ -23,12 +23,31 @@ const checkoutSchema = z.object({
   city: z.string().min(1, "City is required"),
   district: z.string().min(1, "District is required"),
   postalCode: z.string().optional(),
-  phoneNumber: z.string()
+  phoneNumber: z
+    .string()
     .min(1, "Phone number is required")
-    .refine((val) => /^(03\d{9}|\+923\d{9})$/.test(val.replace(/\s+/g, "")), {
-      message: "Enter a valid Pakistani mobile number (e.g., 03001234567)"
-    }),
-  phone2: z.string().optional(),
+    .refine(
+      (val) => {
+        const cleaned = val.replace(/[\s-]/g, "");
+        return /^(03\d{9}|\+923\d{9})$/.test(cleaned);
+      },
+      {
+        message: "Enter a valid Pakistani mobile number",
+      },
+    ),
+  phone2: z
+    .string()
+    .optional()
+    .refine(
+      (val) => {
+        if (!val || val.trim() === "") return true;
+        const cleaned = val.replace(/[\s-]/g, "");
+        return /^(03\d{9}|\+923\d{9})$/.test(cleaned);
+      },
+      {
+        message: "Enter a valid Pakistani mobile number",
+      },
+    ),
 });
 
 type CheckoutFormValues = z.infer<typeof checkoutSchema>;
@@ -76,12 +95,12 @@ export default function CartCheckoutPage() {
     },
   });
 
-  // Redirect if cart is empty ONLY AFTER hydration is ready!
+  // Redirect if cart is empty ONLY AFTER hydration is ready and modal is not open!
   React.useEffect(() => {
-    if (isCartReady && items.length === 0 && !isSubmitPending) {
+    if (isCartReady && items.length === 0 && !isSubmitPending && !isProofModalOpen && !placedOrderId) {
       router.push("/cart");
     }
-  }, [isCartReady, items, router, isSubmitPending]);
+  }, [isCartReady, items, router, isSubmitPending, isProofModalOpen, placedOrderId]);
 
   // Copy helpers
   const handleCopyText = async (text: string, type: "account" | "iban") => {
@@ -109,7 +128,7 @@ export default function CartCheckoutPage() {
     );
   }
 
-  if (items.length === 0) {
+  if (items.length === 0 && !placedOrderId && !isProofModalOpen) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center py-24">
         <div className="font-ntype text-sm animate-pulse text-slate-500">REDIRECTING TO BAG...</div>
@@ -137,8 +156,15 @@ export default function CartCheckoutPage() {
   const onSubmit = async (data: CheckoutFormValues) => {
     setIsSubmitPending(true);
     try {
+      const cleanPhone = (val?: string) => {
+        if (!val) return "";
+        return val.replace(/[\s-]/g, "");
+      };
+
       const orderPayload = {
         ...data,
+        phoneNumber: cleanPhone(data.phoneNumber),
+        phone2: cleanPhone(data.phone2),
         paymentMethod,
         items: items.map((item) => ({
           productId: item.product.id || item.product.slug,
@@ -294,7 +320,10 @@ export default function CartCheckoutPage() {
               <div className="font-ntype text-[11px] text-slate-500 leading-relaxed pl-7">
                 <p className="font-bold text-slate-700">NOTHING OFFICIAL (SMC-PRIVATE) LIMITED</p>
                 <p className="mt-0.5">Registration CUIN: 0337422</p>
-                <Link href="/company-verification" className="text-slate-600 underline font-semibold hover:text-black mt-2 inline-block transition-colors">
+                <Link
+                  href="/company-verification"
+                  className="text-slate-600 underline font-semibold hover:text-black mt-2 inline-block transition-colors"
+                >
                   View SECP Incorporation Certificate
                 </Link>
               </div>

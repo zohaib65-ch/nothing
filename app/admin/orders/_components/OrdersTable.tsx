@@ -14,6 +14,7 @@ interface OrdersTableProps {
   copyOrderId: (id: string) => void;
   onViewDetails: (order: Order) => void;
   onDownloadInvoice: (order: Order) => void;
+  onUpdateStatus?: (orderId: string, status: string) => void;
 }
 
 export function OrdersTable({
@@ -23,10 +24,11 @@ export function OrdersTable({
   copyOrderId,
   onViewDetails,
   onDownloadInvoice,
+  onUpdateStatus,
 }: OrdersTableProps) {
   const columns = React.useMemo<ColumnDef<Order>[]>(
-    () => getColumns(copiedOrderId, copyOrderId, onViewDetails, onDownloadInvoice),
-    [copiedOrderId, copyOrderId, onViewDetails, onDownloadInvoice]
+    () => getColumns(copiedOrderId, copyOrderId, onViewDetails, onDownloadInvoice, onUpdateStatus),
+    [copiedOrderId, copyOrderId, onViewDetails, onDownloadInvoice, onUpdateStatus]
   );
 
   return (

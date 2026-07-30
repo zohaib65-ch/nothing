@@ -27,6 +27,37 @@ interface SharedCheckoutFormProps {
   onCopyText: (text: string, type: "account" | "iban") => void;
 }
 
+export const formatPakistaniPhone = (value: string): string => {
+  if (!value) return "";
+
+  // Keep only digits and '+' at the start
+  let cleaned = value.replace(/[^\d+]/g, "");
+
+  // Handle +92 format
+  if (cleaned.startsWith("+92")) {
+    let digits = cleaned.slice(3).replace(/\D/g, ""); // digits after +92
+    if (digits.length > 10) digits = digits.slice(0, 10);
+
+    if (digits.length <= 3) {
+      return `+92 ${digits}`;
+    }
+    return `+92 ${digits.slice(0, 3)} - ${digits.slice(3)}`;
+  }
+
+  // Handle standard 03XX format
+  let digits = cleaned.replace(/\D/g, "");
+  if (digits.startsWith("92")) {
+    return formatPakistaniPhone("+" + digits);
+  }
+
+  if (digits.length > 11) digits = digits.slice(0, 11);
+
+  if (digits.length <= 4) {
+    return digits;
+  }
+  return `${digits.slice(0, 4)} - ${digits.slice(4)}`;
+};
+
 export function SharedCheckoutForm({
   register,
   errors,
@@ -52,7 +83,9 @@ export function SharedCheckoutForm({
         <div className="space-y-4">
           {/* Full Name */}
           <div className="space-y-1.5">
-            <label htmlFor="fullName" className="text-xs font-semibold text-slate-700">Full Name *</label>
+            <label htmlFor="fullName" className="text-xs font-semibold text-slate-700">
+              Full Name *
+            </label>
             <input
               type="text"
               id="fullName"
@@ -65,7 +98,9 @@ export function SharedCheckoutForm({
 
           {/* Address */}
           <div className="space-y-1.5">
-            <label htmlFor="address" className="text-xs font-semibold text-slate-700">Address *</label>
+            <label htmlFor="address" className="text-xs font-semibold text-slate-700">
+              Address *
+            </label>
             <textarea
               id="address"
               placeholder="House / street / area"
@@ -79,7 +114,9 @@ export function SharedCheckoutForm({
           {/* City & District */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <label htmlFor="city" className="text-xs font-semibold text-slate-700">City *</label>
+              <label htmlFor="city" className="text-xs font-semibold text-slate-700">
+                City *
+              </label>
               <input
                 type="text"
                 id="city"
@@ -91,7 +128,9 @@ export function SharedCheckoutForm({
             </div>
 
             <div className="space-y-1.5">
-              <label htmlFor="district" className="text-xs font-semibold text-slate-700">District *</label>
+              <label htmlFor="district" className="text-xs font-semibold text-slate-700">
+                District *
+              </label>
               <input
                 type="text"
                 id="district"
@@ -120,12 +159,18 @@ export function SharedCheckoutForm({
             </div>
 
             <div className="space-y-1.5">
-              <label htmlFor="phoneNumber" className="text-xs font-semibold text-slate-700">Phone Number *</label>
+              <label htmlFor="phoneNumber" className="text-xs font-semibold text-slate-700">
+                Phone Number *
+              </label>
               <input
                 type="text"
                 id="phoneNumber"
                 placeholder="0300 - 0000000"
-                {...register("phoneNumber")}
+                {...register("phoneNumber", {
+                  onChange: (e) => {
+                    e.target.value = formatPakistaniPhone(e.target.value);
+                  },
+                })}
                 className={`w-full rounded-[16px] border ${errors.phoneNumber ? "border-red-500 ring-1 ring-red-100" : "border-slate-200"} px-4 py-3 bg-white text-slate-900 text-sm focus:border-slate-400 focus:ring-1 focus:ring-slate-200 focus:outline-none transition`}
               />
               {errors.phoneNumber && <p className="text-xs text-red-500">{errors.phoneNumber.message}</p>}
@@ -142,9 +187,14 @@ export function SharedCheckoutForm({
               type="text"
               id="phone2"
               placeholder="0300 - 0000000"
-              {...register("phone2")}
-              className="w-full rounded-[16px] border border-slate-200 px-4 py-3 bg-white text-slate-900 text-sm focus:border-slate-400 focus:ring-1 focus:ring-slate-200 focus:outline-none transition"
+              {...register("phone2", {
+                onChange: (e) => {
+                  e.target.value = formatPakistaniPhone(e.target.value);
+                },
+              })}
+              className={`w-full rounded-[16px] border ${errors.phone2 ? "border-red-500 ring-1 ring-red-100" : "border-slate-200"} px-4 py-3 bg-white text-slate-900 text-sm focus:border-slate-400 focus:ring-1 focus:ring-slate-200 focus:outline-none transition`}
             />
+            {errors.phone2 && <p className="text-xs text-red-500">{errors.phone2.message}</p>}
           </div>
         </div>
       </div>
@@ -160,8 +210,9 @@ export function SharedCheckoutForm({
 
         {/* Warning Banner for High-value orders */}
         {isHighValue && (
-          <div className="bg-amber-50/40 border border-amber-200/80 rounded-[20px] p-5 text-amber-900 text-xs font-ntype leading-relaxed">
-            For the safety and accountability of high-value shipments, we highly recommend bank transfer pre-payment. Orders paid via Bank Transfer receive priority processing and express next-day delivery.
+          <div className="bg-green-100/40 border border-green-200/80 rounded-[20px] p-5 text-black text-xs font-ntype leading-relaxed">
+            For the safety and accountability of high-value shipments, we highly recommend bank transfer pre-payment. Orders paid via Bank Transfer
+            receive priority processing and express next-day delivery.
           </div>
         )}
 
@@ -171,18 +222,12 @@ export function SharedCheckoutForm({
             onClick={() => setPaymentMethod("cod")}
             className={cn(
               "p-5 rounded-[20px] border transition-all duration-200 flex items-center justify-between cursor-pointer select-none",
-              paymentMethod === "cod"
-                ? "border-emerald-500 bg-emerald-50/15"
-                : "border-slate-200 hover:border-slate-300 bg-white"
+              paymentMethod === "cod" ? "border-emerald-500 bg-emerald-50/15" : "border-slate-200 hover:border-slate-300 bg-white",
             )}
           >
             <div className="space-y-1">
-              <span className="font-ntype text-xs font-bold uppercase tracking-wider block text-slate-800">
-                CASH ON DELIVERY
-              </span>
-              <span className="font-ntype text-xs text-slate-500 block leading-relaxed">
-                COD orders = Rs 400 shipping fee + 4% Govt Tax.
-              </span>
+              <span className="font-ntype text-xs font-bold uppercase tracking-wider block text-slate-800">CASH ON DELIVERY</span>
+              <span className="font-ntype text-xs text-slate-500 block leading-relaxed">COD orders = Rs 400 shipping fee + 4% Govt Tax.</span>
             </div>
             <div className="shrink-0 ml-4">
               {paymentMethod === "cod" ? (
@@ -202,16 +247,12 @@ export function SharedCheckoutForm({
             onClick={() => setPaymentMethod("bank_transfer")}
             className={cn(
               "p-5 rounded-[20px] border transition-all duration-200 space-y-5 cursor-pointer select-none",
-              paymentMethod === "bank_transfer"
-                ? "border-emerald-500 bg-emerald-50/15"
-                : "border-slate-200 hover:border-slate-300 bg-white"
+              paymentMethod === "bank_transfer" ? "border-emerald-500 bg-emerald-50/15" : "border-slate-200 hover:border-slate-300 bg-white",
             )}
           >
             <div className="flex items-start justify-between">
               <div className="space-y-1">
-                <span className="font-ntype text-xs font-bold uppercase tracking-wider block text-slate-800">
-                  BANK TRANSFER
-                </span>
+                <span className="font-ntype text-xs font-bold uppercase tracking-wider block text-slate-800">BANK TRANSFER</span>
                 <span className="font-ntype text-xs text-slate-500 block leading-relaxed">
                   Free shipping and 0% Govt Tax. For advance transfers, the 4% government tax is paid by us. Plus, get express next-day delivery.
                 </span>
@@ -231,19 +272,16 @@ export function SharedCheckoutForm({
 
             {/* Nested Bank Details Subcard */}
             {paymentMethod === "bank_transfer" && (
-              <div className="bg-emerald-50/20 border border-emerald-100/80 rounded-[20px] p-5 space-y-4 text-xs font-ntype text-slate-700 animate-in fade-in-20 duration-200" onClick={(e) => e.stopPropagation()}>
+              <div
+                className="bg-emerald-50/20 border border-emerald-100/80 rounded-[20px] p-5 space-y-4 text-xs font-ntype text-slate-700 animate-in fade-in-20 duration-200"
+                onClick={(e) => e.stopPropagation()}
+              >
                 {/* Bank Title & Logo */}
-                <div className="flex items-center space-x-3 text-slate-800 pb-2 border-b border-emerald-100/60">
+                <div className=" items-center space-x-3 text-slate-800 pb-2 border-b border-emerald-100/60">
+                  <p className="font-ntype text-[10px] font-bold text-emerald-700 tracking-wider uppercase">BANK DETAILS</p>
+
                   <div className="shrink-0 flex items-center justify-center w-28 h-10">
-                    <img
-                      src="/bank_alfalah.png"
-                      alt="Bank Alfalah"
-                      className="h-full w-full object-contain"
-                    />
-                  </div>
-                  <div>
-                    <p className="font-ntype text-[10px] font-bold text-emerald-700 tracking-wider uppercase">BANK DETAILS</p>
-                    <p className="font-bold text-slate-900 mt-0.5">Bank Alfalah</p>
+                    <img src="/bank_alfalah.png" alt="Bank Alfalah" className="h-full w-full object-contain" />
                   </div>
                 </div>
 

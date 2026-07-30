@@ -56,11 +56,20 @@ const getStatusIcon = (status: string) => {
   }
 };
 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 export const getColumns = (
   copiedOrderId: string | null,
   copyOrderId: (id: string) => void,
   onViewDetails: (order: Order) => void,
-  onDownloadInvoice: (order: Order) => void
+  onDownloadInvoice: (order: Order) => void,
+  onUpdateStatus?: (orderId: string, status: string) => void
 ): ColumnDef<Order>[] => [
   {
     accessorKey: "id",
@@ -148,14 +157,34 @@ export const getColumns = (
     cell: ({ row }) => {
       const order = row.original;
       return (
-        <div className="text-center">
-          <span className={cn(
-            "inline-flex items-center space-x-1.5 border px-2.5 py-1 rounded-full text-[9px] font-lattera font-bold uppercase tracking-wider",
-            getStatusBadge(order.status)
-          )}>
-            {getStatusIcon(order.status)}
-            <span>{order.status}</span>
-          </span>
+        <div className="flex justify-center">
+          <Select
+            value={order.status}
+            onValueChange={(newStatus) => {
+              if (onUpdateStatus) {
+                onUpdateStatus(order._id || order.id, newStatus);
+              }
+            }}
+          >
+            <SelectTrigger
+              className={cn(
+                "h-7 text-[9px] font-lattera font-bold uppercase tracking-wider rounded-full border px-2.5 shadow-none focus:ring-0 cursor-pointer",
+                getStatusBadge(order.status)
+              )}
+            >
+              <div className="flex items-center space-x-1.5">
+                {getStatusIcon(order.status)}
+                <SelectValue placeholder={order.status} />
+              </div>
+            </SelectTrigger>
+            <SelectContent className="text-[10px] font-lattera font-bold uppercase tracking-wider min-w-[130px]">
+              <SelectItem value="pending">PENDING</SelectItem>
+              <SelectItem value="processing">PROCESSING</SelectItem>
+              <SelectItem value="shipped">SHIPPED</SelectItem>
+              <SelectItem value="delivered">DELIVERED</SelectItem>
+              <SelectItem value="cancelled">CANCELLED</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       );
     },

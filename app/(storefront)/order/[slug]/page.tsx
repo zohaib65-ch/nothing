@@ -16,13 +16,7 @@ import { SharedCheckoutForm } from "@/components/features/checkout/checkout-form
 import { cn } from "@/lib/utils";
 import { TransactionProofModal } from "@/components/features/checkout/transaction-proof-modal";
 import { toast } from "sonner";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 // Form validation schema with Zod
 const checkoutSchema = z.object({
@@ -31,12 +25,31 @@ const checkoutSchema = z.object({
   city: z.string().min(1, "City is required"),
   district: z.string().min(1, "District is required"),
   postalCode: z.string().optional(),
-  phoneNumber: z.string()
+  phoneNumber: z
+    .string()
     .min(1, "Phone number is required")
-    .refine((val) => /^(03\d{9}|\+923\d{9})$/.test(val.replace(/\s+/g, "")), {
-      message: "Enter a valid Pakistani mobile number (e.g., 03001234567)"
-    }),
-  phone2: z.string().optional(),
+    .refine(
+      (val) => {
+        const cleaned = val.replace(/[\s-]/g, "");
+        return /^(03\d{9}|\+923\d{9})$/.test(cleaned);
+      },
+      {
+        message: "Enter a valid Pakistani mobile number",
+      },
+    ),
+  phone2: z
+    .string()
+    .optional()
+    .refine(
+      (val) => {
+        if (!val || val.trim() === "") return true;
+        const cleaned = val.replace(/[\s-]/g, "");
+        return /^(03\d{9}|\+923\d{9})$/.test(cleaned);
+      },
+      {
+        message: "Enter a valid Pakistani mobile number",
+      },
+    ),
 });
 
 type CheckoutFormValues = z.infer<typeof checkoutSchema>;
@@ -136,7 +149,9 @@ export default function CheckoutPage() {
     return (
       <div className="min-h-screen bg-slate-50 text-slate-900 py-24">
         <Container size="sm" className="text-center space-y-6">
-          <Heading size="lg" className="font-ntype font-bold tracking-wider">PRODUCT NOT FOUND</Heading>
+          <Heading size="lg" className="font-ntype font-bold tracking-wider">
+            PRODUCT NOT FOUND
+          </Heading>
           <p className="text-sm text-slate-500">The product you wish to purchase does not exist or has been removed.</p>
           <Button variant="secondary" onClick={() => router.push("/shop-all")} leftIcon={<ArrowLeft className="h-4 w-4" />}>
             BACK TO CATALOG
@@ -167,8 +182,15 @@ export default function CheckoutPage() {
   const onSubmit = async (data: CheckoutFormValues) => {
     setIsSubmitPending(true);
     try {
+      const cleanPhone = (val?: string) => {
+        if (!val) return "";
+        return val.replace(/[\s-]/g, "");
+      };
+
       const orderPayload = {
         ...data,
+        phoneNumber: cleanPhone(data.phoneNumber),
+        phone2: cleanPhone(data.phone2),
         paymentMethod,
         items: [
           {
@@ -179,7 +201,7 @@ export default function CheckoutPage() {
             price: itemPrice,
             quantity: 1,
             image: selectedVariant.image || product.images[0],
-          }
+          },
         ],
         subtotal,
         shippingFee,
@@ -266,11 +288,7 @@ export default function CheckoutPage() {
               {/* Product preview info */}
               <div className="flex items-start space-x-4 pb-6 border-b border-slate-100">
                 <div className="h-16 w-16 bg-slate-50 rounded-xl overflow-hidden border border-slate-100 shrink-0 flex items-center justify-center p-2">
-                  <img
-                    alt={product.name}
-                    src={selectedVariant.image || product.images[0]}
-                    className="h-full w-full object-contain"
-                  />
+                  <img alt={product.name} src={selectedVariant.image || product.images[0]} className="h-full w-full object-contain" />
                 </div>
                 <div className="space-y-1">
                   <h4 className="text-xs font-bold text-slate-800 line-clamp-1">{product.name}</h4>
@@ -278,7 +296,9 @@ export default function CheckoutPage() {
                     Color: {selectedVariant.color}
                     {selectedVariant.storage && ` • Storage: ${selectedVariant.storage}`}
                   </p>
-                  <p className="text-[10px] text-emerald-600 bg-emerald-50 inline-block px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">Qty 1</p>
+                  <p className="text-[10px] text-emerald-600 bg-emerald-50 inline-block px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">
+                    Qty 1
+                  </p>
                 </div>
               </div>
 
@@ -343,7 +363,10 @@ export default function CheckoutPage() {
               <div className="font-ntype text-[11px] text-slate-500 leading-relaxed pl-7">
                 <p className="font-bold text-slate-700">NOTHING OFFICIAL (SMC-PRIVATE) LIMITED</p>
                 <p className="mt-0.5">Registration CUIN: 0337422</p>
-                <Link href="/company-verification" className="text-slate-600 underline font-semibold hover:text-black mt-2 inline-block transition-colors">
+                <Link
+                  href="/company-verification"
+                  className="text-slate-600 underline font-semibold hover:text-black mt-2 inline-block transition-colors"
+                >
                   View SECP Incorporation Certificate
                 </Link>
               </div>

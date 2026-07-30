@@ -71,10 +71,8 @@ export function useOrders() {
       });
       if (res.ok) {
         const updated = await res.json();
-        // Update local state
-        setOrders((prev) =>
-          prev.map((o) => (o._id === orderId ? { ...o, status: updated.status } : o))
-        );
+        // Update local state (optimistic/API response match for both id and _id)
+        setOrders((prev) => prev.map((o) => (o._id === orderId || o.id === orderId ? { ...o, status: updated.status || newStatus } : o)));
         return updated;
       }
     } catch (error) {
@@ -141,7 +139,6 @@ export function useOrders() {
     doc.text(`Reference ID: ${order.customId || order.id}`, 150, 20);
     doc.text(`Order Date: ${new Date(order.createdAt).toLocaleDateString()}`, 150, 25);
     doc.text(`Payment: ${order.paymentMethod === "bank_transfer" ? "Bank Transfer" : "Cash on Delivery (COD)"}`, 150, 30);
-    doc.text(`Status: ${order.status.toUpperCase()}`, 150, 35);
 
     // Section 1: Customer Details
     doc.setFont("helvetica", "bold");
@@ -174,7 +171,10 @@ export function useOrders() {
     doc.setFont("helvetica", "normal");
 
     // Multi-line address wrapping
-    const splitAddress = doc.splitTextToSize(`${order.address}, ${order.city}, ${order.district}${order.postalCode ? ` (${order.postalCode})` : ""}`, 140);
+    const splitAddress = doc.splitTextToSize(
+      `${order.address}, ${order.city}, ${order.district}${order.postalCode ? ` (${order.postalCode})` : ""}`,
+      140,
+    );
     doc.text(splitAddress, 45, 74);
 
     // Section 2: Items Summary
@@ -273,7 +273,11 @@ export function useOrders() {
     doc.setFont("helvetica", "normal");
     doc.setFontSize(8.5);
     doc.setTextColor(180, 180, 180);
-    doc.text(`Generated Date: ${new Date().toLocaleString()}  |  Active Filters: [Status: ${statusFilter.toUpperCase()}] [Payment: ${paymentFilter.toUpperCase()}]`, 15, 26);
+    doc.text(
+      `Generated Date: ${new Date().toLocaleString()}  |  Active Filters: [Status: ${statusFilter.toUpperCase()}] [Payment: ${paymentFilter.toUpperCase()}]`,
+      15,
+      26,
+    );
 
     doc.setFont("helvetica", "bold");
     doc.text(`TOTAL MATCHING: ${filteredOrders.length} ORDERS`, 240, 18);
