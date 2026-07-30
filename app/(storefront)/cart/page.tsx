@@ -4,6 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "@/store/useCartStore";
+import { useCartItemPrices } from "@/hooks/useItemPrices";
 import { Container } from "@/components/ui/container";
 import { Heading } from "@/components/ui/heading";
 import { Button } from "@/components/ui/button";
@@ -11,17 +12,13 @@ import { Trash2, Plus, Minus, ArrowLeft, ArrowRight, ShoppingBag, ShieldCheck } 
 
 export default function CartPage() {
   const router = useRouter();
-  const { items, updateQuantity, removeItem, getTotalPrice, getTotalItems, _hasHydrated } = useCartStore();
-  const [hasMounted, setHasMounted] = React.useState(false);
+  const { items, removeItem, updateQuantity } = useCartStore();
+  const [mounted, setMounted] = React.useState(false);
+  const { itemsWithPrices, effectiveTotal, originalTotalSum } = useCartItemPrices(items);
 
   React.useEffect(() => {
-    setHasMounted(true);
+    setMounted(true);
   }, []);
-
-  const isCartReady = hasMounted && _hasHydrated;
-
-  const totalPrice = getTotalPrice();
-  const totalItems = getTotalItems();
 
   const formatPKR = (amount: number) => {
     return `Rs ${new Intl.NumberFormat("en-PK", {
@@ -30,33 +27,21 @@ export default function CartPage() {
     }).format(amount)}`;
   };
 
-  if (!isCartReady) {
-    return (
-      <div className="bg-slate-50 min-h-screen text-slate-900 py-24 flex items-center justify-center font-ntype">
-        <div className="text-sm animate-pulse text-slate-500">LOADING YOUR BAG...</div>
-      </div>
-    );
-  }
+  if (!mounted) return null;
 
   if (items.length === 0) {
     return (
-      <div className="bg-slate-50 min-h-screen text-slate-900 py-24 flex items-center justify-center">
+      <div className="bg-slate-50 min-h-screen text-slate-900 flex items-center justify-center py-24">
         <Container size="sm" className="text-center space-y-6">
-          <div className="flex justify-center">
-            <div className="bg-slate-100 rounded-full p-6 text-slate-400">
-              <ShoppingBag className="h-16 w-16" />
-            </div>
+          <div className="h-16 w-16 bg-white border border-slate-200 rounded-full flex items-center justify-center mx-auto shadow-sm">
+            <ShoppingBag className="h-8 w-8 text-slate-400" />
           </div>
-          <div className="space-y-2">
-            <Heading size="md" className="font-lattera font-bold tracking-wider uppercase text-black">
-              YOUR BAG IS EMPTY
-            </Heading>
-            <p className="text-sm text-slate-500 max-w-sm mx-auto leading-relaxed">
-              Looks like you haven't added anything to your cart yet. Explore our latest products and exclusive accessories.
-            </p>
-          </div>
-          <Button variant="secondary" onClick={() => router.push("/shop-all")} leftIcon={<ArrowLeft className="h-4 w-4" />}>
-            EXPLORE CATALOG
+          <Heading size="lg" className="font-sans font-bold tracking-tight">YOUR BAG IS EMPTY</Heading>
+          <p className="text-sm text-slate-500 font-sans max-w-sm mx-auto">
+            Looks like you haven't added anything to your bag yet. Explore our store for the latest Nothing products.
+          </p>
+          <Button variant="outline" onClick={() => router.push("/shop-all")} leftIcon={<ShoppingBag className="h-4 w-4" />}>
+            EXPLORE STORE
           </Button>
         </Container>
       </div>
@@ -76,8 +61,8 @@ export default function CartPage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             {/* Left side: Cart Items List */}
             <div className="lg:col-span-8 space-y-4">
-              {items.map((item) => {
-                const itemPrice = item.selectedVariant.salePrice || item.selectedVariant.price;
+              {itemsWithPrices.map((item) => {
+                const prices = item.prices;
                 return (
                   <div
                     key={item.id}
@@ -100,7 +85,16 @@ export default function CartPage() {
                           Color: {item.selectedVariant.color}
                           {item.selectedVariant.storage && ` • Storage: ${item.selectedVariant.storage}`}
                         </p>
-                        <p className="text-xs font-bold text-slate-800 sm:hidden mt-1">{formatPKR(itemPrice)}</p>
+                        <div className="flex items-center gap-1.5 sm:hidden mt-1">
+                          {prices.originalItemTotal ? (
+                            <>
+                              <span className="line-through text-slate-400 text-xs font-normal">{formatPKR(prices.originalItemTotal)}</span>
+                              <span className="text-xs font-bold text-slate-900">{formatPKR(prices.itemTotal)}</span>
+                            </>
+                          ) : (
+                            <span className="text-xs font-bold text-slate-800">{formatPKR(prices.itemTotal)}</span>
+                          )}
+                        </div>
                       </div>
                     </div>
 
@@ -126,9 +120,18 @@ export default function CartPage() {
                       </div>
 
                       {/* Item Total (Desktop) */}
-                      <div className="hidden sm:block text-right w-24">
+                      <div className="hidden sm:block text-right min-w-[100px]">
                         <p className="text-xs text-slate-400 font-ntype">Item Total</p>
-                        <p className="text-sm font-bold text-slate-900 mt-0.5">{formatPKR(itemPrice * item.quantity)}</p>
+                        <div className="mt-0.5 flex flex-col items-end">
+                          {prices.originalItemTotal ? (
+                            <>
+                              <span className="line-through text-slate-400 text-xs font-normal">{formatPKR(prices.originalItemTotal)}</span>
+                              <span className="text-sm font-bold text-slate-900">{formatPKR(prices.itemTotal)}</span>
+                            </>
+                          ) : (
+                            <span className="text-sm font-bold text-slate-900">{formatPKR(prices.itemTotal)}</span>
+                          )}
+                        </div>
                       </div>
 
                       {/* Remove Button */}
@@ -168,7 +171,16 @@ export default function CartPage() {
                 <div className="space-y-4 text-xs">
                   <div className="flex justify-between">
                     <span className="text-slate-500">Items Total</span>
-                    <span className="font-bold text-slate-800">{formatPKR(totalPrice)}</span>
+                    <div className="flex items-center gap-1.5">
+                      {originalTotalSum ? (
+                        <>
+                          <span className="line-through text-slate-400 text-xs font-normal">{formatPKR(originalTotalSum)}</span>
+                          <span className="font-bold text-slate-800">{formatPKR(effectiveTotal)}</span>
+                        </>
+                      ) : (
+                        <span className="font-bold text-slate-800">{formatPKR(effectiveTotal)}</span>
+                      )}
+                    </div>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-500">Shipping</span>
@@ -176,7 +188,16 @@ export default function CartPage() {
                   </div>
                   <div className="flex justify-between border-t border-slate-100 pt-4 text-sm">
                     <span className="font-bold text-slate-900">Estimated Subtotal</span>
-                    <span className="font-black text-slate-900 text-lg">{formatPKR(totalPrice)}</span>
+                    <div className="flex items-center gap-2">
+                      {originalTotalSum ? (
+                        <>
+                          <span className="line-through text-slate-400 text-xs font-normal">{formatPKR(originalTotalSum)}</span>
+                          <span className="font-black text-slate-900 text-lg">{formatPKR(effectiveTotal)}</span>
+                        </>
+                      ) : (
+                        <span className="font-black text-slate-900 text-lg">{formatPKR(effectiveTotal)}</span>
+                      )}
+                    </div>
                   </div>
                 </div>
 

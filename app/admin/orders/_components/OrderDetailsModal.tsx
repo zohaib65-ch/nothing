@@ -1,21 +1,89 @@
 "use client";
 
 import * as React from "react";
-import { Receipt, MessageSquare, MapPin, User, CreditCard, ShoppingBag, ExternalLink } from "lucide-react";
+import { Receipt, MessageSquare, MapPin, User, CreditCard, ShoppingBag, ExternalLink, Pencil, Tag, Check } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { Order } from "@/hooks/useOrders";
+
+import { toast } from "sonner";
 
 interface OrderDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
   order: Order | null;
   onUpdateStatus?: (orderId: string, status: string) => void;
+  onUpdateDiscount?: (orderId: string, discount: number, newTotal: number) => Promise<any> | void;
 }
 
-export function OrderDetailsModal({ isOpen, onClose, order }: OrderDetailsModalProps) {
+export function OrderDetailsModal({ isOpen, onClose, order, onUpdateDiscount }: OrderDetailsModalProps) {
+  const [tempDiscountInput, setTempDiscountInput] = React.useState<string>("");
+  const [appliedDiscount, setAppliedDiscount] = React.useState<number>(0);
+  const [isEditingDiscount, setIsEditingDiscount] = React.useState<boolean>(false);
+  const [isSaving, setIsSaving] = React.useState<boolean>(false);
+
+  // Sync state when order changes or modal opens
+  React.useEffect(() => {
+    const initDiscount = order?.discount || 0;
+    setAppliedDiscount(initDiscount);
+    setTempDiscountInput(initDiscount > 0 ? String(initDiscount) : "");
+    setIsEditingDiscount(false);
+  }, [order?.id, order?.discount, isOpen]);
+
   if (!order) return null;
+
+  const handleSaveDiscount = async () => {
+    if (!order) return;
+    const val = Math.max(0, Number(tempDiscountInput) || 0);
+    const originalSubtotalPlusShippingTax = (order.subtotal || 0) + (order.shippingFee || 0) + (order.tax || 0);
+    const newTotal = Math.max(0, originalSubtotalPlusShippingTax - val);
+
+    setIsSaving(true);
+    try {
+      if (onUpdateDiscount) {
+        await onUpdateDiscount(order.id || order._id!, val, newTotal);
+      } else {
+        await fetch(`/api/orders/${order.id || order._id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ discount: val, total: newTotal }),
+        });
+      }
+      setAppliedDiscount(val);
+      setIsEditingDiscount(false);
+      toast.success(val > 0 ? `Discount of Rs ${val} saved to database!` : "Discount reset & total updated in DB!");
+    } catch (err) {
+      toast.error("Failed to save discount.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleClearDiscount = async () => {
+    if (!order) return;
+    setTempDiscountInput("");
+    const originalSubtotalPlusShippingTax = (order.subtotal || 0) + (order.shippingFee || 0) + (order.tax || 0);
+
+    setIsSaving(true);
+    try {
+      if (onUpdateDiscount) {
+        await onUpdateDiscount(order.id || order._id!, 0, originalSubtotalPlusShippingTax);
+      } else {
+        await fetch(`/api/orders/${order.id || order._id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ discount: 0, total: originalSubtotalPlusShippingTax }),
+        });
+      }
+      setAppliedDiscount(0);
+      toast.success("Discount cleared from database!");
+    } catch (err) {
+      toast.error("Failed to clear discount.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   // Helper: Open data URL / receipt image in new tab
   const openImageInNewTab = (url: string) => {
@@ -47,6 +115,8 @@ export function OrderDetailsModal({ isOpen, onClose, order }: OrderDetailsModalP
   };
 
   const displayId = order.customId || order.id;
+  const discountVal = appliedDiscount;
+  const finalPayableTotal = Math.max(0, order.total - discountVal);
 
   // Format WhatsApp Link
   const rawPhone = (order.phoneNumber || "").replace(/[^0-9]/g, "");
@@ -54,8 +124,12 @@ export function OrderDetailsModal({ isOpen, onClose, order }: OrderDetailsModalP
   const itemsList = (order.items || [])
     .map((item) => `- ${item.productName}${item.variantName ? ` (${item.variantName})` : ""} x${item.quantity}`)
     .join("\n");
-  const totalFormatted = formatPKR(order.total);
-  const rawMsg = `Hello ${order.fullName}!\n\nYour Nothing order (${displayId}) has been confirmed.\nOrder Details:\n${itemsList}\nTotal Amount: ${totalFormatted}\nPayment Method: ${order.paymentMethod === "bank_transfer" ? "Bank Transfer" : "Cash on Delivery"}\n\nThank you for shopping with Nothing Official!`;
+
+  const rawMsg =
+    discountVal > 0
+      ? `Hello ${order.fullName}!\nYour Nothing order (${displayId}) has been confirmed.\nOrder Details:\n${itemsList}\nOriginal Total: ${formatPKR(order.total)}\n Special Discount Given: -${formatPKR(discountVal)}\n Net Payable Amount: ${formatPKR(finalPayableTotal)}\n\nWe have applied a special discount of ${formatPKR(discountVal)} for you!\n\nThank you for shopping with Nothing Official!`
+      : `Hello ${order.fullName}!\nYour Nothing order (${displayId}) has been confirmed.\nOrder Details:\n${itemsList}\n\nThank you for shopping with Nothing Official!`;
+
   const whatsappUrl = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(rawMsg)}`;
 
   return (
@@ -93,7 +167,7 @@ export function OrderDetailsModal({ isOpen, onClose, order }: OrderDetailsModalP
                 className="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] rounded-xl transition duration-150 shadow-sm cursor-pointer"
               >
                 <MessageSquare className="h-3.5 w-3.5 fill-white" />
-                <span>Contact Customer</span>
+                <span>Contact Customer{discountVal > 0 ? ` (-${formatPKR(discountVal)})` : ""}</span>
               </a>
             </div>
 
@@ -218,8 +292,73 @@ export function OrderDetailsModal({ isOpen, onClose, order }: OrderDetailsModalP
             </div>
           </div>
 
-          {/* Pricing Summary */}
-          <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 space-y-2 text-xs">
+          {/* Pricing Summary with Edit Discount option */}
+          <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 space-y-2.5 text-xs">
+            <div className="flex items-center justify-between pb-1 border-b border-slate-200/60">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-600 flex items-center gap-1.5">
+                <Tag className="h-3.5 w-3.5 text-slate-500" />
+                Payment Breakdown
+              </span>
+              <button
+                type="button"
+                onClick={() => setIsEditingDiscount(!isEditingDiscount)}
+                className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 hover:text-emerald-700 cursor-pointer"
+              >
+                <Pencil className="h-3 w-3" />
+                <span>{isEditingDiscount ? "Close Discount" : "Edit Discount"}</span>
+              </button>
+            </div>
+
+            {/* Optional Edit Discount Form */}
+            {isEditingDiscount && (
+              <div className="bg-white border border-emerald-200 p-3.5 rounded-xl space-y-2.5 my-2 shadow-xs animate-in fade-in duration-150">
+                <div className="flex items-center justify-between">
+                  <label className="text-[11px] font-bold text-slate-800 block">Optional Admin Discount (PKR)</label>
+                  {appliedDiscount > 0 && (
+                    <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/60">
+                      Applied: -{formatPKR(appliedDiscount)}
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-slate-400">Rs</span>
+                  <input
+                    type="number"
+                    min="0"
+                    placeholder="Enter discount amount (e.g. 500)"
+                    value={tempDiscountInput}
+                    onChange={(e) => setTempDiscountInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleSaveDiscount();
+                    }}
+                    className="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-900 font-bold focus:outline-none focus:border-emerald-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleSaveDiscount}
+                    disabled={isSaving}
+                    className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold text-xs rounded-lg transition duration-150 flex items-center gap-1 shadow-xs cursor-pointer"
+                  >
+                    <Check className="h-3.5 w-3.5" />
+                    <span>{isSaving ? "Saving..." : "Save Discount"}</span>
+                  </button>
+                  {(tempDiscountInput !== "" || appliedDiscount > 0) && (
+                    <button
+                      type="button"
+                      onClick={handleClearDiscount}
+                      disabled={isSaving}
+                      className="px-2.5 py-1.5 text-slate-500 hover:text-red-600 text-xs font-semibold cursor-pointer disabled:opacity-50"
+                    >
+                      Clear
+                    </button>
+                  )}
+                </div>
+                <p className="text-[10px] text-slate-400">
+                  Clicking "Save Discount" updates the net payable total and includes the discount in the customer's WhatsApp message.
+                </p>
+              </div>
+            )}
+
             <div className="flex justify-between text-slate-600">
               <span>Subtotal</span>
               <span className="font-semibold text-slate-900">{formatPKR(order.subtotal)}</span>
@@ -234,9 +373,26 @@ export function OrderDetailsModal({ isOpen, onClose, order }: OrderDetailsModalP
               <span>Govt Tax (4%)</span>
               <span className="font-semibold text-slate-900">{formatPKR(order.tax)}</span>
             </div>
+
+            {discountVal > 0 && (
+              <div className="flex justify-between text-emerald-700 font-bold bg-emerald-50 px-2.5 py-1 rounded-lg">
+                <span>Special Admin Discount</span>
+                <span>-{formatPKR(discountVal)}</span>
+              </div>
+            )}
+
             <div className="flex justify-between border-t border-slate-200 pt-2.5 text-sm text-slate-900">
               <span className="font-bold">Grand Total</span>
-              <span className="font-bold text-base text-slate-900">{formatPKR(order.total)}</span>
+              <div className="text-right">
+                {discountVal > 0 ? (
+                  <div className="flex items-center gap-2">
+                    <span className="line-through text-slate-400 text-xs font-normal">{formatPKR(order.total)}</span>
+                    <span className="font-bold text-base text-emerald-700">{formatPKR(finalPayableTotal)}</span>
+                  </div>
+                ) : (
+                  <span className="font-bold text-base text-slate-900">{formatPKR(order.total)}</span>
+                )}
+              </div>
             </div>
           </div>
 

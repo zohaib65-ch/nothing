@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useCartStore } from "@/store/useCartStore";
+import { useCartItemPrices } from "@/hooks/useItemPrices";
 import { Container } from "@/components/ui/container";
 import { Heading } from "@/components/ui/heading";
 import { Button } from "@/components/ui/button";
@@ -55,6 +56,7 @@ type CheckoutFormValues = z.infer<typeof checkoutSchema>;
 export default function CartCheckoutPage() {
   const router = useRouter();
   const { items, getTotalPrice, clearCart, _hasHydrated } = useCartStore();
+  const { itemsWithPrices, effectiveTotal, originalTotalSum } = useCartItemPrices(items);
   const [hasMounted, setHasMounted] = React.useState(false);
 
   const [isSubmitPending, setIsSubmitPending] = React.useState<boolean>(false);
@@ -261,8 +263,8 @@ export default function CartCheckoutPage() {
 
               {/* Product preview list */}
               <div className="space-y-4 max-h-60 overflow-y-auto pr-1 border-b border-slate-100 pb-5">
-                {items.map((item) => {
-                  const itemPrice = item.selectedVariant.salePrice || item.selectedVariant.price;
+                {itemsWithPrices.map((item) => {
+                  const prices = item.prices;
                   return (
                     <div key={item.id} className="flex items-center space-x-4 py-1">
                       <div className="h-20 w-20 bg-slate-50/80 rounded-2xl overflow-hidden border border-slate-200/80 shrink-0 flex items-center justify-center p-2.5 shadow-sm">
@@ -284,7 +286,16 @@ export default function CartCheckoutPage() {
                           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold text-slate-700 bg-slate-100 border border-slate-200/80">
                             QTY: {item.quantity}
                           </span>
-                          <span className="text-xs font-bold text-slate-900">{formatPKR(itemPrice * item.quantity)}</span>
+                          <div className="flex items-center gap-1.5">
+                            {prices.originalItemTotal ? (
+                              <>
+                                <span className="line-through text-slate-400 text-xs font-normal">{formatPKR(prices.originalItemTotal)}</span>
+                                <span className="text-xs font-bold text-slate-900">{formatPKR(prices.itemTotal)}</span>
+                              </>
+                            ) : (
+                              <span className="text-xs font-bold text-slate-900">{formatPKR(prices.itemTotal)}</span>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -296,7 +307,16 @@ export default function CartCheckoutPage() {
               <div className="space-y-3.5 text-xs">
                 <div className="flex justify-between">
                   <span className="text-slate-500">Subtotal</span>
-                  <span className="font-bold text-slate-800">{formatPKR(subtotal)}</span>
+                  <div className="flex items-center gap-1.5">
+                    {originalTotalSum ? (
+                      <>
+                        <span className="line-through text-slate-400 text-xs font-normal">{formatPKR(originalTotalSum)}</span>
+                        <span className="font-bold text-slate-800">{formatPKR(subtotal)}</span>
+                      </>
+                    ) : (
+                      <span className="font-bold text-slate-800">{formatPKR(subtotal)}</span>
+                    )}
+                  </div>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-500">Shipping fee</span>
@@ -310,7 +330,16 @@ export default function CartCheckoutPage() {
                 </div>
                 <div className="flex justify-between border-t border-slate-100 pt-4 text-sm">
                   <span className="font-bold text-slate-900">Total</span>
-                  <span className="font-black text-slate-900 text-lg">{formatPKR(total)}</span>
+                  <div className="flex items-center gap-2">
+                    {originalTotalSum ? (
+                      <>
+                        <span className="line-through text-slate-400 text-xs font-normal">{formatPKR(originalTotalSum + shippingFee + tax)}</span>
+                        <span className="font-black text-slate-900 text-lg">{formatPKR(total)}</span>
+                      </>
+                    ) : (
+                      <span className="font-black text-slate-900 text-lg">{formatPKR(total)}</span>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

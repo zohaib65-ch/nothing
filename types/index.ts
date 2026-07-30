@@ -154,6 +154,7 @@ export interface Order {
   subtotal: number;
   shippingFee: number;
   tax: number;
+  discount?: number;
   total: number;
   status: "pending" | "processing" | "shipped" | "cancelled" | "completed";
   receiptImage?: string;

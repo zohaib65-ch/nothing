@@ -5,11 +5,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { X, Trash2, ShoppingBag, Plus, Minus } from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
+import { useCartItemPrices } from "@/hooks/useItemPrices";
 import { formatPrice, getValidImageUrl } from "@/lib/utils";
 
 export function CartDrawer() {
-  const { isOpen, closeCart, items, removeItem, updateQuantity, getTotalPrice, getTotalItems } = useCartStore();
+  const { isOpen, closeCart, items, removeItem, updateQuantity, getTotalItems } = useCartStore();
   const [mounted, setMounted] = React.useState(false);
+  const { itemsWithPrices, effectiveTotal, originalTotalSum } = useCartItemPrices(items);
 
   React.useEffect(() => {
     setMounted(true);
@@ -30,7 +32,6 @@ export function CartDrawer() {
   }, [isOpen]);
 
   const totalItems = mounted ? getTotalItems() : 0;
-  const totalPrice = mounted ? getTotalPrice() : 0;
 
   if (!isOpen) return null;
 
@@ -77,20 +78,15 @@ export function CartDrawer() {
           data-lenis-prevent="true"
           data-lenis-prevent-touch="true"
           data-lenis-prevent-wheel="true"
-          onWheel={(e) => e.stopPropagation()}
-          onTouchMove={(e) => e.stopPropagation()}
           className="flex-1 min-h-0 overflow-y-auto space-y-2 mt-1 scrollbar-none flex flex-col justify-between"
         >
+          {/* Cart Item List */}
           {items.length === 0 ? (
-            <div className="bg-[#EDEBED] rounded-xl p-8 my-auto text-center space-y-4">
-              <div className="w-14 h-14 rounded-full bg-white flex items-center justify-center mx-auto shadow-sm">
-                <ShoppingBag className="h-6 w-6 text-neutral-400" />
-              </div>
+            <div className="flex flex-col items-center justify-center my-auto py-12 text-center space-y-4 font-lattera-mono">
+              <ShoppingBag className="h-12 w-12 text-neutral-300 stroke-[1.5]" />
               <div className="space-y-1">
-                <h3 className="text-sm font-bold uppercase tracking-wider text-neutral-900" style={{ fontFamily: "var(--font-ntype82), serif" }}>
-                  YOUR BAG IS EMPTY
-                </h3>
-                <p className="font-lattera-mono text-xs text-neutral-500 uppercase">EXPLORE OUR LATEST PRODUCTS & ACCESSORIES</p>
+                <p className="text-sm font-bold uppercase tracking-wider text-neutral-800">YOUR BAG IS EMPTY</p>
+                <p className="text-xs text-neutral-500 font-sans">Explore our store and add items to your shopping bag.</p>
               </div>
               <button
                 type="button"
@@ -101,10 +97,10 @@ export function CartDrawer() {
               </button>
             </div>
           ) : (
-            <div className="space-y-1.5 flex-1 overflow-y-auto pr-0.5">
-              {items.map((item) => {
+            <div className="space-y-1.5 flex-1 overflow-y-auto pr-0.5 my-4">
+              {itemsWithPrices.map((item) => {
+                const prices = item.prices;
                 const imageUrl = getValidImageUrl(item.selectedVariant?.image || item.product?.images?.[0]);
-                const itemPrice = item.selectedVariant.salePrice || item.selectedVariant.price;
                 const capacityStr = item.selectedVariant.capacity || item.selectedVariant.storage || "";
 
                 return (
@@ -140,7 +136,18 @@ export function CartDrawer() {
                       </p>
 
                       <div className="flex items-center justify-between pt-1">
-                        <span className="font-lattera-mono text-[13px] font-bold text-neutral-900">{formatPrice(itemPrice * item.quantity)}</span>
+                        <div className="flex items-center gap-1.5 font-lattera-mono text-[13px]">
+                          {prices.originalItemTotal ? (
+                            <>
+                              <span className="line-through text-neutral-400 text-xs font-normal">
+                                {formatPrice(prices.originalItemTotal)}
+                              </span>
+                              <span className="font-bold text-neutral-900">{formatPrice(prices.itemTotal)}</span>
+                            </>
+                          ) : (
+                            <span className="font-bold text-neutral-900">{formatPrice(prices.itemTotal)}</span>
+                          )}
+                        </div>
 
                         <div className="flex items-center bg-white rounded-lg border border-black/8 px-1.5 py-0.5 shadow-2xs">
                           <button
@@ -172,7 +179,16 @@ export function CartDrawer() {
             <div className="bg-white rounded-xl p-4 shadow-[0_16px_40px_rgba(17,17,17,0.12)] border border-black/8 space-y-3 shrink-0 mt-2">
               <div className="flex items-center justify-between font-lattera-mono text-xs uppercase border-b border-neutral-100 pb-2">
                 <span className="text-neutral-500 font-medium tracking-wider">TOTAL ESTIMATE</span>
-                <span className="text-neutral-900 text-sm sm:text-base font-bold">{formatPrice(totalPrice)}</span>
+                <div className="flex items-center gap-2">
+                  {originalTotalSum ? (
+                    <>
+                      <span className="line-through text-neutral-400 text-xs font-normal">{formatPrice(originalTotalSum)}</span>
+                      <span className="text-neutral-900 text-sm sm:text-base font-bold">{formatPrice(effectiveTotal)}</span>
+                    </>
+                  ) : (
+                    <span className="text-neutral-900 text-sm sm:text-base font-bold">{formatPrice(effectiveTotal)}</span>
+                  )}
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-2.5">

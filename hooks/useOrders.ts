@@ -27,6 +27,7 @@ export interface Order {
   subtotal: number;
   shippingFee: number;
   tax: number;
+  discount?: number;
   total: number;
   status: "pending" | "processing" | "shipped" | "delivered" | "cancelled";
   receiptImage?: string;
@@ -71,12 +72,34 @@ export function useOrders() {
       });
       if (res.ok) {
         const updated = await res.json();
-        // Update local state (optimistic/API response match for both id and _id)
         setOrders((prev) => prev.map((o) => (o._id === orderId || o.id === orderId ? { ...o, status: updated.status || newStatus } : o)));
         return updated;
       }
     } catch (error) {
       console.error("Failed to update status:", error);
+    }
+    return null;
+  };
+
+  // Update order discount
+  const updateDiscount = async (orderId: string, discount: number, newTotal: number) => {
+    try {
+      const res = await fetch(`/api/orders/${orderId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ discount, total: newTotal }),
+      });
+      if (res.ok) {
+        const updated = await res.json();
+        setOrders((prev) =>
+          prev.map((o) =>
+            o._id === orderId || o.id === orderId ? { ...o, discount, total: newTotal } : o
+          )
+        );
+        return updated;
+      }
+    } catch (error) {
+      console.error("Failed to update discount:", error);
     }
     return null;
   };
@@ -371,6 +394,7 @@ export function useOrders() {
     filteredOrders,
     refetch: fetchOrders,
     updateStatus,
+    updateDiscount,
     generateInvoicePDF,
     generateReportPDF,
   };

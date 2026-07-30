@@ -145,11 +145,24 @@ export const getColumns = (
   {
     accessorKey: "total",
     header: () => <div className="text-right">TOTAL</div>,
-    cell: ({ row }) => (
-      <div className="font-lattera font-bold text-right text-neutral-900">
-        {formatPKR(row.original.total)}
-      </div>
-    ),
+    cell: ({ row }) => {
+      const order = row.original;
+      const discount = order.discount || 0;
+      return (
+        <div className="font-lattera font-bold text-right text-neutral-900">
+          {discount > 0 ? (
+            <div>
+              <p className="text-xs text-neutral-900 font-bold">{formatPKR(order.total)}</p>
+              <span className="inline-block text-[9px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-1.5 py-0.2 rounded font-mono">
+                -{formatPKR(discount)} OFF
+              </span>
+            </div>
+          ) : (
+            formatPKR(order.total)
+          )}
+        </div>
+      );
+    },
   },
   {
     accessorKey: "status",

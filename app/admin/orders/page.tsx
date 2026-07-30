@@ -25,6 +25,7 @@ export default function AdminOrdersPage() {
     filteredOrders,
     refetch,
     updateStatus,
+    updateDiscount,
     generateInvoicePDF,
     generateReportPDF,
   } = useOrders();
@@ -39,8 +40,15 @@ export default function AdminOrdersPage() {
 
   const handleUpdateStatus = async (orderId: string, status: string) => {
     const updated = await updateStatus(orderId, status);
-    if (updated && selectedOrder && selectedOrder._id === orderId) {
+    if (updated && selectedOrder && (selectedOrder._id === orderId || selectedOrder.id === orderId)) {
       setSelectedOrder((prev) => (prev ? { ...prev, status: updated.status } : null));
+    }
+  };
+
+  const handleUpdateDiscount = async (orderId: string, discount: number, newTotal: number) => {
+    const updated = await updateDiscount(orderId, discount, newTotal);
+    if (updated && selectedOrder && (selectedOrder._id === orderId || selectedOrder.id === orderId)) {
+      setSelectedOrder((prev) => (prev ? { ...prev, discount, total: newTotal } : null));
     }
   };
 
@@ -156,6 +164,7 @@ export default function AdminOrdersPage() {
         }}
         order={selectedOrder}
         onUpdateStatus={handleUpdateStatus}
+        onUpdateDiscount={handleUpdateDiscount}
       />
     </div>
   );

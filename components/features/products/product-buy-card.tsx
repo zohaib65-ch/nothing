@@ -160,14 +160,22 @@ export function ProductBuyCard({ product, selectedVariant, onSelectVariant, onAd
   const { addItem } = useCartStore();
 
   const handleAddToCart = () => {
+    const rawOrigPrice = Number(activePrices.price) || Number(product.price) || 0;
+    const hasSale =
+      activePrices.salePrice !== undefined &&
+      activePrices.salePrice !== null &&
+      !isNaN(activePrices.salePrice) &&
+      Number(activePrices.salePrice) > 0 &&
+      rawOrigPrice > Number(activePrices.salePrice);
+
     const activeVariantToCart: ProductVariant = {
       ...selectedVariant,
       id: selectedVariant?.id ? `${selectedVariant.id}-${currentColor}-${currentCapacity}` : `var-${Date.now()}`,
       color: currentColor,
       storage: currentCapacity !== "Standard" ? currentCapacity : "",
       capacity: currentCapacity !== "Standard" ? currentCapacity : "",
-      price: activeDisplayPrice,
-      salePrice: undefined,
+      price: rawOrigPrice,
+      salePrice: hasSale ? Number(activePrices.salePrice) : undefined,
       image: getValidImageUrl(selectedVariant?.image || product.images?.[0] || ""),
     };
 
@@ -270,7 +278,21 @@ export function ProductBuyCard({ product, selectedVariant, onSelectVariant, onAd
         className="w-full bg-neutral-950 hover:bg-neutral-800 text-white font-lattera-mono text-xs font-medium uppercase tracking-widest py-3 rounded-lg shadow-md cursor-pointer flex items-center justify-center gap-2 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200"
         leftIcon={<ShoppingBag className="h-4 w-4" />}
       >
-        <span style={{ fontFamily: "'LatteraMonoLL', 'letteraRegular', monospace" }}>{formatPrice(activeDisplayPrice)} — ADD TO BAG</span>
+        <span style={{ fontFamily: "'LatteraMonoLL', 'letteraRegular', monospace" }} className="flex items-center gap-2">
+          {activePrices.salePrice !== undefined &&
+          activePrices.salePrice !== null &&
+          !isNaN(activePrices.salePrice) &&
+          Number(activePrices.salePrice) > 0 &&
+          Number(activePrices.price) > Number(activePrices.salePrice) ? (
+            <>
+              <span className="line-through text-white/60 font-normal">{formatPrice(activePrices.price)}</span>
+              <span className="font-bold text-white dark:text-neutral-900">{formatPrice(activePrices.salePrice)}</span>
+            </>
+          ) : (
+            <span>{formatPrice(activeDisplayPrice)}</span>
+          )}
+          <span>— ADD TO BAG</span>
+        </span>
       </Button>
     </div>
   );
