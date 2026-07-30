@@ -103,6 +103,7 @@ export const getColumns = (
       return (
         <div className="font-ntype font-bold text-neutral-900">
           <p>{order.fullName}</p>
+          {order.email && <p className="font-lattera text-[10px] text-neutral-500 mt-0.5 truncate max-w-[180px]">{order.email}</p>}
           <p className="font-lattera text-[10px] text-neutral-500 mt-0.5">{order.phoneNumber}</p>
         </div>
       );

@@ -19,6 +19,7 @@ const OrderSchema = new Schema<IOrderDocument>(
   {
     _id: { type: String }, // Custom short ID
     fullName: { type: String, required: true, trim: true },
+    email: { type: String, required: true, trim: true, lowercase: true },
     address: { type: String, required: true, trim: true },
     city: { type: String, required: true, trim: true },
     district: { type: String, required: true, trim: true },

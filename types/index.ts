@@ -143,6 +143,7 @@ export interface Order {
   id?: string;
   customId?: string;
   fullName: string;
+  email: string;
   address: string;
   city: string;
   district: string;

@@ -201,6 +201,10 @@ Please confirm my order. Thank you!`;
                 <p className="font-bold text-slate-800 mt-0.5">{order.fullName}</p>
               </div>
               <div>
+                <p className="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">Email Address</p>
+                <p className="font-bold text-slate-800 mt-0.5">{order.email}</p>
+              </div>
+              <div>
                 <p className="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">Phone Number</p>
                 <p className="font-bold text-slate-800 mt-0.5">{order.phoneNumber}</p>
               </div>

@@ -157,6 +157,7 @@ export function OrderDetailsModal({ isOpen, onClose, order, onUpdateDiscount }: 
               </div>
               <div>
                 <p className="font-bold text-slate-900 text-sm">{order.fullName}</p>
+                {order.email && <p className="text-xs text-slate-600 mt-0.5">{order.email}</p>}
                 <p className="text-xs text-slate-600 mt-0.5">{order.phoneNumber}</p>
                 {order.phone2 && <p className="text-[11px] text-slate-500 mt-0.5">Secondary: {order.phone2}</p>}
               </div>

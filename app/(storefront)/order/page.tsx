@@ -9,17 +9,15 @@ import * as z from "zod";
 import { useCartStore } from "@/store/useCartStore";
 import { useCartItemPrices } from "@/hooks/useItemPrices";
 import { Container } from "@/components/ui/container";
-import { Heading } from "@/components/ui/heading";
-import { Button } from "@/components/ui/button";
 import { ShieldCheck, ArrowLeft } from "lucide-react";
 import { SharedCheckoutForm } from "@/components/features/checkout/checkout-form";
-import { cn } from "@/lib/utils";
 import { TransactionProofModal } from "@/components/features/checkout/transaction-proof-modal";
 import { toast } from "sonner";
 
 // Form validation schema with Zod
 const checkoutSchema = z.object({
   fullName: z.string().min(1, "Full name is required"),
+  email: z.string().min(1, "Email address is required").email("Enter a valid email address"),
   address: z.string().min(1, "Delivery address is required"),
   city: z.string().min(1, "City is required"),
   district: z.string().min(1, "District is required"),
@@ -66,20 +64,12 @@ export default function CartCheckoutPage() {
   }, []);
 
   const isCartReady = hasMounted && _hasHydrated;
-
-  // Payment method state
   const [paymentMethod, setPaymentMethod] = React.useState<"bank_transfer" | "cod">("bank_transfer");
-
-  // Clipboard copy states
   const [copiedAccount, setCopiedAccount] = React.useState(false);
   const [copiedIban, setCopiedIban] = React.useState(false);
   const [placedOrderId, setPlacedOrderId] = React.useState<string | null>(null);
   const [isProofModalOpen, setIsProofModalOpen] = React.useState<boolean>(false);
-
-  // High-value check (> 8000)
   const isHighValue = getTotalPrice() > 8000;
-
-  // React Hook Form initialization
   const {
     register,
     handleSubmit,
@@ -88,6 +78,7 @@ export default function CartCheckoutPage() {
     resolver: zodResolver(checkoutSchema),
     defaultValues: {
       fullName: "",
+      email: "",
       address: "",
       city: "",
       district: "",
@@ -97,14 +88,12 @@ export default function CartCheckoutPage() {
     },
   });
 
-  // Redirect if cart is empty ONLY AFTER hydration is ready and modal is not open!
   React.useEffect(() => {
     if (isCartReady && items.length === 0 && !isSubmitPending && !isProofModalOpen && !placedOrderId) {
       router.push("/cart");
     }
   }, [isCartReady, items, router, isSubmitPending, isProofModalOpen, placedOrderId]);
 
-  // Copy helpers
   const handleCopyText = async (text: string, type: "account" | "iban") => {
     try {
       await navigator.clipboard.writeText(text);
@@ -143,8 +132,6 @@ export default function CartCheckoutPage() {
   const shippingFee = paymentMethod === "cod" ? 400 : 0;
   const tax = paymentMethod === "cod" ? Math.round(0.04 * subtotal) : 0;
   const total = subtotal + shippingFee + tax;
-
-  // Estimated delivery dates
   const today = new Date();
   const formatShortDate = (d: Date) => {
     return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
@@ -153,8 +140,6 @@ export default function CartCheckoutPage() {
   const estEnd = new Date(today);
   estEnd.setDate(today.getDate() + 2);
   const deliveryRangeString = `${formatShortDate(estStart)} - ${formatShortDate(estEnd)}`;
-
-  // Form submission handler
   const onSubmit = async (data: CheckoutFormValues) => {
     setIsSubmitPending(true);
     try {
@@ -279,7 +264,10 @@ export default function CartCheckoutPage() {
                         <p className="text-[11px] text-slate-500 font-sans">
                           Color: <span className="font-semibold text-slate-700">{item.selectedVariant.color}</span>
                           {item.selectedVariant.storage && (
-                            <> • Storage: <span className="font-semibold text-slate-700">{item.selectedVariant.storage}</span></>
+                            <>
+                              {" "}
+                              • Storage: <span className="font-semibold text-slate-700">{item.selectedVariant.storage}</span>
+                            </>
                           )}
                         </p>
                         <div className="flex items-center justify-between pt-1">

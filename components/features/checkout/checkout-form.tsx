@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 
 export interface CheckoutFormValues {
   fullName: string;
+  email: string;
   address: string;
   city: string;
   district: string;
@@ -81,19 +82,35 @@ export function SharedCheckoutForm({
         </div>
 
         <div className="space-y-4">
-          {/* Full Name */}
-          <div className="space-y-1.5">
-            <label htmlFor="fullName" className="text-xs font-semibold text-slate-700">
-              Full Name *
-            </label>
-            <input
-              type="text"
-              id="fullName"
-              placeholder="Your full name"
-              {...register("fullName")}
-              className={`w-full rounded-[16px] border ${errors.fullName ? "border-red-500 ring-1 ring-red-100" : "border-slate-200"} px-4 py-3 bg-white text-slate-900 text-sm focus:border-slate-400 focus:ring-1 focus:ring-slate-200 focus:outline-none transition`}
-            />
-            {errors.fullName && <p className="text-xs text-red-500">{errors.fullName.message}</p>}
+          {/* Full Name & Email */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <label htmlFor="fullName" className="text-xs font-semibold text-slate-700">
+                Full Name *
+              </label>
+              <input
+                type="text"
+                id="fullName"
+                placeholder="Your full name"
+                {...register("fullName")}
+                className={`w-full rounded-[16px] border ${errors.fullName ? "border-red-500 ring-1 ring-red-100" : "border-slate-200"} px-4 py-3 bg-white text-slate-900 text-sm focus:border-slate-400 focus:ring-1 focus:ring-slate-200 focus:outline-none transition`}
+              />
+              {errors.fullName && <p className="text-xs text-red-500">{errors.fullName.message}</p>}
+            </div>
+
+            <div className="space-y-1.5">
+              <label htmlFor="email" className="text-xs font-semibold text-slate-700">
+                Email Address *
+              </label>
+              <input
+                type="email"
+                id="email"
+                placeholder="your.email@example.com"
+                {...register("email")}
+                className={`w-full rounded-[16px] border ${errors.email ? "border-red-500 ring-1 ring-red-100" : "border-slate-200"} px-4 py-3 bg-white text-slate-900 text-sm focus:border-slate-400 focus:ring-1 focus:ring-slate-200 focus:outline-none transition`}
+              />
+              {errors.email && <p className="text-xs text-red-500">{errors.email.message}</p>}
+            </div>
           </div>
 
           {/* Address */}

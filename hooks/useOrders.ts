@@ -16,6 +16,7 @@ export interface Order {
   _id?: string;
   customId?: string;
   fullName: string;
+  email: string;
   address: string;
   city: string;
   district: string;
@@ -116,10 +117,12 @@ export function useOrders() {
     return orders.filter((order) => {
       const orderId = (order?.id || order?._id || "").toLowerCase();
       const customer = (order?.fullName || "").toLowerCase();
+      const email = (order?.email || "").toLowerCase();
       const phone = (order?.phoneNumber || "").toLowerCase();
       const term = searchTerm.toLowerCase();
 
-      const matchesSearch = orderId.includes(term) || customer.includes(term) || phone.includes(term);
+      const matchesSearch =
+        orderId.includes(term) || customer.includes(term) || email.includes(term) || phone.includes(term);
       const matchesStatus = statusFilter === "all" || order?.status === statusFilter;
       const matchesPayment = paymentFilter === "all" || order?.paymentMethod === paymentFilter;
 

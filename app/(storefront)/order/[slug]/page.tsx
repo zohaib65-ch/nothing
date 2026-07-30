@@ -21,6 +21,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 // Form validation schema with Zod
 const checkoutSchema = z.object({
   fullName: z.string().min(1, "Full name is required"),
+  email: z.string().min(1, "Email address is required").email("Enter a valid email address"),
   address: z.string().min(1, "Delivery address is required"),
   city: z.string().min(1, "City is required"),
   district: z.string().min(1, "District is required"),
@@ -85,6 +86,7 @@ export default function CheckoutPage() {
     resolver: zodResolver(checkoutSchema),
     defaultValues: {
       fullName: "",
+      email: "",
       address: "",
       city: "",
       district: "",
