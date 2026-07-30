@@ -54,7 +54,7 @@ type CheckoutFormValues = z.infer<typeof checkoutSchema>;
 export default function CartCheckoutPage() {
   const router = useRouter();
   const { items, getTotalPrice, clearCart, _hasHydrated } = useCartStore();
-  const { itemsWithPrices, effectiveTotal, originalTotalSum } = useCartItemPrices(items);
+  const { itemsWithPrices, originalTotalSum } = useCartItemPrices(items);
   const [hasMounted, setHasMounted] = React.useState(false);
 
   const [isSubmitPending, setIsSubmitPending] = React.useState<boolean>(false);
@@ -64,7 +64,8 @@ export default function CartCheckoutPage() {
   }, []);
 
   const isCartReady = hasMounted && _hasHydrated;
-  const [paymentMethod, setPaymentMethod] = React.useState<"bank_transfer" | "cod">("bank_transfer");
+  const [fulfillmentMethod, setFulfillmentMethod] = React.useState<"ship" | "pickup">("ship");
+  const [paymentMethod, setPaymentMethod] = React.useState<"bank_transfer" | "cod" | "pay_at_store">("bank_transfer");
   const [copiedAccount, setCopiedAccount] = React.useState(false);
   const [copiedIban, setCopiedIban] = React.useState(false);
   const [placedOrderId, setPlacedOrderId] = React.useState<string | null>(null);
@@ -73,6 +74,7 @@ export default function CartCheckoutPage() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutSchema),
@@ -129,8 +131,8 @@ export default function CartCheckoutPage() {
 
   // Calculations
   const subtotal = getTotalPrice();
-  const shippingFee = paymentMethod === "cod" ? 400 : 0;
-  const tax = paymentMethod === "cod" ? Math.round(0.04 * subtotal) : 0;
+  const shippingFee = fulfillmentMethod === "pickup" ? 0 : paymentMethod === "cod" ? 400 : 0;
+  const tax = fulfillmentMethod === "pickup" ? 0 : paymentMethod === "cod" ? Math.round(0.04 * subtotal) : 0;
   const total = subtotal + shippingFee + tax;
   const today = new Date();
   const formatShortDate = (d: Date) => {
@@ -150,6 +152,8 @@ export default function CartCheckoutPage() {
 
       const orderPayload = {
         ...data,
+        fulfillmentMethod,
+        pickupLocation: fulfillmentMethod === "pickup" ? "Nothing Official Office - Al Qadir Heights, Babar Block, Garden Town, Lahore" : undefined,
         phoneNumber: cleanPhone(data.phoneNumber),
         phone2: cleanPhone(data.phone2),
         paymentMethod,
@@ -224,7 +228,10 @@ export default function CartCheckoutPage() {
           <div className="lg:col-span-7 space-y-8">
             <SharedCheckoutForm
               register={register}
+              setValue={setValue}
               errors={errors}
+              fulfillmentMethod={fulfillmentMethod}
+              setFulfillmentMethod={setFulfillmentMethod}
               paymentMethod={paymentMethod}
               setPaymentMethod={setPaymentMethod}
               isHighValue={isHighValue}
@@ -305,6 +312,16 @@ export default function CartCheckoutPage() {
                       <span className="font-bold text-slate-800">{formatPKR(subtotal)}</span>
                     )}
                   </div>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Fulfillment</span>
+                  <span className="font-bold text-slate-800">
+                    {fulfillmentMethod === "pickup" ? (
+                      <span className="text-emerald-600 font-bold">Store Pickup (Free)</span>
+                    ) : (
+                      "Door Delivery"
+                    )}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-500">Shipping fee</span>

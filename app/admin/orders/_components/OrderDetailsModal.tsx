@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Receipt, MessageSquare, MapPin, User, CreditCard, ShoppingBag, ExternalLink, Pencil, Tag, Check } from "lucide-react";
+import { Receipt, MessageSquare, MapPin, User, CreditCard, ShoppingBag, ExternalLink, Pencil, Tag, Check, Store } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
@@ -125,10 +125,15 @@ export function OrderDetailsModal({ isOpen, onClose, order, onUpdateDiscount }: 
     .map((item) => `- ${item.productName}${item.variantName ? ` (${item.variantName})` : ""} x${item.quantity}`)
     .join("\n");
 
+  const fulfillmentDetailsText =
+    order.fulfillmentMethod === "pickup"
+      ? "Fulfillment: OFFICE PICKUP (Nothing Official Office - Al Qadir Heights, Babar Block, Garden Town, Lahore)"
+      : "Fulfillment: DOOR DELIVERY";
+
   const rawMsg =
     discountVal > 0
-      ? `Hello ${order.fullName}!\nYour Nothing order (${displayId}) has been confirmed.\nOrder Details:\n${itemsList}\nOriginal Total: ${formatPKR(order.total)}\n Special Discount Given: -${formatPKR(discountVal)}\n Net Payable Amount: ${formatPKR(finalPayableTotal)}\n\nWe have applied a special discount of ${formatPKR(discountVal)} for you!\n\nThank you for shopping with Nothing Official!`
-      : `Hello ${order.fullName}!\nYour Nothing order (${displayId}) has been confirmed.\nOrder Details:\n${itemsList}\n\nThank you for shopping with Nothing Official!`;
+      ? `Hello ${order.fullName}!\nYour Nothing order (${displayId}) has been confirmed.\n${fulfillmentDetailsText}\nOrder Details:\n${itemsList}\nOriginal Total: ${formatPKR(order.total)}\n Special Discount Given: -${formatPKR(discountVal)}\n Net Payable Amount: ${formatPKR(finalPayableTotal)}\n\nWe have applied a special discount of ${formatPKR(discountVal)} for you!\n\nThank you for shopping with Nothing Official!`
+      : `Hello ${order.fullName}!\nYour Nothing order (${displayId}) has been confirmed.\n${fulfillmentDetailsText}\nOrder Details:\n${itemsList}\n\nThank you for shopping with Nothing Official!`;
 
   const whatsappUrl = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(rawMsg)}`;
 
@@ -172,16 +177,25 @@ export function OrderDetailsModal({ isOpen, onClose, order, onUpdateDiscount }: 
               </a>
             </div>
 
-            {/* Delivery Address Card */}
+            {/* Delivery / Pickup Address Card */}
             <div className="bg-slate-50 border border-slate-100 p-4 rounded-2xl space-y-2">
               <div className="flex items-center space-x-2 text-slate-400">
-                <MapPin className="h-4 w-4 text-slate-600" />
-                <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500 font-sans">Shipping Address</span>
+                {order.fulfillmentMethod === "pickup" ? <Store className="h-4 w-4 text-emerald-600" /> : <MapPin className="h-4 w-4 text-slate-600" />}
+                <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500 font-sans">
+                  {order.fulfillmentMethod === "pickup" ? "Office Pickup" : "Shipping Address"}
+                </span>
               </div>
-              <p className="text-xs font-semibold text-slate-800 leading-relaxed">
-                {order.address}, {order.city}, {order.district}
-                {order.postalCode && <span className="text-slate-500 font-normal"> ({order.postalCode})</span>}
-              </p>
+              {order.fulfillmentMethod === "pickup" ? (
+                <div className="space-y-1">
+                  <p className="text-xs font-bold text-emerald-700">Official Experience Office Pickup</p>
+                  <p className="text-[11px] text-slate-600 leading-relaxed">Nothing Official Office, Al Qadir Heights, Babar Block, Garden Town, Lahore</p>
+                </div>
+              ) : (
+                <p className="text-xs font-semibold text-slate-800 leading-relaxed">
+                  {order.address}, {order.city}, {order.district}
+                  {order.postalCode && <span className="text-slate-500 font-normal"> ({order.postalCode})</span>}
+                </p>
+              )}
             </div>
           </div>
 
@@ -196,6 +210,8 @@ export function OrderDetailsModal({ isOpen, onClose, order, onUpdateDiscount }: 
                 <p className="font-bold text-xs text-slate-900 uppercase mt-0.5">
                   {order.paymentMethod === "bank_transfer" ? (
                     <span className="text-emerald-600 font-bold">Direct Bank Transfer</span>
+                  ) : order.paymentMethod === "pay_at_store" ? (
+                    <span className="text-emerald-700 font-bold">Pay at Store Counter (Cash / POS Card / Online)</span>
                   ) : (
                     <span>Cash on Delivery (COD)</span>
                   )}
@@ -234,7 +250,7 @@ export function OrderDetailsModal({ isOpen, onClose, order, onUpdateDiscount }: 
                 <div className="flex items-center space-x-4 bg-white p-2.5 rounded-xl border border-emerald-100">
                   <img
                     src={order.receiptImage}
-                    alt="Receipt Screenshot"
+                    alt="Receipt Snapshot"
                     className="h-16 w-16 object-cover rounded-lg border border-slate-200 cursor-pointer"
                     onClick={() => openImageInNewTab(order.receiptImage!)}
                   />

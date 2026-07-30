@@ -3,56 +3,88 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
-export interface TabItem {
-  id: string;
-  label: string;
-  count?: number;
+interface TabsContextValue {
+  value: string;
+  onValueChange: (value: string) => void;
 }
 
-export interface TabsProps {
-  tabs: TabItem[];
-  activeTab: string;
-  onChange: (tabId: string) => void;
+const TabsContext = React.createContext<TabsContextValue | undefined>(undefined);
+
+export function Tabs({
+  value,
+  onValueChange,
+  children,
+  className,
+}: {
+  value: string;
+  onValueChange: (val: string) => void;
+  children: React.ReactNode;
   className?: string;
+}) {
+  return (
+    <TabsContext.Provider value={{ value, onValueChange }}>
+      <div className={cn("w-full space-y-4", className)}>{children}</div>
+    </TabsContext.Provider>
+  );
 }
 
-export function Tabs({ tabs, activeTab, onChange, className }: TabsProps) {
+export function TabsList({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={cn("flex space-x-1 border-b border-[#26262A] overflow-x-auto no-scrollbar", className)}>
-      {tabs.map((tab) => {
-        const isActive = tab.id === activeTab;
-        return (
-          <button
-            key={tab.id}
-            onClick={() => onChange(tab.id)}
-            className={cn(
-              "px-5 py-3 font-mono text-xs uppercase tracking-widest transition-all relative whitespace-nowrap focus:outline-none",
-              isActive
-                ? "text-white font-bold"
-                : "text-neutral-500 hover:text-neutral-300"
-            )}
-          >
-            <span className="flex items-center space-x-2">
-              <span>{tab.label}</span>
-              {tab.count !== undefined && (
-                <span
-                  className={cn(
-                    "text-[10px] px-1.5 py-0.2 border",
-                    isActive
-                      ? "border-[#D71921] text-[#D71921] bg-[#D71921]/10"
-                      : "border-[#26262A] text-neutral-500"
-                  )}
-                >
-                  {tab.count}
-                </span>
-              )}
-            </span>
-            {isActive && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#D71921] shadow-[0_0_10px_#D71921]" />
-            )}
-          </button>
-        );
-      })}
+    <div
+      className={cn(
+        "inline-flex h-12 items-center justify-center rounded-[18px] bg-slate-100 p-1 text-slate-500 w-full grid grid-cols-2 border border-slate-200/60",
+        className
+      )}
+    >
+      {children}
     </div>
   );
+}
+
+export function TabsTrigger({
+  value,
+  children,
+  className,
+}: {
+  value: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  const context = React.useContext(TabsContext);
+  if (!context) throw new Error("TabsTrigger must be used within Tabs");
+
+  const isSelected = context.value === value;
+
+  return (
+    <button
+      type="button"
+      onClick={() => context.onValueChange(value)}
+      className={cn(
+        "inline-flex items-center justify-center whitespace-nowrap rounded-[14px] px-4 py-2 text-xs font-bold transition-all focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 cursor-pointer font-ntype select-none h-full",
+        isSelected
+          ? "bg-white text-slate-900 shadow-sm border border-slate-200/80 font-bold"
+          : "text-slate-500 hover:text-slate-900 font-medium",
+        className
+      )}
+    >
+      {children}
+    </button>
+  );
+}
+
+export function TabsContent({
+  value,
+  children,
+  className,
+}: {
+  value: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  const context = React.useContext(TabsContext);
+  if (!context) throw new Error("TabsContent must be used within Tabs");
+
+  if (context.value !== value) return null;
+
+  return <div className={cn("mt-4 outline-none animate-in fade-in-50 duration-150", className)}>{children}</div>;
 }

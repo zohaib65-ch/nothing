@@ -36,11 +36,13 @@ export default function CartPage() {
           <div className="h-16 w-16 bg-white border border-slate-200 rounded-full flex items-center justify-center mx-auto shadow-sm">
             <ShoppingBag className="h-8 w-8 text-slate-400" />
           </div>
-          <Heading size="lg" className="font-sans font-bold tracking-tight">YOUR BAG IS EMPTY</Heading>
+          <Heading size="lg" className="font-sans font-bold tracking-tight text-black">
+            YOUR BAG IS EMPTY
+          </Heading>
           <p className="text-sm text-slate-500 font-sans max-w-sm mx-auto">
             Looks like you haven't added anything to your bag yet. Explore our store for the latest Nothing products.
           </p>
-          <Button variant="outline" onClick={() => router.push("/shop-all")} leftIcon={<ShoppingBag className="h-4 w-4" />}>
+          <Button variant="outline" className="text-black!" onClick={() => router.push("/shop-all")} leftIcon={<ShoppingBag className="h-4 w-4" />}>
             EXPLORE STORE
           </Button>
         </Container>

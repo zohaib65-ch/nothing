@@ -11,9 +11,8 @@ import { Loader } from "@/components/ui/loader";
 import { Container } from "@/components/ui/container";
 import { Heading } from "@/components/ui/heading";
 import { Button } from "@/components/ui/button";
-import { ShieldCheck, ArrowLeft, HelpCircle } from "lucide-react";
+import { ShieldCheck, ArrowLeft } from "lucide-react";
 import { SharedCheckoutForm } from "@/components/features/checkout/checkout-form";
-import { cn } from "@/lib/utils";
 import { TransactionProofModal } from "@/components/features/checkout/transaction-proof-modal";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -65,8 +64,9 @@ export default function CheckoutPage() {
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
   const [isSubmitPending, setIsSubmitPending] = React.useState<boolean>(false);
 
-  // Payment method state
-  const [paymentMethod, setPaymentMethod] = React.useState<"bank_transfer" | "cod">("bank_transfer");
+  // Fulfillment & Payment method states
+  const [fulfillmentMethod, setFulfillmentMethod] = React.useState<"ship" | "pickup">("ship");
+  const [paymentMethod, setPaymentMethod] = React.useState<"bank_transfer" | "cod" | "pay_at_store">("bank_transfer");
 
   // Clipboard copy states
   const [copiedAccount, setCopiedAccount] = React.useState(false);
@@ -81,6 +81,7 @@ export default function CheckoutPage() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutSchema),
@@ -166,8 +167,8 @@ export default function CheckoutPage() {
   // Calculations
   const itemPrice = selectedVariant.salePrice || selectedVariant.price;
   const subtotal = itemPrice;
-  const shippingFee = paymentMethod === "cod" ? 400 : 0;
-  const tax = paymentMethod === "cod" ? Math.round(0.04 * itemPrice) : 0;
+  const shippingFee = fulfillmentMethod === "pickup" ? 0 : paymentMethod === "cod" ? 400 : 0;
+  const tax = fulfillmentMethod === "pickup" ? 0 : paymentMethod === "cod" ? Math.round(0.04 * itemPrice) : 0;
   const total = subtotal + shippingFee + tax;
 
   // Estimated delivery dates
@@ -191,6 +192,8 @@ export default function CheckoutPage() {
 
       const orderPayload = {
         ...data,
+        fulfillmentMethod,
+        pickupLocation: fulfillmentMethod === "pickup" ? "Nothing Official Office - Al Qadir Heights, Babar Block, Garden Town, Lahore" : undefined,
         phoneNumber: cleanPhone(data.phoneNumber),
         phone2: cleanPhone(data.phone2),
         paymentMethod,
@@ -265,7 +268,10 @@ export default function CheckoutPage() {
           <div className="lg:col-span-7 space-y-8">
             <SharedCheckoutForm
               register={register}
+              setValue={setValue}
               errors={errors}
+              fulfillmentMethod={fulfillmentMethod}
+              setFulfillmentMethod={setFulfillmentMethod}
               paymentMethod={paymentMethod}
               setPaymentMethod={setPaymentMethod}
               isHighValue={isHighValue}
@@ -338,6 +344,16 @@ export default function CheckoutPage() {
                 <div className="flex justify-between">
                   <span className="text-slate-500">Subtotal</span>
                   <span className="font-bold text-slate-800">{formatPKR(subtotal)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Fulfillment</span>
+                  <span className="font-bold text-slate-800">
+                    {fulfillmentMethod === "pickup" ? (
+                      <span className="text-emerald-600 font-bold">Store Pickup (Free)</span>
+                    ) : (
+                      "Door Delivery"
+                    )}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-500">Shipping fee</span>

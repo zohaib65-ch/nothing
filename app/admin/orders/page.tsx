@@ -1,8 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Download, ShoppingBag, Clock, CheckCircle2, CreditCard } from "lucide-react";
-import { Heading } from "@/components/ui/heading";
+import { Download, ShoppingBag, Clock, CheckCircle2, CreditCard, Store } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useOrders, Order } from "@/hooks/useOrders";
 import { OrdersFilter } from "./_components/OrdersFilter";
@@ -20,6 +19,8 @@ export default function AdminOrdersPage() {
     setStatusFilter,
     paymentFilter,
     setPaymentFilter,
+    fulfillmentFilter,
+    setFulfillmentFilter,
     copiedOrderId,
     copyOrderId,
     filteredOrders,
@@ -69,18 +70,18 @@ export default function AdminOrdersPage() {
       icon: <ShoppingBag className="h-4.5 w-4.5 text-[#D71921]" />,
     },
     {
+      title: "STORE PICKUPS",
+      value: orders.filter((o) => o.fulfillmentMethod === "pickup").length,
+      subtext: "OFFICE PICKUPS",
+      icon: <Store className="h-4.5 w-4.5 text-emerald-500" />,
+      subtextColor: "text-emerald-600 font-bold",
+    },
+    {
       title: "PENDING ORDERS",
       value: orders.filter((o) => o.status === "pending" || o.status === "processing").length,
       subtext: "AWAITING PROCESSING",
       icon: <Clock className="h-4.5 w-4.5 text-amber-500" />,
       subtextColor: "text-amber-600 font-bold",
-    },
-    {
-      title: "DELIVERED STATUS",
-      value: orders.filter((o) => o.status === "delivered").length,
-      subtext: "SUCCESSFULLY DISPATCHED",
-      icon: <CheckCircle2 className="h-4.5 w-4.5 text-emerald-500" />,
-      subtextColor: "text-emerald-600 font-bold",
     },
     {
       title: "TOTAL REVENUE",
@@ -142,6 +143,8 @@ export default function AdminOrdersPage() {
         setStatusFilter={setStatusFilter}
         paymentFilter={paymentFilter}
         setPaymentFilter={setPaymentFilter}
+        fulfillmentFilter={fulfillmentFilter}
+        setFulfillmentFilter={setFulfillmentFilter}
       />
 
       {/* Database table listings */}

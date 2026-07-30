@@ -150,7 +150,9 @@ export interface Order {
   postalCode?: string;
   phoneNumber: string;
   phone2?: string;
-  paymentMethod: "bank_transfer" | "cod";
+  fulfillmentMethod?: "ship" | "pickup";
+  pickupLocation?: string;
+  paymentMethod: "bank_transfer" | "cod" | "pay_at_store";
   items: OrderItem[];
   subtotal: number;
   shippingFee: number;

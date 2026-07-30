@@ -10,8 +10,16 @@ import {
   Clock, 
   CheckCircle, 
   Truck, 
-  XCircle 
+  XCircle,
+  Store
 } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 // Format price helper
 const formatPKR = (num: number) => {
@@ -55,14 +63,6 @@ const getStatusIcon = (status: string) => {
       return <Clock className="h-3 w-3 shrink-0" />;
   }
 };
-
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 export const getColumns = (
   copiedOrderId: string | null,
@@ -110,6 +110,24 @@ export const getColumns = (
     },
   },
   {
+    accessorKey: "fulfillmentMethod",
+    header: "FULFILLMENT",
+    cell: ({ row }) => {
+      const isPickup = row.original.fulfillmentMethod === "pickup";
+      return isPickup ? (
+        <span className="inline-flex items-center gap-1 font-lattera text-[10px] font-bold tracking-wider text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-2 py-0.5 rounded-full uppercase">
+          <Store className="h-3 w-3" />
+          <span>PICKUP</span>
+        </span>
+      ) : (
+        <span className="inline-flex items-center gap-1 font-lattera text-[10px] font-bold tracking-wider text-blue-700 bg-blue-50 border border-blue-200/80 px-2 py-0.5 rounded-full uppercase">
+          <Truck className="h-3 w-3" />
+          <span>DELIVERY</span>
+        </span>
+      );
+    },
+  },
+  {
     accessorKey: "createdAt",
     header: "DATE",
     cell: ({ row }) => (
@@ -125,6 +143,8 @@ export const getColumns = (
       <span className="font-lattera text-[10px] font-bold tracking-wider text-neutral-500 uppercase">
         {row.original.paymentMethod === "bank_transfer" ? (
           <span className="text-emerald-600">BANK</span>
+        ) : row.original.paymentMethod === "pay_at_store" ? (
+          <span className="text-emerald-700">STORE PAY</span>
         ) : (
           <span>COD</span>
         )}

@@ -23,7 +23,9 @@ export interface Order {
   postalCode?: string;
   phoneNumber: string;
   phone2?: string;
-  paymentMethod: "bank_transfer" | "cod";
+  fulfillmentMethod?: "ship" | "pickup";
+  pickupLocation?: string;
+  paymentMethod: "bank_transfer" | "cod" | "pay_at_store";
   items: OrderItem[];
   subtotal: number;
   shippingFee: number;
@@ -41,6 +43,7 @@ export function useOrders() {
   const [searchTerm, setSearchTerm] = React.useState<string>("");
   const [statusFilter, setStatusFilter] = React.useState<string>("all");
   const [paymentFilter, setPaymentFilter] = React.useState<string>("all");
+  const [fulfillmentFilter, setFulfillmentFilter] = React.useState<string>("all");
   const [copiedOrderId, setCopiedOrderId] = React.useState<string | null>(null);
 
   // Fetch orders from API
@@ -92,11 +95,7 @@ export function useOrders() {
       });
       if (res.ok) {
         const updated = await res.json();
-        setOrders((prev) =>
-          prev.map((o) =>
-            o._id === orderId || o.id === orderId ? { ...o, discount, total: newTotal } : o
-          )
-        );
+        setOrders((prev) => prev.map((o) => (o._id === orderId || o.id === orderId ? { ...o, discount, total: newTotal } : o)));
         return updated;
       }
     } catch (error) {
@@ -121,16 +120,16 @@ export function useOrders() {
       const phone = (order?.phoneNumber || "").toLowerCase();
       const term = searchTerm.toLowerCase();
 
-      const matchesSearch =
-        orderId.includes(term) || customer.includes(term) || email.includes(term) || phone.includes(term);
+      const matchesSearch = orderId.includes(term) || customer.includes(term) || email.includes(term) || phone.includes(term);
       const matchesStatus = statusFilter === "all" || order?.status === statusFilter;
       const matchesPayment = paymentFilter === "all" || order?.paymentMethod === paymentFilter;
+      const matchesFulfillment = fulfillmentFilter === "all" || (order?.fulfillmentMethod || "ship") === fulfillmentFilter;
 
-      return matchesSearch && matchesStatus && matchesPayment;
+      return matchesSearch && matchesStatus && matchesPayment && matchesFulfillment;
     });
-  }, [orders, searchTerm, statusFilter, paymentFilter]);
+  }, [orders, searchTerm, statusFilter, paymentFilter, fulfillmentFilter]);
 
-  // Generate Single Order PDF Invoice
+  // Generate Single Order PDF Invoice matching exact reference design
   const generateInvoicePDF = (order: Order) => {
     const doc = new jsPDF({
       orientation: "portrait",
@@ -138,145 +137,274 @@ export function useOrders() {
       format: "a4",
     });
 
-    // Branding header
-    doc.setFillColor(245, 245, 247);
-    doc.rect(0, 0, 210, 40, "F");
+    const formatPDFNum = (num: number) => {
+      return new Intl.NumberFormat("en-PK", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(num);
+    };
 
-    doc.setTextColor(17, 17, 17);
+    const formatDateStr = (dateStr: string) => {
+      try {
+        const d = new Date(dateStr);
+        return d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+      } catch {
+        return dateStr;
+      }
+    };
+
+    const marginX = 15;
+    const rightMarginX = 195;
+    const contentWidth = rightMarginX - marginX; // 180mm
+
+    // --- 1. HEADER SECTION ---
+    // Left: Brand title & subtitle
+    doc.setTextColor(20, 20, 20);
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(22);
-    doc.text("NOTHING PAKISTAN", 20, 20);
+    doc.setFontSize(18);
+    doc.text("NOTHING", marginX, 18);
 
-    doc.setFont("helvetica", "normal");
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8.5);
+    doc.text("NOTHING", marginX, 23);
+
+    // Right: Invoice Title, Number, Date
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(18);
+    doc.text("SALES INVOICE", rightMarginX, 15, { align: "right" });
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8.5);
+    doc.setTextColor(30, 30, 30);
+    const invoiceNo = order.customId || order.id || "NT-2026-8942-v14";
+    doc.text(`Invoice No: ${invoiceNo}`, rightMarginX, 21, { align: "right" });
+    doc.text(`Date: ${formatDateStr(order.createdAt)}`, rightMarginX, 26, { align: "right" });
+
+    // Header Divider Line (Solid Black)
+    doc.setDrawColor(0, 0, 0);
+    doc.setLineWidth(0.8);
+    doc.line(marginX, 31, rightMarginX, 31);
+
+    // --- 2. SELLER & CUSTOMER DETAILS SECTION ---
+    const detailsTopY = 40;
+
+    // Left Column: Seller Details
+    doc.setFont("helvetica", "bold");
     doc.setFontSize(9);
-    doc.setTextColor(100, 100, 100);
-    doc.text("Official SMC-Private Limited Incorporation Certificate CUIN: 0337422", 20, 27);
-    doc.text("Bank Alfalah Payment Settlement Gateway", 20, 32);
+    doc.setTextColor(20, 20, 20);
+    doc.text("SELLER DETAILS", marginX, detailsTopY);
+    doc.setDrawColor(220, 220, 220);
+    doc.setLineWidth(0.3);
+    doc.line(marginX, detailsTopY + 2, 95, detailsTopY + 2);
 
-    // Order Info block (right-aligned header)
-    doc.setTextColor(17, 17, 17);
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(10);
-    doc.text("ORDER INVOICE", 150, 15);
+    doc.setFontSize(8.5);
+    doc.text("Nothing Pakistan", marginX, detailsTopY + 8);
 
     doc.setFont("helvetica", "normal");
     doc.setFontSize(8);
-    doc.setTextColor(80, 80, 80);
-    doc.text(`Reference ID: ${order.customId || order.id}`, 150, 20);
-    doc.text(`Order Date: ${new Date(order.createdAt).toLocaleDateString()}`, 150, 25);
-    doc.text(`Payment: ${order.paymentMethod === "bank_transfer" ? "Bank Transfer" : "Cash on Delivery (COD)"}`, 150, 30);
+    doc.setTextColor(70, 70, 70);
+    doc.text("Al-Qadir Heights, Executive Floor,", marginX, detailsTopY + 13);
+    doc.text("Babar Block, Garden Town,", marginX, detailsTopY + 17);
+    doc.text("Lahore, Pakistan", marginX, detailsTopY + 21);
 
-    // Section 1: Customer Details
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(11);
-    doc.setTextColor(17, 17, 17);
-    doc.text("RECIPIENT DELIVERY DETAILS", 20, 52);
-
-    // Draw horizontal separator
-    doc.setDrawColor(230, 230, 235);
-    doc.setLineWidth(0.5);
-    doc.line(20, 55, 190, 55);
-
-    // Details Grid text
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(9);
-    doc.setTextColor(80, 80, 80);
-
-    doc.setFont("helvetica", "bold");
-    doc.text("Name:", 20, 62);
-    doc.setFont("helvetica", "normal");
-    doc.text(order.fullName, 45, 62);
-
-    doc.setFont("helvetica", "bold");
-    doc.text("Contact:", 20, 68);
-    doc.setFont("helvetica", "normal");
-    doc.text(order.phoneNumber + (order.phone2 ? ` / ${order.phone2}` : ""), 45, 68);
-
-    doc.setFont("helvetica", "bold");
-    doc.text("Address:", 20, 74);
-    doc.setFont("helvetica", "normal");
-
-    // Multi-line address wrapping
-    const splitAddress = doc.splitTextToSize(
-      `${order.address}, ${order.city}, ${order.district}${order.postalCode ? ` (${order.postalCode})` : ""}`,
-      140,
-    );
-    doc.text(splitAddress, 45, 74);
-
-    // Section 2: Items Summary
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(11);
-    doc.setTextColor(17, 17, 17);
-    doc.text("ORDER SPECIFICATIONS", 20, 95);
-    doc.line(20, 98, 190, 98);
-
-    // Table Headers
-    doc.setFillColor(245, 245, 247);
-    doc.rect(20, 102, 170, 8, "F");
-
+    // Right Column: Customer Details
+    const custColX = 108;
     doc.setFont("helvetica", "bold");
     doc.setFontSize(9);
-    doc.text("ITEM NAME", 23, 107);
-    doc.text("VARIANT", 95, 107);
-    doc.text("PRICE", 140, 107);
-    doc.text("QTY", 163, 107);
-    doc.text("TOTAL", 175, 107);
+    doc.setTextColor(20, 20, 20);
+    doc.text("CUSTOMER DETAILS", custColX, detailsTopY);
+    doc.line(custColX, detailsTopY + 2, rightMarginX, detailsTopY + 2);
 
-    // Table rows
-    let currentY = 115;
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8.5);
+    doc.text(order.fullName, custColX, detailsTopY + 8);
+
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(9);
-    doc.setTextColor(60, 60, 60);
+    doc.setFontSize(8);
+    doc.setTextColor(70, 70, 70);
+    doc.text(`Phone: ${order.phoneNumber}`, custColX, detailsTopY + 13);
+
+    const deliveryModeStr = order.fulfillmentMethod === "pickup" ? "Office Pickup" : "Door Delivery";
+    doc.text(`Delivery Mode: ${deliveryModeStr}`, custColX, detailsTopY + 17);
+
+    if (order.fulfillmentMethod !== "pickup" && order.address) {
+      const splitAddr = doc.splitTextToSize(`Address: ${order.address}, ${order.city}`, 85);
+      doc.text(splitAddr, custColX, detailsTopY + 21);
+    }
+
+    // --- 3. ITEMS TABLE ---
+    const tableTopY = 72;
+    const tableHeaderHeight = 7;
+
+    // Solid Black Header Bar
+    doc.setFillColor(0, 0, 0);
+    doc.rect(marginX, tableTopY, contentWidth, tableHeaderHeight, "F");
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8);
+    doc.setTextColor(255, 255, 255);
+    doc.text("ITEM DESCRIPTION", marginX + 3, tableTopY + 4.8);
+    doc.text("WARRANTY", 115, tableTopY + 4.8);
+    doc.text("QTY", 145, tableTopY + 4.8);
+    doc.text("UNIT PRICE (PKR)", rightMarginX - 3, tableTopY + 4.8, { align: "right" });
+
+    // Table Content Rows
+    let rowY = tableTopY + tableHeaderHeight + 6;
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(30, 30, 30);
 
     order.items.forEach((item) => {
-      // Product Name (wrapped if long)
-      const nameLines = doc.splitTextToSize(item.productName, 70);
-      doc.text(nameLines, 23, currentY);
+      // Item Name (Bold)
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(9);
+      doc.setTextColor(10, 10, 10);
+      doc.text(item.productName, marginX + 3, rowY);
 
-      doc.text(item.variantName, 95, currentY);
-      doc.text(`Rs ${item.price}`, 140, currentY);
-      doc.text(String(item.quantity), 164, currentY);
-      doc.text(`Rs ${item.price * item.quantity}`, 175, currentY);
+      // Item Variant / Specifications on second line
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(7.5);
+      doc.setTextColor(110, 110, 110);
+      const variantDetailStr = item.variantName ? `Variant: ${item.variantName}` : "Official Brand Unit";
+      doc.text(variantDetailStr, marginX + 3, rowY + 4.5);
 
-      const lineHeights = nameLines.length * 4.5;
-      currentY += Math.max(8, lineHeights);
+      // Warranty column
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8);
+      doc.setTextColor(60, 60, 60);
+      doc.text("1 Year Brand", 115, rowY);
+
+      // Qty column
+      doc.setFont("helvetica", "normal");
+      doc.text(String(item.quantity), 145, rowY);
+
+      // Price column (Bold)
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(8.5);
+      doc.setTextColor(10, 10, 10);
+      doc.text(formatPDFNum(item.price), rightMarginX - 3, rowY, { align: "right" });
+
+      rowY += 12;
+
+      // Row separator line
+      doc.setDrawColor(240, 240, 240);
+      doc.setLineWidth(0.2);
+      doc.line(marginX, rowY - 4, rightMarginX, rowY - 4);
     });
 
-    // Separator line before totals
-    doc.line(20, currentY, 190, currentY);
-    currentY += 8;
+    // --- 4. TOTALS SECTION (Right Aligned) ---
+    let totalsY = Math.max(130, rowY + 5);
+    const totalsLeftX = 110;
 
-    // Totals Block
+    // Subtotal
     doc.setFont("helvetica", "normal");
-    doc.setTextColor(80, 80, 80);
-    doc.text("Subtotal:", 135, currentY);
-    doc.text(`Rs ${order.subtotal}`, 168, currentY);
+    doc.setFontSize(8.5);
+    doc.setTextColor(60, 60, 60);
+    doc.text("Retail Price Subtotal", totalsLeftX, totalsY);
+    doc.text(formatPDFNum(order.subtotal), rightMarginX - 3, totalsY, { align: "right" });
 
-    currentY += 6;
-    doc.text("Shipping charge:", 135, currentY);
-    doc.text(order.shippingFee === 0 ? "Free" : `Rs ${order.shippingFee}`, 168, currentY);
+    totalsY += 6;
+    if (order.shippingFee > 0) {
+      doc.text("Shipping Fee", totalsLeftX, totalsY);
+      doc.text(formatPDFNum(order.shippingFee), rightMarginX - 3, totalsY, { align: "right" });
+      totalsY += 6;
+    }
 
-    currentY += 6;
-    doc.text("Govt Tax (4%):", 135, currentY);
-    doc.text(order.tax === 0 ? "Rs 0" : `Rs ${order.tax}`, 168, currentY);
+    if (order.tax > 0) {
+      doc.text("Govt Tax (4%)", totalsLeftX, totalsY);
+      doc.text(formatPDFNum(order.tax), rightMarginX - 3, totalsY, { align: "right" });
+      totalsY += 6;
+    }
 
-    currentY += 8;
-    doc.line(130, currentY - 5, 190, currentY - 5);
+    // Light line above Total Invoice Amount
+    doc.setDrawColor(220, 220, 220);
+    doc.setLineWidth(0.3);
+    doc.line(totalsLeftX, totalsY, rightMarginX, totalsY);
+    totalsY += 5;
 
+    // Total Invoice Amount
     doc.setFont("helvetica", "bold");
-    doc.setTextColor(17, 17, 17);
-    doc.setFontSize(10);
-    doc.text("Grand Total:", 135, currentY);
-    doc.text(`Rs ${order.total}`, 168, currentY);
+    doc.setFontSize(9);
+    doc.setTextColor(10, 10, 10);
+    doc.text("Total Invoice Amount", totalsLeftX, totalsY);
+    doc.text(formatPDFNum(order.total), rightMarginX - 3, totalsY, { align: "right" });
 
-    // Footer info
-    doc.setFont("helvetica", "italic");
+    // Optional Discount / Advance Paid
+    const discountVal = order.discount || 0;
+    if (discountVal > 0) {
+      totalsY += 6;
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8.5);
+      doc.setTextColor(60, 60, 60);
+      doc.text("Advance Paid / Discount", totalsLeftX, totalsY);
+      doc.text(`-${formatPDFNum(discountVal)}`, rightMarginX - 3, totalsY, { align: "right" });
+    }
+
+    // Solid Black Line above Balance Due
+    totalsY += 5;
+    doc.setDrawColor(0, 0, 0);
+    doc.setLineWidth(0.8);
+    doc.line(totalsLeftX, totalsY, rightMarginX, totalsY);
+
+    // Balance Due
+    totalsY += 6;
+    const finalPayable = Math.max(0, order.total - discountVal);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(10.5);
+    doc.setTextColor(0, 0, 0);
+    const balanceLabel = order.fulfillmentMethod === "pickup" ? "Balance Due (at Pickup)" : "Balance Due";
+    doc.text(balanceLabel, totalsLeftX, totalsY);
+    doc.text(formatPDFNum(finalPayable), rightMarginX - 3, totalsY, { align: "right" });
+
+    // Double line below Balance Due
+    totalsY += 3;
+    doc.setDrawColor(0, 0, 0);
+    doc.setLineWidth(0.8);
+    doc.line(totalsLeftX, totalsY, rightMarginX, totalsY);
+    doc.setLineWidth(0.3);
+    doc.line(totalsLeftX, totalsY + 1, rightMarginX, totalsY + 1);
+
+    // --- 5. TERMS & CONDITIONS SECTION ---
+    const termsY = 210;
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8.5);
+    doc.setTextColor(20, 20, 20);
+    doc.text("TERMS & CONDITIONS", marginX, termsY);
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(7.5);
+    doc.setTextColor(90, 90, 90);
+    doc.text("1. Device warranty is directly fulfilled by the official brand service center.", marginX, termsY + 5);
+    doc.text("2. Items picked up from the office must be verified by the customer at the time of hand-over.", marginX, termsY + 9);
+    doc.text(
+      "3. Advance payments processed for handling are non-refundable once the unit has been reserved at the local office.",
+      marginX,
+      termsY + 13,
+    );
+
+    // --- 6. SIGNATURES SECTION ---
+    const sigY = 260;
+    // Left Signature
+    doc.setDrawColor(0, 0, 0);
+    doc.setLineWidth(0.6);
+    doc.line(marginX, sigY, marginX + 65, sigY);
+    doc.setFont("helvetica", "bold");
     doc.setFontSize(8);
-    doc.setTextColor(150, 150, 150);
-    doc.text("Thank you for shopping at Nothing. For delivery tracking updates, connect on WhatsApp helpline.", 20, 275);
+    doc.setTextColor(40, 40, 40);
+    doc.text("AUTHORIZED SIGNATURE", marginX + 12, sigY + 4);
+
+    // Right Signature
+    doc.line(125, sigY, rightMarginX, sigY);
+    doc.text("CUSTOMER SIGNATURE", 140, sigY + 4);
+
+    // --- 7. FOOTER PAGE NUMBER ---
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(7.5);
+    doc.setTextColor(140, 140, 140);
+    doc.text("Page 1 of 1", rightMarginX, 282, { align: "right" });
 
     // Save File
-    doc.save(`Invoice_${order.customId || order.id}.pdf`);
+    doc.save(`Sales_Invoice_${invoiceNo}.pdf`);
   };
 
   // Generate All Filtered Orders PDF Report
@@ -300,7 +428,7 @@ export function useOrders() {
     doc.setFontSize(8.5);
     doc.setTextColor(180, 180, 180);
     doc.text(
-      `Generated Date: ${new Date().toLocaleString()}  |  Active Filters: [Status: ${statusFilter.toUpperCase()}] [Payment: ${paymentFilter.toUpperCase()}]`,
+      `Generated Date: ${new Date().toLocaleString()}  |  Active Filters: [Status: ${statusFilter.toUpperCase()}] [Fulfillment: ${fulfillmentFilter.toUpperCase()}]`,
       15,
       26,
     );
@@ -317,8 +445,8 @@ export function useOrders() {
     doc.setFontSize(8.5);
     doc.text("REFERENCE ID", 18, 50);
     doc.text("CUSTOMER NAME", 68, 50);
-    doc.text("CONTACT NUMBER", 112, 50);
-    doc.text("CITY", 145, 50);
+    doc.text("FULFILLMENT", 112, 50);
+    doc.text("CITY", 150, 50);
     doc.text("PAYMENT", 175, 50);
     doc.text("TOTAL PAID", 205, 50);
     doc.text("STATUS", 232, 50);
@@ -331,10 +459,8 @@ export function useOrders() {
     doc.setTextColor(80, 80, 80);
 
     filteredOrders.forEach((o) => {
-      // Manage page break
       if (currentY > 190) {
         doc.addPage();
-        // Draw header again
         doc.setFillColor(20, 20, 22);
         doc.rect(0, 0, 297, 30, "F");
         doc.setTextColor(255, 255, 255);
@@ -349,8 +475,8 @@ export function useOrders() {
         doc.setFontSize(8.5);
         doc.text("REFERENCE ID", 18, 43);
         doc.text("CUSTOMER NAME", 68, 43);
-        doc.text("CONTACT NUMBER", 112, 43);
-        doc.text("CITY", 145, 43);
+        doc.text("FULFILLMENT", 112, 43);
+        doc.text("CITY", 150, 43);
         doc.text("PAYMENT", 175, 43);
         doc.text("TOTAL PAID", 205, 43);
         doc.text("STATUS", 232, 43);
@@ -364,14 +490,13 @@ export function useOrders() {
 
       doc.text(o.id || o._id || "", 18, currentY);
       doc.text(o.fullName, 68, currentY);
-      doc.text(o.phoneNumber, 112, currentY);
-      doc.text(o.city, 145, currentY);
+      doc.text(o.fulfillmentMethod === "pickup" ? "STORE PICKUP" : "DELIVERY", 112, currentY);
+      doc.text(o.city, 150, currentY);
       doc.text(o.paymentMethod.toUpperCase(), 175, currentY);
       doc.text(`Rs ${o.total}`, 205, currentY);
       doc.text(o.status.toUpperCase(), 232, currentY);
       doc.text(new Date(o.createdAt).toLocaleDateString(), 254, currentY);
 
-      // Light gray separator lines
       doc.setDrawColor(240, 240, 243);
       doc.setLineWidth(0.3);
       doc.line(15, currentY + 3, 282, currentY + 3);
@@ -392,6 +517,8 @@ export function useOrders() {
     setStatusFilter,
     paymentFilter,
     setPaymentFilter,
+    fulfillmentFilter,
+    setFulfillmentFilter,
     copiedOrderId,
     copyOrderId,
     filteredOrders,
