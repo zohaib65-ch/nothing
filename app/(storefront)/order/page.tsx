@@ -264,23 +264,27 @@ export default function CartCheckoutPage() {
                 {items.map((item) => {
                   const itemPrice = item.selectedVariant.salePrice || item.selectedVariant.price;
                   return (
-                    <div key={item.id} className="flex items-start space-x-4">
-                      <div className="h-14 w-14 bg-slate-50 rounded-xl overflow-hidden border border-slate-100 shrink-0 flex items-center justify-center p-2">
+                    <div key={item.id} className="flex items-center space-x-4 py-1">
+                      <div className="h-20 w-20 bg-slate-50/80 rounded-2xl overflow-hidden border border-slate-200/80 shrink-0 flex items-center justify-center p-2.5 shadow-sm">
                         <img
                           alt={item.product.name}
                           src={item.selectedVariant.image || item.product.images[0]}
                           className="h-full w-full object-contain"
                         />
                       </div>
-                      <div className="space-y-0.5 flex-1">
-                        <h4 className="text-xs font-bold text-slate-800 line-clamp-1">{item.product.name}</h4>
-                        <p className="text-[10px] text-slate-400 font-ntype">
-                          Color: {item.selectedVariant.color}
-                          {item.selectedVariant.storage && ` • Storage: ${item.selectedVariant.storage}`}
+                      <div className="space-y-1 flex-1">
+                        <h4 className="text-xs font-bold text-slate-900 line-clamp-1">{item.product.name}</h4>
+                        <p className="text-[11px] text-slate-500 font-sans">
+                          Color: <span className="font-semibold text-slate-700">{item.selectedVariant.color}</span>
+                          {item.selectedVariant.storage && (
+                            <> • Storage: <span className="font-semibold text-slate-700">{item.selectedVariant.storage}</span></>
+                          )}
                         </p>
-                        <div className="flex items-center justify-between mt-1">
-                          <span className="text-[10px] text-emerald-600 bg-emerald-50 px-1.5 py-0.2 rounded font-bold">Qty {item.quantity}</span>
-                          <span className="text-xs font-bold text-slate-700">{formatPKR(itemPrice * item.quantity)}</span>
+                        <div className="flex items-center justify-between pt-1">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold text-slate-700 bg-slate-100 border border-slate-200/80">
+                            QTY: {item.quantity}
+                          </span>
+                          <span className="text-xs font-bold text-slate-900">{formatPKR(itemPrice * item.quantity)}</span>
                         </div>
                       </div>
                     </div>

@@ -76,6 +76,24 @@ export class ProductService {
     return this.saveProductLocal(product);
   }
 
+  public static async updateProductFieldsApi(id: string, fields: Partial<Product>): Promise<Product | null> {
+    try {
+      const res = await fetch(`/api/products/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(fields),
+      });
+      if (res.ok) {
+        const updated = await res.json();
+        this.saveProductLocal(updated);
+        return updated;
+      }
+    } catch (err) {
+      console.error("Failed to update product fields", err);
+    }
+    return null;
+  }
+
   public static saveProduct(product: Product): Product {
     this.saveProductApi(product);
     return this.saveProductLocal(product);

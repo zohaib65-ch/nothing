@@ -85,6 +85,7 @@ export interface Product {
   seo: ProductSEO;
   isFeatured: boolean;
   isNewArrival: boolean;
+  inStock?: boolean;
   sortOrder: number;
   warranty?: string;
   status: "draft" | "published";

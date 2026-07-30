@@ -11,6 +11,7 @@ import { Star, Edit2, Trash2 } from "lucide-react";
 export const getColumns = (
   handleToggleFeatured: (prod: Product) => void,
   handleToggleStatus: (prod: Product) => void,
+  handleToggleStock: (prod: Product) => void,
   handleEdit: (prod: Product) => void,
   handlePromptDelete: (prod: Product) => void,
 ): ColumnDef<Product>[] => [
@@ -33,7 +34,7 @@ export const getColumns = (
     cell: ({ row }) => {
       const prod = row.original;
       return (
-        <div className="space-y-1 py-1 min-w-[180px]">
+        <div className="space-y-1 py-1 min-w-[70px]">
           <div className="text-xs sm:text-sm sm:font-bold font-medium text-neutral-900 leading-snug">{prod.name}</div>
           {prod.tagline && <div className="text-[9px] sm:text-[11px] text-neutral-500 leading-normal font-sans">{prod.tagline}</div>}
         </div>
@@ -63,6 +64,26 @@ export const getColumns = (
           <Switch checked={Boolean(prod.isFeatured)} onCheckedChange={() => handleToggleFeatured(prod)} />
           <span className={prod.isFeatured ? "text-amber-600 tracking-wider" : "text-neutral-400 font-normal tracking-wider"}>
             {prod.isFeatured ? "YES" : "NO"}
+          </span>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "inStock",
+    header: "STOCK",
+    cell: ({ row }) => {
+      const prod = row.original;
+      const isInStock = prod.inStock !== false; // Default true if undefined
+      return (
+        <div className="flex items-center gap-2 font-mono text-[11px] font-bold">
+          <Switch checked={isInStock} onCheckedChange={() => handleToggleStock(prod)} />
+          <span
+            className={
+              isInStock ? "text-emerald-600 tracking-wider text-[10px] font-semibold" : "text-red-500 tracking-wider text-[10px] font-semibold"
+            }
+          >
+            {isInStock ? "IN STOCK" : "OUT OF STOCK"}
           </span>
         </div>
       );

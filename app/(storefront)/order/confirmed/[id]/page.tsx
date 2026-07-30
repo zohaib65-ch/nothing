@@ -63,7 +63,9 @@ export default function OrderConfirmedPage() {
     return (
       <div className="min-h-screen bg-slate-50 text-slate-900 py-24">
         <Container size="sm" className="text-center space-y-6">
-          <Heading size="lg" className="font-mono font-bold tracking-wider">ORDER NOT FOUND</Heading>
+          <Heading size="lg" className="font-mono font-bold tracking-wider">
+            ORDER NOT FOUND
+          </Heading>
           <p className="text-sm text-slate-500">We couldn't retrieve details for this order ID. It may still be processing.</p>
           <Button variant="secondary" onClick={() => router.push("/shop-all")} leftIcon={<ShoppingBag className="h-4 w-4" />}>
             CONTINUE SHOPPING
@@ -82,9 +84,7 @@ export default function OrderConfirmedPage() {
 
   // WhatsApp link generator
   const cleanPhone = WHATSAPP_NUMBER.replace(/[^0-9]/g, "");
-  const itemsText = order.items
-    ? order.items.map((item) => `- ${item.productName} (${item.variantName}) x${item.quantity}`).join("\n")
-    : "";
+  const itemsText = order.items ? order.items.map((item) => `- ${item.productName} (${item.variantName}) x${item.quantity}`).join("\n") : "";
   const whatsappMsg = `Hello Nothing Pakistan! I have just placed an order.
 Order ID: ${order.customId || order.id}
 Items:
@@ -119,7 +119,7 @@ Please confirm my order. Thank you!`;
             <div className="bg-slate-50 border border-slate-200/60 rounded-2xl p-4 flex sm:flex-row flex-col items-center justify-between max-w-sm mx-auto">
               <div className="text-left">
                 <p className="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">Order Reference ID</p>
-                 <p className="font-lattera text-sm font-bold text-slate-900 mt-0.5 line-clamp-1">{order.customId || order.id}</p>
+                <p className="font-lattera text-sm font-bold text-slate-900 mt-0.5 line-clamp-1">{order.customId || order.id}</p>
               </div>
               <button
                 onClick={handleCopyOrderId}
@@ -170,13 +170,24 @@ Please confirm my order. Thank you!`;
                 <span>Action Required: Complete Bank Transfer</span>
               </h4>
               <p className="text-[11px] text-slate-600 leading-relaxed font-ntype pl-5">
-                Please transfer the total amount of <span className="font-bold text-slate-900">{formatPKR(order.total)}</span> to our bank account. Once completed, kindly share a screenshot of the receipt on WhatsApp along with your Order ID <span className="font-lattera font-bold text-slate-955">{order.customId || order.id}</span> so we can dispatch your parcel immediately.
+                Please transfer the total amount of <span className="font-bold text-slate-900">{formatPKR(order.total)}</span> to our bank account.
+                Once completed, kindly share a screenshot of the receipt on WhatsApp along with your Order ID{" "}
+                <span className="font-lattera font-bold text-slate-955">{order.customId || order.id}</span> so we can dispatch your parcel
+                immediately.
               </p>
               <div className="pl-5 pt-1 space-y-1 text-[11px] text-slate-500">
-                <p>• Bank: <span className="font-semibold text-slate-700">Bank Alfalah</span></p>
-                <p>• Account Title: <span className="font-semibold text-slate-700">NOTHING OFFICIAL</span></p>
-                <p>• Account Number: <span className="font-semibold text-slate-700">57065002935977</span></p>
-                <p>• IBAN: <span className="font-semibold text-slate-700">PK35ALFH5706005002935977</span></p>
+                <p>
+                  • Bank: <span className="font-semibold text-slate-700">Bank Alfalah</span>
+                </p>
+                <p>
+                  • Account Title: <span className="font-semibold text-slate-700">NOTHING OFFICIAL</span>
+                </p>
+                <p>
+                  • Account Number: <span className="font-semibold text-slate-700">57065002935977</span>
+                </p>
+                <p>
+                  • IBAN: <span className="font-semibold text-slate-700">PK35ALFH5706005002935977</span>
+                </p>
               </div>
             </div>
           )}
@@ -192,7 +203,6 @@ Please confirm my order. Thank you!`;
               <div>
                 <p className="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">Phone Number</p>
                 <p className="font-bold text-slate-800 mt-0.5">{order.phoneNumber}</p>
-                 {order.phone2 && <p className="text-[11px] text-slate-500 mt-0.5 font-lattera">Secondary: {order.phone2}</p>}
               </div>
               <div className="sm:col-span-2">
                 <p className="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">Shipping Address</p>
@@ -202,9 +212,7 @@ Please confirm my order. Thank you!`;
               </div>
               <div>
                 <p className="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">Payment Method</p>
-                <p className="font-bold text-slate-800 mt-0.5">
-                  {order.paymentMethod === "bank_transfer" ? "Bank Transfer" : "Cash on Delivery"}
-                </p>
+                <p className="font-bold text-slate-800 mt-0.5">{order.paymentMethod === "bank_transfer" ? "Bank Transfer" : "Cash on Delivery"}</p>
               </div>
               <div>
                 <p className="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">Delivery Status</p>
@@ -217,15 +225,18 @@ Please confirm my order. Thank you!`;
             {/* Calculations breakdown */}
             <div className="border-t border-slate-100 pt-6 space-y-4">
               <h4 className="text-[10px] uppercase tracking-wider font-bold text-slate-400">Order breakdown</h4>
-              {order.items && order.items.map((item, idx) => (
-                <div key={idx} className="flex items-start justify-between text-xs pb-3 border-b border-slate-100">
-                  <div className="space-y-0.5">
-                    <p className="font-bold text-slate-800">{item.productName}</p>
-                    <p className="text-[10px] text-slate-500">{item.variantName} x{item.quantity}</p>
+              {order.items &&
+                order.items.map((item, idx) => (
+                  <div key={idx} className="flex items-start justify-between text-xs pb-3 border-b border-slate-100">
+                    <div className="space-y-0.5">
+                      <p className="font-bold text-slate-800">{item.productName}</p>
+                      <p className="text-[10px] text-slate-500">
+                        {item.variantName} x{item.quantity}
+                      </p>
+                    </div>
+                    <span className="font-bold text-slate-800">{formatPKR(item.price * item.quantity)}</span>
                   </div>
-                  <span className="font-bold text-slate-800">{formatPKR(item.price * item.quantity)}</span>
-                </div>
-              ))}
+                ))}
               <div className="space-y-2.5 text-xs">
                 <div className="flex justify-between">
                   <span className="text-slate-500">Subtotal</span>
@@ -255,14 +266,15 @@ Please confirm my order. Thank you!`;
               <ShieldCheck className="h-4.5 w-4.5 text-emerald-600" />
               <span>SECP Registered Company</span>
             </div>
-             <p className="text-[10px] text-slate-400 font-ntype mt-1">
-              NOTHING OFFICIAL (SMC-PRIVATE) LIMITED • CUIN 0337422
-            </p>
+            <p className="text-[10px] text-slate-400 font-ntype mt-1">NOTHING OFFICIAL (SMC-PRIVATE) LIMITED • CUIN 0337422</p>
           </div>
 
           {/* Back button */}
           <div className="text-center">
-            <Link href="/shop-all" className="inline-flex items-center space-x-1.5 text-xs font-bold uppercase tracking-wider text-slate-500 hover:text-black transition-colors">
+            <Link
+              href="/shop-all"
+              className="inline-flex items-center space-x-1.5 text-xs font-bold uppercase tracking-wider text-slate-500 hover:text-black transition-colors"
+            >
               <span>Continue Catalog Shopping</span>
               <ArrowRight className="h-3.5 w-3.5" />
             </Link>

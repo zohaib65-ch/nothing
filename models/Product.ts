@@ -79,6 +79,7 @@ const ProductSchema = new Schema<IProductDocument>(
     },
     isFeatured: { type: Boolean, default: false, index: true },
     isNewArrival: { type: Boolean, default: false },
+    inStock: { type: Boolean, default: true },
     sortOrder: { type: Number, default: 0 },
     status: { type: String, enum: ["draft", "published"], default: "published", index: true },
   },

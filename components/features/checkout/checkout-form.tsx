@@ -210,9 +210,14 @@ export function SharedCheckoutForm({
 
         {/* Warning Banner for High-value orders */}
         {isHighValue && (
-          <div className="bg-green-100/40 border border-green-200/80 rounded-[20px] p-5 text-black text-xs font-ntype leading-relaxed">
-            For the safety and accountability of high-value shipments, we highly recommend bank transfer pre-payment. Orders paid via Bank Transfer
-            receive priority processing and express next-day delivery.
+          <div className="bg-emerald-50/70 border border-emerald-200/90 rounded-[20px] p-5 text-slate-800 text-xs font-ntype leading-relaxed space-y-2.5 shadow-sm">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-600 text-white font-mono text-[10px] font-bold uppercase tracking-wider rounded-full shadow-sm">
+              <span>★ CUSTOMER BENEFIT</span>
+            </span>
+            <p className="text-slate-700 font-sans leading-relaxed">
+              For the safety and accountability of high-value shipments, we highly recommend bank transfer pre-payment. Orders paid via Bank Transfer
+              receive priority processing and express next-day delivery.
+            </p>
           </div>
         )}
 

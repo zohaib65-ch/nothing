@@ -11,18 +11,19 @@ import { ColumnDef } from "@tanstack/react-table";
 import { getColumns } from "./_components/columns";
 import { Plus, Search, Loader2 } from "lucide-react";
 import { DeleteProductModal } from "./_components/delete-product-modal";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function AdminProductsPage() {
   const router = useRouter();
   const [products, setProducts] = React.useState<Product[]>([]);
   const [searchQuery, setSearchQuery] = React.useState("");
+  const [stockFilter, setStockFilter] = React.useState<"all" | "in_stock" | "out_of_stock">("all");
+  const [categoryFilter, setCategoryFilter] = React.useState<string>("all");
+  const [categoriesList, setCategoriesList] = React.useState<string[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
-
-  // Custom Delete Modal State
   const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
   const [productToDelete, setProductToDelete] = React.useState<Product | null>(null);
   const [isDeleting, setIsDeleting] = React.useState(false);
-
   const [mounted, setMounted] = React.useState(false);
 
   const loadProducts = React.useCallback(async (showLoader = true) => {
@@ -30,6 +31,10 @@ export default function AdminProductsPage() {
     try {
       const data = await ProductService.fetchProductsFromApi();
       setProducts(data);
+      
+      // Extract unique categories for filter
+      const cats = Array.from(new Set(data.map((p) => p.category).filter(Boolean)));
+      setCategoriesList(cats);
     } finally {
       if (showLoader) setIsLoading(false);
     }
@@ -63,25 +68,36 @@ export default function AdminProductsPage() {
   };
 
   const handleToggleFeatured = React.useCallback(async (prod: Product) => {
-    const updated: Product = { ...prod, isFeatured: !prod.isFeatured };
-    setProducts((prev) => prev.map((p) => (p.id === prod.id ? updated : p)));
-    await ProductService.saveProductApi(updated);
+    const nextVal = !prod.isFeatured;
+    setProducts((prev) => prev.map((p) => (p.id === prod.id ? { ...p, isFeatured: nextVal } : p)));
+    await ProductService.updateProductFieldsApi(prod.id, { isFeatured: nextVal });
+  }, []);
+
+  const handleToggleStock = React.useCallback(async (prod: Product) => {
+    const currentStock = prod.inStock !== false;
+    const nextVal = !currentStock;
+    setProducts((prev) => prev.map((p) => (p.id === prod.id ? { ...p, inStock: nextVal } : p)));
+    await ProductService.updateProductFieldsApi(prod.id, { inStock: nextVal });
   }, []);
 
   const handleToggleStatus = React.useCallback(async (prod: Product) => {
     const newStatus: "published" | "draft" = prod.status === "published" ? "draft" : "published";
-    const updated: Product = { ...prod, status: newStatus };
-    setProducts((prev) => prev.map((p) => (p.id === prod.id ? updated : p)));
-    await ProductService.saveProductApi(updated);
+    setProducts((prev) => prev.map((p) => (p.id === prod.id ? { ...p, status: newStatus } : p)));
+    await ProductService.updateProductFieldsApi(prod.id, { status: newStatus });
   }, []);
 
-  const filteredProducts = products.filter(
-    (p) => p.name.toLowerCase().includes(searchQuery.toLowerCase()) || p.category.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
+  const filteredProducts = products.filter((p) => {
+    const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || p.category.toLowerCase().includes(searchQuery.toLowerCase());
+    const isInStock = p.inStock !== false;
+    const matchesStock = stockFilter === "all" ? true : stockFilter === "in_stock" ? isInStock : !isInStock;
+    const matchesCategory = categoryFilter === "all" ? true : p.category.toLowerCase() === categoryFilter.toLowerCase();
+
+    return matchesSearch && matchesStock && matchesCategory;
+  });
 
   const columns = React.useMemo<ColumnDef<Product>[]>(
-    () => getColumns(handleToggleFeatured, handleToggleStatus, handleEdit, handlePromptDelete),
-    [handleToggleFeatured, handleToggleStatus, handleEdit, handlePromptDelete],
+    () => getColumns(handleToggleFeatured, handleToggleStatus, handleToggleStock, handleEdit, handlePromptDelete),
+    [handleToggleFeatured, handleToggleStatus, handleToggleStock, handleEdit, handlePromptDelete],
   );
 
   if (!mounted) {
@@ -108,16 +124,47 @@ export default function AdminProductsPage() {
         </Link>
       </div>
 
-      {/* Search Bar */}
-      <div className="relative max-w-md">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-500" />
-        <input
-          type="text"
-          placeholder="SEARCH PRODUCTS BY NAME OR CATEGORY..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full bg-white border border-neutral-200 pl-10 pr-4 py-2.5 font-mono text-xs text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-[#D71921] transition-all rounded-lg shadow-sm"
-        />
+      {/* Controls Bar: Search, Category Filter & Stock Filter Dropdown */}
+      <div className="flex flex-col md:flex-row md:items-center gap-3 justify-between">
+        <div className="relative flex-1 max-w-md">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-500" />
+          <input
+            type="text"
+            placeholder="SEARCH PRODUCTS BY NAME OR CATEGORY..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full bg-white border border-neutral-200 pl-10 pr-4 py-2 font-mono text-xs text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-[#D71921] transition-all rounded-lg shadow-sm"
+          />
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
+          {/* Category Filter */}
+          <Select value={categoryFilter} onValueChange={(val) => setCategoryFilter(val)}>
+            <SelectTrigger className="w-[200px] h-9 text-xs font-mono font-bold bg-white border border-neutral-200 uppercase">
+              <SelectValue placeholder="ALL CATEGORIES" />
+            </SelectTrigger>
+            <SelectContent className="font-mono text-xs uppercase">
+              <SelectItem value="all">ALL CATEGORIES</SelectItem>
+              {categoriesList.map((cat) => (
+                <SelectItem key={cat} value={cat}>
+                  {cat}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          {/* Stock Filter */}
+          <Select value={stockFilter} onValueChange={(val) => setStockFilter(val as any)}>
+            <SelectTrigger className="w-[200px] h-9 text-xs font-mono font-bold bg-white border border-neutral-200 uppercase">
+              <SelectValue placeholder="ALL STOCK STATUS" />
+            </SelectTrigger>
+            <SelectContent className="font-mono text-xs uppercase">
+              <SelectItem value="all">ALL STOCK STATUS</SelectItem>
+              <SelectItem value="in_stock">IN STOCK ONLY</SelectItem>
+              <SelectItem value="out_of_stock">OUT OF STOCK ONLY</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       {isLoading ? (

@@ -32,7 +32,7 @@ export async function GET(
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
     return NextResponse.json(normalizeLeanDoc(doc), {
-      headers: { "Cache-Control": "s-maxage=60, stale-while-revalidate=300" },
+      headers: { "Cache-Control": "no-store, max-age=0" },
     });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -65,6 +65,28 @@ export async function PUT(
     if (!product) {
       // If product doesn't exist yet, create it with upsert
       product = await ProductModel.create({ ...body, id: body.id || id });
+    }
+
+    return NextResponse.json(product);
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+export async function PATCH(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const body = await request.json();
+    await connectToDatabase();
+
+    const query = getProductQuery(id);
+    const product = await ProductModel.findOneAndUpdate(query, { $set: body }, { returnDocument: "after" });
+
+    if (!product) {
+      return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
 
     return NextResponse.json(product);
