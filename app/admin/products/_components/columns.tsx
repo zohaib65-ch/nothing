@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ColumnDef } from "@tanstack/react-table";
 import { Product } from "@/types";
-import { formatPrice, getValidImageUrl } from "@/lib/utils";
+import { formatPrice, getValidImageUrl, getProductDisplayPrice } from "@/lib/utils";
 import { Switch } from "@/components/ui/switch";
 import { Star, Edit2, Trash2 } from "lucide-react";
 
@@ -51,7 +51,7 @@ export const getColumns = (
     header: "PRICE",
     cell: ({ row }) => {
       const prod = row.original;
-      return <span className="font-bold text-neutral-900">{formatPrice(prod.salePrice || prod.price)}</span>;
+      return <span className="font-bold text-neutral-900">{formatPrice(getProductDisplayPrice(prod))}</span>;
     },
   },
   {

@@ -6,6 +6,7 @@ import { ProductService } from "@/services/productService";
 import { Product } from "@/types";
 import { useParams } from "next/navigation";
 import { Loader } from "@/components/ui/loader";
+import { getProductDisplayPrice } from "@/lib/utils";
 
 export default function CollectionSlugPage() {
   const params = useParams();
@@ -106,7 +107,7 @@ export default function CollectionSlugPage() {
                           <p className="text-xs text-red-600 font-mono font-bold mt-0.5 uppercase tracking-wider">OUT OF STOCK</p>
                         ) : (
                           <>
-                            <p className="text-[11px] text-black/62 font-[system-ui] font-normal">Rs {product.price.toLocaleString()}</p>
+                            <p className="text-[11px] text-black/62 font-[system-ui] font-normal">Rs {getProductDisplayPrice(product).toLocaleString()}</p>
                             {product.originalPrice && (
                               <p className="mt-0.5 text-[10px] text-black/65 line-through decoration-black/65 font-[system-ui] font-normal">
                                 {product.originalPrice.toLocaleString()}

@@ -71,11 +71,11 @@ export function VariantsInfoSection() {
   const handleAddPresetVariant = (preset: { name: string; hex: string }) => {
     appendVariant({
       id: `var-${Date.now()}`,
-      name: `${preset.name} - 8 + 128`,
+      name: preset.name,
       color: preset.name,
       colorHex: preset.hex,
-      storage: "8 + 128",
-      capacity: "8 + 128",
+      storage: "",
+      capacity: "",
       price: basePrice || 0,
       salePrice: baseSalePrice,
       sku: `SKU-${Date.now()}`,

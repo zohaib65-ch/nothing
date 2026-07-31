@@ -28,6 +28,54 @@ export function slugify(text: string): string {
     .replace(/\-\-+/g, "-");
 }
 
+import { Product } from "@/types";
+
+export function getProductDisplayPrice(prod: Partial<Product>): number {
+  if (!prod) return 0;
+
+  if (prod.variants && prod.variants.length > 0) {
+    for (const variant of prod.variants) {
+      if (variant.storagePrices && Object.keys(variant.storagePrices).length > 0) {
+        const storageStr = variant.storage || variant.capacity || "";
+        const storages = storageStr
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean);
+
+        for (const st of storages) {
+          const exactKey = Object.keys(variant.storagePrices).find(
+            (k) => k.trim().toLowerCase() === st.toLowerCase()
+          );
+          if (exactKey && variant.storagePrices[exactKey]) {
+            const sp = variant.storagePrices[exactKey];
+            const val = sp.salePrice || sp.price;
+            if (val !== undefined && val !== null && !isNaN(val) && val > 0) {
+              return Number(val);
+            }
+          }
+        }
+
+        for (const key of Object.keys(variant.storagePrices)) {
+          const sp = variant.storagePrices[key];
+          if (sp) {
+            const val = sp.salePrice || sp.price;
+            if (val !== undefined && val !== null && !isNaN(val) && val > 0) {
+              return Number(val);
+            }
+          }
+        }
+      }
+
+      const varPrice = variant.salePrice || variant.price;
+      if (varPrice !== undefined && varPrice !== null && !isNaN(varPrice) && varPrice > 0) {
+        return Number(varPrice);
+      }
+    }
+  }
+
+  return Number(prod.salePrice || prod.price) || 0;
+}
+
 export function generateWhatsAppLink(
   whatsappNumber: string,
   product: any,
@@ -41,3 +89,4 @@ export function generateWhatsAppLink(
   const message = `Hi, I am interested in purchasing ${productName}${variantText} (Qty: ${quantity}) for Rs ${price}. Please confirm availability.`;
   return `https://wa.me/${num}?text=${encodeURIComponent(message)}`;
 }
+

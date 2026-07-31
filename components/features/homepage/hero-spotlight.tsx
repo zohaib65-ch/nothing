@@ -4,7 +4,7 @@ import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Product } from "@/types";
-import { formatPrice, generateWhatsAppLink } from "@/lib/utils";
+import { formatPrice, generateWhatsAppLink, getProductDisplayPrice } from "@/lib/utils";
 import { WHATSAPP_NUMBER } from "@/lib/config";
 import { MessageSquare, ArrowRight, Play, Pause } from "lucide-react";
 
@@ -108,7 +108,7 @@ export function HeroSpotlight({ product }: HeroSpotlightProps) {
           <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
             <button className="h-12 px-8 bg-[#D71921] text-white font-lattera text-xs font-bold uppercase tracking-widest hover:bg-[#B51219] shadow-[0_0_25px_rgba(215,25,33,0.4)] transition-all inline-flex items-center justify-center space-x-2">
               <MessageSquare className="h-4 w-4" />
-              <span>BUY ON WHATSAPP {product ? `(${formatPrice(product.price)})` : ''}</span>
+              <span>BUY ON WHATSAPP {product ? `(${formatPrice(getProductDisplayPrice(product))})` : ''}</span>
             </button>
           </a>
         </div>

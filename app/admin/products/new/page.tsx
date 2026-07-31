@@ -27,20 +27,9 @@ export default function CreateProductPage() {
       subcategory: "",
       images: [],
       gallery: [],
-      storageOptions: ["256GB"],
-      colors: [{ name: "Dark Grey", hex: "#1C1C1E" }],
-      variants: [
-        {
-          id: `var-${timestamp}`,
-          name: "Standard 256GB",
-          storage: "256GB",
-          color: "Dark Grey",
-          colorHex: "#1C1C1E",
-          price: 199,
-          sku: `SKU-${timestamp}`,
-          inStock: true,
-        },
-      ],
+      storageOptions: [],
+      colors: [],
+      variants: [],
       specifications: [
         {
           category: "General Hardware",

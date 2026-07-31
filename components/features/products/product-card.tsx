@@ -4,7 +4,7 @@ import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Product } from "@/types";
-import { formatPrice, generateWhatsAppLink, getValidImageUrl } from "@/lib/utils";
+import { formatPrice, generateWhatsAppLink, getValidImageUrl, getProductDisplayPrice } from "@/lib/utils";
 import { useCartStore } from "@/store/useCartStore";
 import { WHATSAPP_NUMBER } from "@/lib/config";
 import { MessageSquare, ShoppingBag } from "lucide-react";
@@ -16,7 +16,7 @@ export interface ProductCardProps {
 export function ProductCard({ product }: ProductCardProps) {
   const { addItem } = useCartStore();
 
-  const defaultVariant = product.variants[0] || {
+  const defaultVariant = product.variants?.[0] || {
     id: "default",
     name: "Standard",
     color: "Standard",
@@ -27,7 +27,7 @@ export function ProductCard({ product }: ProductCardProps) {
     inStock: true,
   };
 
-  const currentPrice = defaultVariant.salePrice || defaultVariant.price;
+  const currentPrice = getProductDisplayPrice(product);
   const imageUrl = getValidImageUrl(product.images?.[0]);
 
   const whatsappUrl = generateWhatsAppLink(

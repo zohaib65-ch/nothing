@@ -6,6 +6,7 @@ import { useCartStore } from "@/store/useCartStore";
 import { ProductService } from "@/services/productService";
 import { Product } from "@/types";
 import { Loader } from "@/components/ui/loader";
+import { getProductDisplayPrice } from "@/lib/utils";
 
 const storeBenefits = [
   {
@@ -453,7 +454,7 @@ export default function HomePage() {
                             <p className="text-[11px] text-red-600 font-mono font-bold uppercase tracking-wider">OUT OF STOCK</p>
                           ) : (
                             <>
-                              <p className="text-[11px] text-black/62 font-[system-ui] font-normal"> Rs {p.price.toLocaleString()} </p>
+                              <p className="text-[11px] text-black/62 font-[system-ui] font-normal"> Rs {getProductDisplayPrice(p).toLocaleString()} </p>
                               {p.salePrice && (
                                 <p className="mt-0.5 text-[10px] text-black/65 line-through decoration-black/65 font-[system-ui] font-normal">
                                   {p.salePrice.toLocaleString()}
@@ -512,7 +513,7 @@ export default function HomePage() {
                             <p className="text-[11px] text-red-600 font-mono font-bold uppercase tracking-wider">OUT OF STOCK</p>
                           ) : (
                             <>
-                              <p className="text-[11px] text-black/62 font-[system-ui] font-normal"> Rs {p.price.toLocaleString()} </p>
+                              <p className="text-[11px] text-black/62 font-[system-ui] font-normal"> Rs {getProductDisplayPrice(p).toLocaleString()} </p>
                               {p.salePrice && (
                                 <p className="mt-0.5 text-[10px] text-black/65 line-through decoration-black/65 font-[system-ui] font-normal">
                                   {p.salePrice.toLocaleString()}
