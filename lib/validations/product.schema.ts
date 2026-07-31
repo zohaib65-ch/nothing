@@ -22,6 +22,14 @@ export const SpecificationGroupSchema = z.object({
   items: z.array(SpecificationItemSchema),
 });
 
+const hexColorPreprocess = z.preprocess((val) => {
+  if (typeof val === "string" && val.trim() !== "") {
+    const clean = val.trim();
+    return clean.startsWith("#") ? clean.toUpperCase() : `#${clean.toUpperCase()}`;
+  }
+  return val;
+}, z.string().optional());
+
 export const ProductVariantSchema = z.object({
   id: z.string().optional(),
   name: z.string().optional(),
@@ -29,7 +37,7 @@ export const ProductVariantSchema = z.object({
   capacity: z.string().optional(),
   ram: z.string().optional(),
   color: z.string().optional(),
-  colorHex: z.string().optional(),
+  colorHex: hexColorPreprocess,
   price: z.coerce.number().optional().default(0),
   salePrice: optionalNumber,
   storagePrices: z.record(z.string(), z.object({ price: z.number().optional(), salePrice: z.number().optional() })).optional(),

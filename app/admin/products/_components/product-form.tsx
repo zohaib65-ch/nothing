@@ -150,13 +150,17 @@ export function ProductForm({ initialProduct, isEditMode = false, onSave, isSubm
     // Ensure variants array is formatted properly
     let updatedVariants = (data.variants || []).map((v) => {
       const st = v.storage || (v as any).capacity || "Standard";
+      let hex = (v.colorHex || "#000000").trim();
+      if (hex && !hex.startsWith("#")) {
+        hex = `#${hex}`;
+      }
       return {
         ...v,
         specifications: v.specifications || [],
         storage: st,
         capacity: st,
         color: v.color || "Standard",
-        colorHex: v.colorHex || "#000000",
+        colorHex: hex.toUpperCase(),
         price: v.price !== undefined && v.price !== null ? Number(v.price) : Number(data.price) || 0,
         salePrice: v.salePrice !== undefined && v.salePrice !== null ? Number(v.salePrice) : data.salePrice,
         storagePrices: v.storagePrices || {},
@@ -166,7 +170,8 @@ export function ProductForm({ initialProduct, isEditMode = false, onSave, isSubm
     if (updatedVariants.length === 0) {
       const st = data.storageOptions?.[0] || "Standard";
       const cl = data.colors?.[0]?.name || "Standard";
-      const clHex = data.colors?.[0]?.hex || "#000000";
+      let clHex = (data.colors?.[0]?.hex || "#000000").trim();
+      if (clHex && !clHex.startsWith("#")) clHex = `#${clHex}`;
       updatedVariants = [
         {
           id: `var-${Date.now()}`,
@@ -174,7 +179,7 @@ export function ProductForm({ initialProduct, isEditMode = false, onSave, isSubm
           storage: st,
           capacity: st,
           color: cl,
-          colorHex: clHex,
+          colorHex: clHex.toUpperCase(),
           price: Number(data.price) || 0,
           salePrice: data.salePrice,
           storagePrices: {},
@@ -189,10 +194,14 @@ export function ProductForm({ initialProduct, isEditMode = false, onSave, isSubm
     // Always extract storageOptions and colors directly from variants
     const finalStorageOptions = Array.from(new Set(updatedVariants.map((v) => v.storage || (v as any).capacity).filter(Boolean))) as string[];
 
-    const finalColors = Array.from(new Set(updatedVariants.map((v) => v.color).filter(Boolean))).map((c) => ({
-      name: c,
-      hex: updatedVariants.find((v) => v.color === c)?.colorHex || "#000000",
-    }));
+    const finalColors = Array.from(new Set(updatedVariants.map((v) => v.color).filter(Boolean))).map((c) => {
+      let rawHex = (updatedVariants.find((v) => v.color === c)?.colorHex || "#000000").trim();
+      if (rawHex && !rawHex.startsWith("#")) rawHex = `#${rawHex}`;
+      return {
+        name: c,
+        hex: rawHex.toUpperCase(),
+      };
+    });
 
     const now = new Date().toISOString();
     const rootPrice = updatedVariants[0]?.price || 0;

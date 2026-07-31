@@ -20,7 +20,16 @@ const ProductVariantSchema = new Schema({
   capacity: { type: String, default: "" },
   ram: { type: String, default: "" },
   color: { type: String, default: "Standard" },
-  colorHex: { type: String, default: "#000000" },
+  colorHex: {
+    type: String,
+    default: "#000000",
+    set: (v: string) => {
+      if (!v) return "#000000";
+      const clean = v.trim();
+      if (!clean) return "#000000";
+      return clean.startsWith("#") ? clean.toUpperCase() : `#${clean.toUpperCase()}`;
+    },
+  },
   price: { type: Number, default: 0 },
   salePrice: { type: Number },
   storagePrices: { type: Schema.Types.Mixed, default: {} },
@@ -62,7 +71,20 @@ const ProductSchema = new Schema<IProductDocument>(
     videos: [{ type: String }],
     variants: [ProductVariantSchema],
     storageOptions: [{ type: String }],
-    colors: [{ name: String, hex: String }],
+    colors: [
+      {
+        name: String,
+        hex: {
+          type: String,
+          set: (v: string) => {
+            if (!v) return "#000000";
+            const clean = v.trim();
+            if (!clean) return "#000000";
+            return clean.startsWith("#") ? clean.toUpperCase() : `#${clean.toUpperCase()}`;
+          },
+        },
+      },
+    ],
     specifications: [SpecificationGroupSchema],
     features: [ProductFeatureSchema],
     highlights: [ProductHighlightSchema],
