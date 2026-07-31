@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { getValidImageUrl } from "@/lib/utils";
 import { SpecsModal } from "./specs-modal";
+import { useColorFetcher } from "@/hooks/useColorFetcher";
 
 const QUICK_COLOR_PRESETS = [
   { name: "Dark Grey", hex: "#1C1C1E" },
@@ -26,6 +27,12 @@ const STORAGE_PRESET_OPTIONS = ["8 + 128", "12 + 256", "16 + 512", "8GB + 128GB"
 
 export function VariantsInfoSection() {
   const { register, watch, setValue, control } = useFormContext<ProductFormValues>();
+  const {
+    formatValidHexForPicker,
+    handleColorNameChange,
+    handleColorHexInputChange,
+    handleColorPickerChange,
+  } = useColorFetcher(setValue, watch);
   const basePrice = watch("price") || 0;
   const baseSalePrice = watch("salePrice");
 
@@ -191,11 +198,7 @@ export function VariantsInfoSection() {
                       label="COLOR NAME"
                       placeholder="e.g. White, Pink, Dark Grey"
                       {...register(`variants.${index}.color`, {
-                        onChange: (e) => {
-                          const val = e.target.value;
-                          const st = watch(`variants.${index}.storage`) || watch(`variants.${index}.capacity`) || "";
-                          setValue(`variants.${index}.name`, `${val} - ${st}`);
-                        },
+                        onChange: (e) => handleColorNameChange(index, e.target.value),
                       })}
                     />
 
@@ -204,11 +207,17 @@ export function VariantsInfoSection() {
                       <div className="flex items-center gap-2">
                         <input
                           type="color"
-                          value={currentColorHex}
-                          onChange={(e) => setValue(`variants.${index}.colorHex`, e.target.value, { shouldDirty: true })}
+                          value={formatValidHexForPicker(currentColorHex)}
+                          onChange={(e) => handleColorPickerChange(index, e.target.value)}
                           className="w-10 h-10 border border-neutral-300 rounded-lg cursor-pointer p-0.5 flex-shrink-0 bg-white"
                         />
-                        <Input placeholder="#FFFFFF" {...register(`variants.${index}.colorHex`)} className="uppercase flex-1" />
+                        <Input
+                          placeholder="#FFFFFF"
+                          {...register(`variants.${index}.colorHex`, {
+                            onChange: (e) => handleColorHexInputChange(index, e.target.value),
+                          })}
+                          className="uppercase flex-1"
+                        />
                       </div>
                     </div>
                   </div>
