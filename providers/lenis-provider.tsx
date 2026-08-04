@@ -1,47 +1,67 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, ReactNode } from "react";
+import { useEffect, useRef, ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import Lenis from "lenis";
-
-const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 export function LenisProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const lenisRef = useRef<Lenis | null>(null);
 
   useEffect(() => {
+    if (typeof window !== "undefined" && "scrollRestoration" in window.history) {
+      window.history.scrollRestoration = "manual";
+    }
+
     const lenis = new Lenis({
-      duration: 1.2,
+      duration: 0.45,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: "vertical",
       gestureOrientation: "vertical",
       smoothWheel: true,
-      wheelMultiplier: 1.0,
-      touchMultiplier: 2,
+      wheelMultiplier: 1.5,
+      touchMultiplier: 1.5,
     });
 
     lenisRef.current = lenis;
 
+    let animId: number;
     function raf(time: number) {
       lenis.raf(time);
-      requestAnimationFrame(raf);
+      animId = requestAnimationFrame(raf);
     }
+    animId = requestAnimationFrame(raf);
 
-    requestAnimationFrame(raf);
+    const handlePopState = () => {
+      window.scrollTo(0, 0);
+      lenis.scrollTo(0, { immediate: true });
+    };
+
+    window.addEventListener("popstate", handlePopState);
 
     return () => {
+      cancelAnimationFrame(animId);
+      window.removeEventListener("popstate", handlePopState);
       lenis.destroy();
       lenisRef.current = null;
     };
   }, []);
 
-  useIsomorphicLayoutEffect(() => {
-    // Reset scroll positions synchronously before painting to prevent visual footer flashes
+  useEffect(() => {
     window.scrollTo(0, 0);
     if (lenisRef.current) {
       lenisRef.current.scrollTo(0, { immediate: true });
     }
+
+    const timer = setTimeout(() => {
+      window.scrollTo(0, 0);
+      if (lenisRef.current) {
+        lenisRef.current.scrollTo(0, { immediate: true });
+        lenisRef.current.resize();
+      }
+    }, 80);
+
+    return () => clearTimeout(timer);
   }, [pathname]);
 
   return <>{children}</>;

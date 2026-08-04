@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ProductService } from "@/services/productService";
 import { Product } from "@/types";
 import { Loader } from "@/components/ui/loader";
-import { getProductDisplayPrice, getVariantCardsForListing } from "@/lib/utils";
+import { getVariantCardsForListing } from "@/lib/utils";
 
 export default function ShopAllPage() {
   const [products, setProducts] = React.useState<Product[]>([]);
