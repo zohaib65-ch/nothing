@@ -305,6 +305,24 @@ export function VariantsInfoSection() {
                           <div className="space-y-2">
                             {storagesToRender.map((st) => {
                               const currentPriceObj = watch(`variants.${index}.storagePrices.${st}`);
+
+                              const handleDeleteStoragePrice = () => {
+                                const currentPrices = watch(`variants.${index}.storagePrices`) || {};
+                                const newPrices = { ...currentPrices };
+                                delete newPrices[st];
+                                setValue(`variants.${index}.storagePrices`, newPrices, { shouldDirty: true });
+
+                                if (selectedStorages.includes(st)) {
+                                  const updatedArr = selectedStorages.filter((item: string) => item !== st);
+                                  const finalStr = updatedArr.join(", ");
+                                  setValue(`variants.${index}.storage`, finalStr, { shouldDirty: true });
+                                  setValue(`variants.${index}.capacity`, finalStr, { shouldDirty: true });
+                                  const cl = watch(`variants.${index}.color`) || "";
+                                  setValue(`variants.${index}.name`, `${cl} - ${finalStr}`, { shouldDirty: true });
+                                }
+                                toast.success(`Removed "${st}" price & option`);
+                              };
+
                               return (
                                 <div
                                   key={st}
@@ -315,22 +333,36 @@ export function VariantsInfoSection() {
                                     <input
                                       type="number"
                                       placeholder="Regular Price (e.g. 149999)"
-                                      defaultValue={currentPriceObj?.price ?? ""}
-                                      {...register(`variants.${index}.storagePrices.${st}.price` as const, {
-                                        setValueAs: (v) => (v === "" || v === null || v === undefined || isNaN(v) ? undefined : Number(v)),
-                                      })}
+                                      value={currentPriceObj?.price ?? ""}
+                                      onChange={(e) => {
+                                        const v = e.target.value;
+                                        const num = v === "" || v === null || v === undefined || isNaN(Number(v)) ? undefined : Number(v);
+                                        setValue(`variants.${index}.storagePrices.${st}.price` as const, num, { shouldDirty: true });
+                                      }}
                                       className="bg-white border border-neutral-300 rounded px-2.5 py-1.5 font-mono text-xs text-neutral-900 focus:outline-none focus:border-[#D71921]"
                                     />
                                     <input
                                       type="number"
                                       placeholder="Sale Price (Optional)"
-                                      defaultValue={currentPriceObj?.salePrice ?? ""}
-                                      {...register(`variants.${index}.storagePrices.${st}.salePrice` as const, {
-                                        setValueAs: (v) => (v === "" || v === null || v === undefined || isNaN(v) ? undefined : Number(v)),
-                                      })}
+                                      value={currentPriceObj?.salePrice ?? ""}
+                                      onChange={(e) => {
+                                        const v = e.target.value;
+                                        const num = v === "" || v === null || v === undefined || isNaN(Number(v)) ? undefined : Number(v);
+                                        setValue(`variants.${index}.storagePrices.${st}.salePrice` as const, num, { shouldDirty: true });
+                                      }}
                                       className="bg-white border border-neutral-300 rounded px-2.5 py-1.5 font-mono text-xs text-neutral-900 focus:outline-none focus:border-[#D71921]"
                                     />
                                   </div>
+                                  <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={handleDeleteStoragePrice}
+                                    className="text-neutral-400 hover:text-red-600 border-none p-1.5 h-auto self-end sm:self-center shrink-0"
+                                    title={`Delete ${st} pricing and option`}
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
                                 </div>
                               );
                             })}
