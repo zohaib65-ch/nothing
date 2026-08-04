@@ -120,21 +120,21 @@ export default function CollectionSlugPage() {
 
                     {/* Info Wrap */}
                     <div className="mt-3 text-center">
-                      <h3 className="font-sans text-[0.98rem] sm:text-[1.04rem] leading-[1.12] text-black font-normal tracking-normal">
+                      <h3 className="font-ntype82 text-[0.98rem] sm:text-[1.04rem] leading-[1.12] text-black font-normal tracking-normal">
                         {item.name}
                       </h3>
                       <div className="mt-1 flex flex-col items-center">
                         {isOutOfStock ? (
                           <p className="text-xs text-red-600 font-mono font-bold mt-0.5 uppercase tracking-wider">OUT OF STOCK</p>
-                        ) : (
+                        ) : item.isComingSoon ? (
+                          <p className="text-xs text-[#D71921] font-ntype82 font-bold mt-0.5 uppercase tracking-wider">COMING SOON</p>
+                        ) : item.salePrice && item.salePrice > 0 && item.salePrice < item.price ? (
                           <>
-                            <p className="text-[11px] text-black/62 font-[system-ui] font-normal">Rs {item.price.toLocaleString()}</p>
-                            {item.salePrice && item.salePrice > 0 && (
-                              <p className="mt-0.5 text-[10px] text-black/65 line-through decoration-black/65 font-[system-ui] font-normal">
-                                {item.salePrice.toLocaleString()}
-                              </p>
-                            )}
+                            <p className="text-[11px] text-black font-bold font-ntype82">Rs {item.salePrice.toLocaleString()}</p>
+                            <p className="mt-0.5 text-[10px] text-black/50 line-through font-ntype82 font-normal">Rs {item.price.toLocaleString()}</p>
                           </>
+                        ) : (
+                          <p className="text-[11px] text-black/62 font-ntype82 font-normal">Rs {item.price.toLocaleString()}</p>
                         )}
                       </div>
                     </div>

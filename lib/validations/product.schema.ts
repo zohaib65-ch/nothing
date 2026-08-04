@@ -40,9 +40,10 @@ export const ProductVariantSchema = z.object({
   colorHex: hexColorPreprocess,
   price: z.coerce.number().optional().default(0),
   salePrice: optionalNumber,
-  storagePrices: z.record(z.string(), z.object({ price: z.number().optional(), salePrice: z.number().optional() })).optional(),
+  storagePrices: z.record(z.string(), z.object({ price: z.number().optional(), salePrice: z.number().optional(), isComingSoon: z.boolean().optional() })).optional(),
   sku: z.string().optional(),
   inStock: z.boolean().optional().default(true),
+  isComingSoon: z.boolean().optional(),
   image: z.string().optional(),
   specifications: z.array(SpecificationGroupSchema).optional(),
 });

@@ -34,6 +34,7 @@ const ProductVariantSchema = new Schema({
   salePrice: { type: Number },
   storagePrices: { type: Schema.Types.Mixed, default: {} },
   sku: { type: String, default: () => `SKU-${Date.now()}` },
+  isComingSoon: { type: Boolean, default: false },
   image: { type: String, default: "" },
   specifications: [SpecificationGroupSchema],
 });

@@ -33,9 +33,20 @@ export const getColumns = (
     header: "PRODUCT NAME",
     cell: ({ row }) => {
       const prod = row.original;
+      const hasComingSoon = Boolean(
+        (prod.variants || []).some((v) => v.isComingSoon || (v.storagePrices && Object.values(v.storagePrices).some((sp: any) => sp.isComingSoon))),
+      );
+
       return (
         <div className="space-y-1 py-1 min-w-[70px]">
-          <div className="text-xs sm:text-sm sm:font-bold font-medium text-neutral-900 leading-snug">{prod.name}</div>
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="text-xs sm:text-sm sm:font-bold font-medium text-neutral-900 leading-snug">{prod.name}</span>
+            {hasComingSoon && (
+              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-[#D71921]/10 text-[#D71921] border border-[#D71921]/20">
+                COMING SOON
+              </span>
+            )}
+          </div>
           {prod.tagline && <div className="text-[9px] sm:text-[11px] text-neutral-500 leading-normal font-sans">{prod.tagline}</div>}
         </div>
       );
@@ -51,7 +62,16 @@ export const getColumns = (
     header: "PRICE",
     cell: ({ row }) => {
       const prod = row.original;
-      return <span className="font-bold text-neutral-900">{formatPrice(getProductDisplayPrice(prod))}</span>;
+      const displayPrice = getProductDisplayPrice(prod);
+      const isComingSoon = Boolean(
+        (prod.variants || []).some((v) => v.isComingSoon || (v.storagePrices && Object.values(v.storagePrices).some((sp: any) => sp.isComingSoon))),
+      );
+
+      if (isComingSoon || displayPrice === 0) {
+        return <span className="font-mono text-xs text-[#D71921] font-bold uppercase">COMING SOON</span>;
+      }
+
+      return <span className="font-bold text-neutral-900">{formatPrice(displayPrice)}</span>;
     },
   },
   {

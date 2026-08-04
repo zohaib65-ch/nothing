@@ -323,46 +323,70 @@ export function VariantsInfoSection() {
                                 toast.success(`Removed "${st}" price & option`);
                               };
 
+                              const isComingSoon = watch(`variants.${index}.storagePrices.${st}.isComingSoon`) || false;
+
                               return (
                                 <div
                                   key={st}
-                                  className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-2 bg-neutral-50 rounded-md border border-neutral-200"
+                                  className="flex flex-col gap-2 p-2.5 bg-neutral-50 rounded-md border border-neutral-200"
                                 >
-                                  <span className="font-bold text-xs uppercase text-neutral-800 min-w-[100px]">{st}:</span>
-                                  <div className="grid grid-cols-2 gap-2 flex-1">
-                                    <input
-                                      type="number"
-                                      placeholder="Regular Price (e.g. 149999)"
-                                      value={currentPriceObj?.price ?? ""}
-                                      onChange={(e) => {
-                                        const v = e.target.value;
-                                        const num = v === "" || v === null || v === undefined || isNaN(Number(v)) ? undefined : Number(v);
-                                        setValue(`variants.${index}.storagePrices.${st}.price` as const, num, { shouldDirty: true });
-                                      }}
-                                      className="bg-white border border-neutral-300 rounded px-2.5 py-1.5 font-mono text-xs text-neutral-900 focus:outline-none focus:border-[#D71921]"
-                                    />
-                                    <input
-                                      type="number"
-                                      placeholder="Sale Price (Optional)"
-                                      value={currentPriceObj?.salePrice ?? ""}
-                                      onChange={(e) => {
-                                        const v = e.target.value;
-                                        const num = v === "" || v === null || v === undefined || isNaN(Number(v)) ? undefined : Number(v);
-                                        setValue(`variants.${index}.storagePrices.${st}.salePrice` as const, num, { shouldDirty: true });
-                                      }}
-                                      className="bg-white border border-neutral-300 rounded px-2.5 py-1.5 font-mono text-xs text-neutral-900 focus:outline-none focus:border-[#D71921]"
-                                    />
+                                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                                    <span className="font-bold text-xs uppercase text-neutral-800 min-w-[100px]">{st}:</span>
+                                    <div className="grid grid-cols-2 gap-2 flex-1">
+                                      <input
+                                        type="number"
+                                        placeholder={isComingSoon ? "Coming Soon" : "Regular Price (e.g. 149999)"}
+                                        disabled={isComingSoon}
+                                        value={currentPriceObj?.price ?? ""}
+                                        onChange={(e) => {
+                                          const v = e.target.value;
+                                          const num = v === "" || v === null || v === undefined || isNaN(Number(v)) ? undefined : Number(v);
+                                          setValue(`variants.${index}.storagePrices.${st}.price` as const, num, { shouldDirty: true });
+                                        }}
+                                        className="bg-white border border-neutral-300 rounded px-2.5 py-1.5 font-mono text-xs text-neutral-900 focus:outline-none focus:border-[#D71921] disabled:bg-neutral-200/60 disabled:text-neutral-400 disabled:cursor-not-allowed"
+                                      />
+                                      <input
+                                        type="number"
+                                        placeholder={isComingSoon ? "Coming Soon" : "Sale Price (Optional)"}
+                                        disabled={isComingSoon}
+                                        value={currentPriceObj?.salePrice ?? ""}
+                                        onChange={(e) => {
+                                          const v = e.target.value;
+                                          const num = v === "" || v === null || v === undefined || isNaN(Number(v)) ? undefined : Number(v);
+                                          setValue(`variants.${index}.storagePrices.${st}.salePrice` as const, num, { shouldDirty: true });
+                                        }}
+                                        className="bg-white border border-neutral-300 rounded px-2.5 py-1.5 font-mono text-xs text-neutral-900 focus:outline-none focus:border-[#D71921] disabled:bg-neutral-200/60 disabled:text-neutral-400 disabled:cursor-not-allowed"
+                                      />
+                                    </div>
+                                    <Button
+                                      type="button"
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={handleDeleteStoragePrice}
+                                      className="text-neutral-400 hover:text-red-600 border-none p-1.5 h-auto self-end sm:self-center shrink-0"
+                                      title={`Delete ${st} pricing and option`}
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                    </Button>
                                   </div>
-                                  <Button
-                                    type="button"
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={handleDeleteStoragePrice}
-                                    className="text-neutral-400 hover:text-red-600 border-none p-1.5 h-auto self-end sm:self-center shrink-0"
-                                    title={`Delete ${st} pricing and option`}
-                                  >
-                                    <Trash2 className="h-4 w-4" />
-                                  </Button>
+
+                                  {/* Coming Soon Checkbox Below Storage Inputs */}
+                                  <div className="flex items-center gap-2 pt-1 border-t border-neutral-200/60">
+                                    <label className="inline-flex items-center gap-1.5 cursor-pointer text-[10px] font-mono uppercase font-bold text-neutral-600 select-none hover:text-neutral-900">
+                                      <input
+                                        type="checkbox"
+                                        checked={isComingSoon}
+                                        onChange={(e) => {
+                                          const checked = e.target.checked;
+                                          setValue(`variants.${index}.storagePrices.${st}.isComingSoon` as const, checked, { shouldDirty: true });
+                                        }}
+                                        className="h-3.5 w-3.5 rounded border-neutral-300 text-neutral-900 focus:ring-neutral-900 cursor-pointer"
+                                      />
+                                      <span className={isComingSoon ? "text-[#D71921] font-bold" : "text-neutral-500"}>
+                                        {isComingSoon ? "✓ COMING SOON ENABLED" : "MARK AS COMING SOON"}
+                                      </span>
+                                    </label>
+                                  </div>
                                 </div>
                               );
                             })}

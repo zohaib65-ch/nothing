@@ -101,6 +101,7 @@ export interface ListingCardItem {
   colorName?: string;
   colorHex?: string;
   inStock: boolean;
+  isComingSoon?: boolean;
   href: string;
   product: Product;
   variant?: any;
@@ -123,18 +124,35 @@ export function getVariantCardsForListing(products: Product[]): ListingCardItem[
       if (colorMap.size > 1) {
         for (const [cKey, v] of colorMap.entries()) {
           const cardImg = v.image || p.images?.[0] || "";
-          const price = v.salePrice || v.price || getProductDisplayPrice(p);
+
+          let regPrice = v.price || p.price || 0;
+          let salePrice = v.salePrice || p.salePrice;
+          let isComingSoon = !!v.isComingSoon;
+
+          if (v.storagePrices && Object.keys(v.storagePrices).length > 0) {
+            const spEntries = Object.values(v.storagePrices) as any[];
+            const firstSp = spEntries.find((sp) => sp.price || sp.salePrice) || spEntries[0];
+            if (firstSp) {
+              if (firstSp.price) regPrice = firstSp.price;
+              if (firstSp.salePrice) salePrice = firstSp.salePrice;
+            }
+            if (spEntries.every((sp) => sp.isComingSoon)) {
+              isComingSoon = true;
+            }
+          }
+
           list.push({
             id: `${p.id}-${cKey}`,
             productId: p.id,
             name: p.name,
             slug: p.slug,
             image: cardImg,
-            price,
-            salePrice: v.salePrice,
+            price: regPrice,
+            salePrice: salePrice && salePrice < regPrice ? salePrice : undefined,
             colorName: v.color,
             colorHex: v.colorHex,
             inStock: p.inStock !== false,
+            isComingSoon,
             href: `/products/${p.slug}?color=${encodeURIComponent(v.color)}`,
             product: p,
             variant: v,
@@ -144,15 +162,20 @@ export function getVariantCardsForListing(products: Product[]): ListingCardItem[
       }
     }
 
+    const regPrice = p.price || getProductDisplayPrice(p);
+    const salePrice = p.salePrice && p.salePrice < regPrice ? p.salePrice : undefined;
+    const isComingSoon = p.variants?.length > 0 && p.variants.every((v) => v.isComingSoon);
+
     list.push({
       id: p.id,
       productId: p.id,
       name: p.name,
       slug: p.slug,
       image: p.images?.[0] || "",
-      price: getProductDisplayPrice(p),
-      salePrice: p.salePrice,
+      price: regPrice,
+      salePrice,
       inStock: p.inStock !== false,
+      isComingSoon,
       href: `/products/${p.slug}`,
       product: p,
     });

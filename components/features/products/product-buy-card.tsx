@@ -151,6 +151,18 @@ export function ProductBuyCard({ product, selectedVariant, onSelectVariant, onAd
     }
   };
 
+  const isCurrentCapacityComingSoon = React.useMemo(() => {
+    if (!selectedVariant) return false;
+    if (selectedVariant.storagePrices && currentCapacity) {
+      const trimmedCap = currentCapacity.trim();
+      const exactKey = Object.keys(selectedVariant.storagePrices).find((k) => k.trim().toLowerCase() === trimmedCap.toLowerCase());
+      if (exactKey && selectedVariant.storagePrices[exactKey]) {
+        return !!selectedVariant.storagePrices[exactKey].isComingSoon;
+      }
+    }
+    return !!selectedVariant.isComingSoon;
+  }, [selectedVariant, currentCapacity]);
+
   const activePrices = getEffectiveVariantPrices(selectedVariant, currentCapacity);
   const activeDisplayPrice =
     activePrices.salePrice !== undefined && activePrices.salePrice !== null && !isNaN(activePrices.salePrice) && Number(activePrices.salePrice) > 0
@@ -160,6 +172,8 @@ export function ProductBuyCard({ product, selectedVariant, onSelectVariant, onAd
   const { addItem } = useCartStore();
 
   const handleAddToCart = () => {
+    if (isCurrentCapacityComingSoon) return;
+
     const rawOrigPrice = Number(activePrices.price) || Number(product.price) || 0;
     const hasSale =
       activePrices.salePrice !== undefined &&
@@ -261,37 +275,52 @@ export function ProductBuyCard({ product, selectedVariant, onSelectVariant, onAd
             <SelectValue placeholder="SELECT CAPACITY" />
           </SelectTrigger>
           <SelectContent>
-            {displayCapacities.map((cap) => (
-              <SelectItem key={cap} value={cap} className="text-xs uppercase">
-                {cap}
-              </SelectItem>
-            ))}
+            {displayCapacities.map((cap) => {
+              const exactKey = selectedVariant?.storagePrices ? Object.keys(selectedVariant.storagePrices).find((k) => k.trim().toLowerCase() === cap.trim().toLowerCase()) : undefined;
+              const isCapComingSoon = exactKey && selectedVariant?.storagePrices ? !!selectedVariant.storagePrices[exactKey]?.isComingSoon : !!selectedVariant?.isComingSoon;
+              return (
+                <SelectItem key={cap} value={cap} className="text-xs uppercase flex items-center justify-between">
+                  <span>{cap}</span>
+                  {isCapComingSoon && <span className="ml-2 text-[10px] text-[#D71921] font-bold font-mono">(COMING SOON)</span>}
+                </SelectItem>
+              );
+            })}
           </SelectContent>
         </Select>
       </div>
       <Button
         type="button"
-        variant="primary"
+        variant={isCurrentCapacityComingSoon ? "outline" : "primary"}
         size="lg"
+        disabled={isCurrentCapacityComingSoon}
         onClick={handleAddToCart}
         style={{ fontFamily: "'LatteraMonoLL', 'letteraRegular', monospace" }}
-        className="w-full bg-neutral-950 hover:bg-neutral-800 text-white font-lattera-mono text-xs font-medium uppercase tracking-widest py-3 rounded-lg shadow-md cursor-pointer flex items-center justify-center gap-2 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200"
-        leftIcon={<ShoppingBag className="h-4 w-4" />}
+        className={`w-full font-lattera-mono text-xs font-medium uppercase tracking-widest py-3 rounded-lg shadow-md flex items-center justify-center gap-2 ${
+          isCurrentCapacityComingSoon
+            ? "bg-[#D71921] text-white cursor-not-allowed border-none opacity-90"
+            : "bg-neutral-950 hover:bg-neutral-800 text-white cursor-pointer dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200"
+        }`}
+        leftIcon={isCurrentCapacityComingSoon ? undefined : <ShoppingBag className="h-4 w-4" />}
       >
         <span style={{ fontFamily: "'LatteraMonoLL', 'letteraRegular', monospace" }} className="flex items-center gap-2">
-          {activePrices.salePrice !== undefined &&
-          activePrices.salePrice !== null &&
-          !isNaN(activePrices.salePrice) &&
-          Number(activePrices.salePrice) > 0 &&
-          Number(activePrices.price) > Number(activePrices.salePrice) ? (
+          {isCurrentCapacityComingSoon ? (
+            <span className="font-bold text-white tracking-widest">— COMING SOON —</span>
+          ) : activePrices.salePrice !== undefined &&
+            activePrices.salePrice !== null &&
+            !isNaN(activePrices.salePrice) &&
+            Number(activePrices.salePrice) > 0 &&
+            Number(activePrices.price) > Number(activePrices.salePrice) ? (
             <>
               <span className="line-through text-white dark:text-neutral-900 font-normal">{formatPrice(activePrices.price)}</span>
               <span className="font-bold text-white dark:text-neutral-900">{formatPrice(activePrices.salePrice)}</span>
+              <span>— ADD TO BAG</span>
             </>
           ) : (
-            <span>{formatPrice(activeDisplayPrice)}</span>
+            <>
+              <span>{formatPrice(activeDisplayPrice)}</span>
+              <span>— ADD TO BAG</span>
+            </>
           )}
-          <span>— ADD TO BAG</span>
         </span>
       </Button>
     </div>

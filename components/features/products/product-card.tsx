@@ -62,9 +62,22 @@ export function ProductCard({ product, imageUrl: customImageUrl, href: customHre
             {product.name}
           </h3>
         </Link>
-        <div className="font-lattera text-xs text-neutral-500 font-bold">
-          {formatPrice(currentPrice)}
-        </div>
+        {defaultVariant?.isComingSoon ? (
+          <div className="font-mono text-xs text-[#D71921] font-bold uppercase tracking-wider">
+            COMING SOON
+          </div>
+        ) : (
+          <div className="font-lattera text-xs text-neutral-500 font-bold flex items-center justify-center gap-1.5">
+            {product.salePrice && product.salePrice > 0 && product.salePrice < product.price ? (
+              <>
+                <span className="text-black font-bold">{formatPrice(product.salePrice)}</span>
+                <span className="line-through text-neutral-400 font-normal">{formatPrice(product.price)}</span>
+              </>
+            ) : (
+              <span>{formatPrice(currentPrice)}</span>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Hover Order Actions */}

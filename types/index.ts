@@ -10,9 +10,10 @@ export interface ProductVariant {
   colorHex: string; // e.g. "#1C1C1E"
   price: number;
   salePrice?: number;
-  storagePrices?: Record<string, { price?: number; salePrice?: number }>;
+  storagePrices?: Record<string, { price?: number; salePrice?: number; isComingSoon?: boolean }>;
   sku: string;
   inStock?: boolean;
+  isComingSoon?: boolean;
   image?: string;
   specifications?: SpecificationGroup[];
 }
