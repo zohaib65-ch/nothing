@@ -12,6 +12,7 @@ import { getColumns } from "./_components/columns";
 import { Plus, Search, Loader2 } from "lucide-react";
 import { DeleteProductModal } from "./_components/delete-product-modal";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { formatPrice, getProductDisplayPrice } from "@/lib/utils";
 
 export default function AdminProductsPage() {
   const router = useRouter();
@@ -87,7 +88,27 @@ export default function AdminProductsPage() {
   }, []);
 
   const filteredProducts = products.filter((p) => {
-    const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || p.category.toLowerCase().includes(searchQuery.toLowerCase());
+    const query = searchQuery.toLowerCase().trim();
+    const nameMatch = p.name.toLowerCase().includes(query);
+    const categoryMatch = p.category.toLowerCase().includes(query);
+
+    const displayPrice = getProductDisplayPrice(p);
+    const formattedPrice = formatPrice(displayPrice).toLowerCase();
+
+    const pricesToTest = [
+      p.price,
+      p.salePrice,
+      p.originalPrice,
+      displayPrice,
+      ...(p.variants || []).flatMap((v) => [v.price, v.salePrice]),
+    ].filter((val): val is number => val !== undefined && val !== null && !isNaN(val));
+
+    const priceMatch =
+      formattedPrice.includes(query) ||
+      pricesToTest.some((priceVal) => priceVal.toString().includes(query));
+
+    const matchesSearch = nameMatch || categoryMatch || priceMatch;
+
     const isInStock = p.inStock !== false;
     const matchesStock = stockFilter === "all" ? true : stockFilter === "in_stock" ? isInStock : !isInStock;
     const matchesCategory = categoryFilter === "all" ? true : p.category.toLowerCase() === categoryFilter.toLowerCase();
@@ -130,7 +151,7 @@ export default function AdminProductsPage() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-500" />
           <input
             type="text"
-            placeholder="SEARCH PRODUCTS BY NAME OR CATEGORY..."
+            placeholder="SEARCH PRODUCTS BY NAME, CATEGORY, OR PRICE..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full bg-white border border-neutral-200 pl-10 pr-4 py-2 font-mono text-xs text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-[#D71921] transition-all rounded-lg shadow-sm"
