@@ -352,8 +352,9 @@ export default function HomePage() {
       .finally(() => setIsLoading(false));
   }, []);
 
-  const selectedGems = products.filter((p) => p.isFeatured).length > 0 ? products.filter((p) => p.isFeatured) : products.slice(0, 6);
-  const phoneModels = products.filter((p) => p.category === "phones");
+  const rawGems = products.filter((p) => p.isFeatured).length > 0 ? products.filter((p) => p.isFeatured) : products.slice(0, 6);
+  const selectedGems = getVariantCardsForListing(rawGems);
+  const phoneModels = getVariantCardsForListing(products.filter((p) => p.category === "phones"));
 
   const filteredFaqs = allFaqs.filter((f) => f.category === activeFaqCategory);
 
@@ -444,7 +445,7 @@ export default function HomePage() {
                           className={`absolute inset-0 h-full w-full object-contain object-center transition-transform duration-500 ease-out ${
                             !isOutOfStock ? "group-hover:scale-[1.02]" : "grayscale-[30%]"
                           }`}
-                          src={p.images[0]}
+                          src={p.image}
                         />
                       </div>
                       <div className="mt-3 text-center">
@@ -454,8 +455,8 @@ export default function HomePage() {
                             <p className="text-[11px] text-red-600 font-mono font-bold uppercase tracking-wider">OUT OF STOCK</p>
                           ) : (
                             <>
-                              <p className="text-[11px] text-black/62 font-[system-ui] font-normal"> Rs {getProductDisplayPrice(p).toLocaleString()} </p>
-                              {p.salePrice && (
+                              <p className="text-[11px] text-black/62 font-[system-ui] font-normal"> Rs {p.price.toLocaleString()} </p>
+                              {p.salePrice && p.salePrice > 0 && (
                                 <p className="mt-0.5 text-[10px] text-black/65 line-through decoration-black/65 font-[system-ui] font-normal">
                                   {p.salePrice.toLocaleString()}
                                 </p>
@@ -476,7 +477,7 @@ export default function HomePage() {
                   }
 
                   return (
-                    <Link key={p.id} className="group block" href={`/products/${p.slug}`}>
+                    <Link key={p.id} className="group block" href={p.href}>
                       {CardContent}
                     </Link>
                   );
@@ -503,7 +504,7 @@ export default function HomePage() {
                           className={`absolute inset-0 h-full w-full object-contain object-center transition-transform duration-500 ease-out ${
                             !isOutOfStock ? "group-hover:scale-[1.02]" : "grayscale-[30%]"
                           }`}
-                          src={p.images[0]}
+                          src={p.image}
                         />
                       </div>
                       <div className="mt-3 text-center">
@@ -513,8 +514,8 @@ export default function HomePage() {
                             <p className="text-[11px] text-red-600 font-mono font-bold uppercase tracking-wider">OUT OF STOCK</p>
                           ) : (
                             <>
-                              <p className="text-[11px] text-black/62 font-[system-ui] font-normal"> Rs {getProductDisplayPrice(p).toLocaleString()} </p>
-                              {p.salePrice && (
+                              <p className="text-[11px] text-black/62 font-[system-ui] font-normal"> Rs {p.price.toLocaleString()} </p>
+                              {p.salePrice && p.salePrice > 0 && (
                                 <p className="mt-0.5 text-[10px] text-black/65 line-through decoration-black/65 font-[system-ui] font-normal">
                                   {p.salePrice.toLocaleString()}
                                 </p>
@@ -535,7 +536,7 @@ export default function HomePage() {
                   }
 
                   return (
-                    <Link key={p.id} className="group block" href={`/products/${p.slug}`}>
+                    <Link key={p.id} className="group block" href={p.href}>
                       {CardContent}
                     </Link>
                   );
@@ -571,7 +572,7 @@ export default function HomePage() {
                     <div className="w-full">
                       <div className="relative mx-auto h-[215px] w-full max-w-[190px] sm:h-[265px] sm:max-w-[230px] lg:h-[365px] lg:max-w-[275px] bg-black/[0.01] rounded-2xl flex items-center justify-center">
                         {isOutOfStock && (
-                          <div className="absolute inset-0 z-30 bg-black/40 backdrop-blur-[1px] rounded-2xl flex items-center justify-center">
+                          <div className="absolute inset-0 z-30 bg-black/40 backdrop-blur-[1px] flex items-center justify-center">
                             <span className="bg-red-600 text-white font-mono text-[9px] sm:text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded shadow-md">
                               OUT OF STOCK
                             </span>
@@ -583,7 +584,7 @@ export default function HomePage() {
                           className={`absolute inset-0 h-full w-full scale-[1.08] object-contain object-center transition-transform duration-500 ease-out ${
                             !isOutOfStock ? "group-hover:scale-[1.12] lg:scale-[1.12] lg:group-hover:scale-[1.16]" : "grayscale-[30%]"
                           }`}
-                          src={phone.images[0]}
+                          src={phone.image}
                         />
                       </div>
                     </div>
@@ -612,7 +613,7 @@ export default function HomePage() {
                     key={phone.id}
                     className="group flex min-h-[270px] flex-col items-start justify-between rounded-[28px] bg-transparent p-1 transition duration-300 hover:-translate-y-1 sm:min-h-[330px] lg:min-h-[455px] lg:p-2"
                     aria-label={`Open ${phone.name}`}
-                    href={`/products/${phone.slug}`}
+                    href={phone.href}
                   >
                     {CardContent}
                   </Link>

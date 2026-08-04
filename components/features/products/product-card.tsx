@@ -11,12 +11,16 @@ import { MessageSquare, ShoppingBag } from "lucide-react";
 
 export interface ProductCardProps {
   product: Product;
+  imageUrl?: string;
+  href?: string;
+  displayPrice?: number;
+  variant?: any;
 }
 
-export function ProductCard({ product }: ProductCardProps) {
+export function ProductCard({ product, imageUrl: customImageUrl, href: customHref, displayPrice: customDisplayPrice, variant: customVariant }: ProductCardProps) {
   const { addItem } = useCartStore();
 
-  const defaultVariant = product.variants?.[0] || {
+  const defaultVariant = customVariant || product.variants?.[0] || {
     id: "default",
     name: "Standard",
     color: "Standard",
@@ -27,8 +31,9 @@ export function ProductCard({ product }: ProductCardProps) {
     inStock: true,
   };
 
-  const currentPrice = getProductDisplayPrice(product);
-  const imageUrl = getValidImageUrl(product.images?.[0]);
+  const currentPrice = customDisplayPrice ?? getProductDisplayPrice(product);
+  const imageUrl = getValidImageUrl(customImageUrl || product.images?.[0]);
+  const productHref = customHref || `/products/${product.slug}`;
 
   const whatsappUrl = generateWhatsAppLink(
     WHATSAPP_NUMBER,
@@ -40,7 +45,7 @@ export function ProductCard({ product }: ProductCardProps) {
   return (
     <div className="group relative flex flex-col items-center text-center space-y-4 py-6 transition-all duration-300">
       {/* Product Image Stage (Transparent background) */}
-      <Link href={`/products/${product.slug}`} className="relative aspect-[4/5] w-full flex items-center justify-center p-4 group-hover:-translate-y-2 transition-transform duration-300">
+      <Link href={productHref} className="relative aspect-[4/5] w-full flex items-center justify-center p-4 group-hover:-translate-y-2 transition-transform duration-300">
         <Image
           src={imageUrl}
           alt={product.name}
@@ -52,7 +57,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
       {/* Product Title below Image (Matches Reference Screenshot) */}
       <div className="space-y-1 text-center">
-        <Link href={`/products/${product.slug}`}>
+        <Link href={productHref}>
           <h3 className="font-ntype text-base font-medium text-black group-hover:text-[#D71921] transition-colors">
             {product.name}
           </h3>

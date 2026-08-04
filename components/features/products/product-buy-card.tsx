@@ -285,7 +285,7 @@ export function ProductBuyCard({ product, selectedVariant, onSelectVariant, onAd
           Number(activePrices.salePrice) > 0 &&
           Number(activePrices.price) > Number(activePrices.salePrice) ? (
             <>
-              <span className="line-through text-white/60 font-normal">{formatPrice(activePrices.price)}</span>
+              <span className="line-through text-white dark:text-neutral-900 font-normal">{formatPrice(activePrices.price)}</span>
               <span className="font-bold text-white dark:text-neutral-900">{formatPrice(activePrices.salePrice)}</span>
             </>
           ) : (

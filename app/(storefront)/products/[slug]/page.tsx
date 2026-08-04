@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Product, ProductVariant } from "@/types";
 import { useCartStore } from "@/store/useCartStore";
 import { useSpecsStore } from "@/store/useSpecsStore";
@@ -14,8 +14,10 @@ import { ProductShowcaseImages } from "@/components/features/products/product-sh
 
 export default function ProductDetailPage() {
   const params = useParams();
+  const searchParams = useSearchParams();
   const router = useRouter();
   const slug = params?.slug as string;
+  const colorQuery = searchParams?.get("color");
 
   const { addItem } = useCartStore();
   const { openSpecs } = useSpecsStore();
@@ -33,7 +35,15 @@ export default function ProductDetailPage() {
         if (res.ok) {
           const item: Product = await res.json();
           setProduct(item);
-          setSelectedVariant(item?.variants?.[0] || null);
+
+          let initialVariant: ProductVariant | null = item?.variants?.[0] || null;
+          if (colorQuery && item?.variants?.length) {
+            const matched = item.variants.find(
+              (v) => v.color && v.color.trim().toLowerCase() === colorQuery.trim().toLowerCase()
+            );
+            if (matched) initialVariant = matched;
+          }
+          setSelectedVariant(initialVariant);
         } else {
           setProduct(null);
         }
@@ -45,7 +55,7 @@ export default function ProductDetailPage() {
     };
 
     loadProduct();
-  }, [slug]);
+  }, [slug, colorQuery]);
 
   const handleOpenSpecs = () => {
     if (product) {

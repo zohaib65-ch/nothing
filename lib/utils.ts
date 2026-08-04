@@ -90,3 +90,75 @@ export function generateWhatsAppLink(
   return `https://wa.me/${num}?text=${encodeURIComponent(message)}`;
 }
 
+export interface ListingCardItem {
+  id: string;
+  productId: string;
+  name: string;
+  slug: string;
+  image: string;
+  price: number;
+  salePrice?: number;
+  colorName?: string;
+  colorHex?: string;
+  inStock: boolean;
+  href: string;
+  product: Product;
+  variant?: any;
+}
+
+export function getVariantCardsForListing(products: Product[]): ListingCardItem[] {
+  const list: ListingCardItem[] = [];
+
+  for (const p of products) {
+    if (p.variants && p.variants.length > 0) {
+      const colorMap = new Map<string, any>();
+      for (const v of p.variants) {
+        if (!v.color || v.color.trim().toLowerCase() === "standard" || v.color.trim().toLowerCase() === "default") continue;
+        const lowerColor = v.color.trim().toLowerCase();
+        if (!colorMap.has(lowerColor)) {
+          colorMap.set(lowerColor, v);
+        }
+      }
+
+      if (colorMap.size > 1) {
+        for (const [cKey, v] of colorMap.entries()) {
+          const cardImg = v.image || p.images?.[0] || "";
+          const price = v.salePrice || v.price || getProductDisplayPrice(p);
+          list.push({
+            id: `${p.id}-${cKey}`,
+            productId: p.id,
+            name: p.name,
+            slug: p.slug,
+            image: cardImg,
+            price,
+            salePrice: v.salePrice,
+            colorName: v.color,
+            colorHex: v.colorHex,
+            inStock: p.inStock !== false,
+            href: `/products/${p.slug}?color=${encodeURIComponent(v.color)}`,
+            product: p,
+            variant: v,
+          });
+        }
+        continue;
+      }
+    }
+
+    list.push({
+      id: p.id,
+      productId: p.id,
+      name: p.name,
+      slug: p.slug,
+      image: p.images?.[0] || "",
+      price: getProductDisplayPrice(p),
+      salePrice: p.salePrice,
+      inStock: p.inStock !== false,
+      href: `/products/${p.slug}`,
+      product: p,
+    });
+  }
+
+  return list;
+}
+
+
