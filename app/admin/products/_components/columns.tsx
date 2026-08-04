@@ -20,7 +20,8 @@ export const getColumns = (
     header: "IMAGE",
     cell: ({ row }) => {
       const prod = row.original;
-      const imageUrl = getValidImageUrl(prod.images?.[0]);
+      const primaryImg = prod.images?.[0] || prod.variants?.[0]?.image;
+      const imageUrl = getValidImageUrl(primaryImg);
       return (
         <div className="relative h-12 w-12 bg-white border border-neutral-200 rounded">
           <Image src={imageUrl} alt={prod.name} fill sizes="48px" className="object-contain p-1" />

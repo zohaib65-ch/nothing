@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Product } from "@/types";
@@ -17,35 +16,45 @@ export interface ProductCardProps {
   variant?: any;
 }
 
-export function ProductCard({ product, imageUrl: customImageUrl, href: customHref, displayPrice: customDisplayPrice, variant: customVariant }: ProductCardProps) {
+export function ProductCard({
+  product,
+  imageUrl: customImageUrl,
+  href: customHref,
+  displayPrice: customDisplayPrice,
+  variant: customVariant,
+}: ProductCardProps) {
   const { addItem } = useCartStore();
 
-  const defaultVariant = customVariant || product.variants?.[0] || {
-    id: "default",
-    name: "Standard",
-    color: "Standard",
-    colorHex: "#FFFFFF",
-    price: product.price,
-    salePrice: product.salePrice,
-    sku: product.slug,
-    inStock: true,
-  };
+  const defaultVariant = customVariant ||
+    product.variants?.[0] || {
+      id: "default",
+      name: "Standard",
+      color: "Standard",
+      colorHex: "#FFFFFF",
+      price: product.price,
+      salePrice: product.salePrice,
+      sku: product.slug,
+      inStock: true,
+    };
 
   const currentPrice = customDisplayPrice ?? getProductDisplayPrice(product);
-  const imageUrl = getValidImageUrl(customImageUrl || product.images?.[0]);
+  const primaryImg = customImageUrl || product.images?.[0] || product.variants?.[0]?.image;
+  const imageUrl = getValidImageUrl(primaryImg);
   const productHref = customHref || `/products/${product.slug}`;
 
-  const whatsappUrl = generateWhatsAppLink(
-    WHATSAPP_NUMBER,
-    product,
-    defaultVariant,
-    1
-  );
+  const whatsappUrl = generateWhatsAppLink(WHATSAPP_NUMBER, product, defaultVariant, 1);
+
+  const cardSalePrice = defaultVariant?.salePrice || product.salePrice;
+  const cardRegularPrice = defaultVariant?.price || product.price || currentPrice;
+  const showSale = Boolean(cardSalePrice && cardSalePrice > 0 && cardRegularPrice > cardSalePrice);
 
   return (
     <div className="group relative flex flex-col items-center text-center space-y-4 py-6 transition-all duration-300">
       {/* Product Image Stage (Transparent background) */}
-      <Link href={productHref} className="relative aspect-[4/5] w-full flex items-center justify-center p-4 group-hover:-translate-y-2 transition-transform duration-300">
+      <Link
+        href={productHref}
+        className="relative aspect-[4/5] w-full flex items-center justify-center p-4 group-hover:-translate-y-2 transition-transform duration-300"
+      >
         <Image
           src={imageUrl}
           alt={product.name}
@@ -58,20 +67,16 @@ export function ProductCard({ product, imageUrl: customImageUrl, href: customHre
       {/* Product Title below Image (Matches Reference Screenshot) */}
       <div className="space-y-1 text-center">
         <Link href={productHref}>
-          <h3 className="font-ntype text-base font-medium text-black group-hover:text-[#D71921] transition-colors">
-            {product.name}
-          </h3>
+          <h3 className="font-ntype text-base font-medium text-black group-hover:text-[#D71921] transition-colors">{product.name}</h3>
         </Link>
         {defaultVariant?.isComingSoon ? (
-          <div className="font-mono text-xs text-[#D71921] font-bold uppercase tracking-wider">
-            COMING SOON
-          </div>
+          <div className="font-mono text-xs text-[#D71921] font-bold uppercase tracking-wider">COMING SOON</div>
         ) : (
           <div className="font-lattera text-xs text-neutral-500 font-bold flex items-center justify-center gap-1.5">
-            {product.salePrice && product.salePrice > 0 && product.salePrice < product.price ? (
+            {showSale ? (
               <>
-                <span className="text-black font-bold">{formatPrice(product.salePrice)}</span>
-                <span className="line-through text-neutral-400 font-normal">{formatPrice(product.price)}</span>
+                <span className="text-black font-bold">{formatPrice(cardSalePrice!)}</span>
+                <span className="line-through text-neutral-400 font-normal">{formatPrice(cardRegularPrice)}</span>
               </>
             ) : (
               <span>{formatPrice(currentPrice)}</span>

@@ -32,9 +32,6 @@ const STEPS = [
 
 export function ProductForm({ initialProduct, isEditMode = false, onSave, isSubmitting }: ProductFormProps) {
   const [currentStep, setCurrentStep] = React.useState<number>(1);
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
-  const [isUploading, setIsUploading] = React.useState(false);
-  const [uploadError, setUploadError] = React.useState<string | null>(null);
   const [uploadingIndex, setUploadingIndex] = React.useState<{ section: string; idx: number } | null>(null);
   const methods = useForm<ProductFormValues>({
     resolver: zodResolver(ProductSchema) as any,
@@ -48,43 +45,6 @@ export function ProductForm({ initialProduct, isEditMode = false, onSave, isSubm
     getValues,
     formState: { errors },
   } = methods;
-
-  // Handle direct product image file upload → Cloudinary
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setIsUploading(true);
-    setUploadError(null);
-
-    try {
-      // Upload to Cloudinary via server API
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const res = await fetch("/api/media/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || "Upload failed");
-      }
-
-      const currentImages = getValues("images") || [];
-      setValue("images", [data.url, ...currentImages.slice(1)]);
-      toast.success("Image uploaded to Cloudinary successfully.");
-    } catch (err: any) {
-      const errorMsg = err.message || "Failed to upload image";
-      setUploadError(errorMsg);
-      toast.error(errorMsg);
-    } finally {
-      setIsUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = "";
-    }
-  };
 
   // Upload image for dynamic custom sections → Cloudinary
   const handleSectionImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, section: string, idx: number) => {
@@ -145,7 +105,6 @@ export function ProductForm({ initialProduct, isEditMode = false, onSave, isSubm
 
   const onSubmitForm = async (data: ProductFormValues) => {
     const finalSlug = data.slug || slugify(data.name || "");
-    const validImage = getValidImageUrl(data.images?.[0]);
 
     // Ensure variants array is formatted properly
     let updatedVariants = (data.variants || []).map((v) => {
@@ -166,6 +125,9 @@ export function ProductForm({ initialProduct, isEditMode = false, onSave, isSubm
         storagePrices: v.storagePrices || {},
       };
     });
+
+    const primaryRawImage = data.images?.[0] || updatedVariants[0]?.image || "";
+    const validImage = getValidImageUrl(primaryRawImage);
 
     if (updatedVariants.length === 0) {
       const st = data.storageOptions?.[0] || "Standard";
@@ -204,8 +166,19 @@ export function ProductForm({ initialProduct, isEditMode = false, onSave, isSubm
     });
 
     const now = new Date().toISOString();
-    const rootPrice = updatedVariants[0]?.price || 0;
-    const rootSalePrice = updatedVariants[0]?.salePrice;
+    let rootPrice = updatedVariants[0]?.price || 0;
+    let rootSalePrice = updatedVariants[0]?.salePrice;
+
+    if (!rootPrice && updatedVariants[0]?.storagePrices) {
+      const spEntries = Object.values(updatedVariants[0].storagePrices) as any[];
+      const firstSp = spEntries.find((sp) => sp.price || sp.salePrice);
+      if (firstSp) {
+        rootPrice = firstSp.price || firstSp.salePrice || 0;
+        if (firstSp.salePrice && firstSp.price && firstSp.salePrice < firstSp.price) {
+          rootSalePrice = firstSp.salePrice;
+        }
+      }
+    }
 
     const fullProduct = {
       ...data,
@@ -250,9 +223,7 @@ export function ProductForm({ initialProduct, isEditMode = false, onSave, isSubm
 
       <FormProvider {...methods}>
         <form onSubmit={handleSubmit(onSubmitForm, onInvalidForm)} className="space-y-6">
-          {currentStep === 1 && (
-            <GeneralInfoSection fileInputRef={fileInputRef} handleFileUpload={handleFileUpload} isUploading={isUploading} uploadError={uploadError} />
-          )}
+          {currentStep === 1 && <GeneralInfoSection />}
           {currentStep === 2 && <HeroShowcaseSection onFileUpload={handleSectionImageUpload} uploadingIndex={uploadingIndex} />}
           {currentStep === 3 && <BentoGridSection onFileUpload={handleSectionImageUpload} uploadingIndex={uploadingIndex} />}
           {currentStep === 4 && <ColumnGridsSection onFileUpload={handleSectionImageUpload} uploadingIndex={uploadingIndex} />}

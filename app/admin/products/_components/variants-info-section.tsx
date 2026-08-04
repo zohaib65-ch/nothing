@@ -27,12 +27,7 @@ const STORAGE_PRESET_OPTIONS = ["8 + 128", "12 + 256", "16 + 512", "8GB + 128GB"
 
 export function VariantsInfoSection() {
   const { register, watch, setValue, control } = useFormContext<ProductFormValues>();
-  const {
-    formatValidHexForPicker,
-    handleColorNameChange,
-    handleColorHexInputChange,
-    handleColorPickerChange,
-  } = useColorFetcher(setValue, watch);
+  const { formatValidHexForPicker, handleColorNameChange, handleColorHexInputChange, handleColorPickerChange } = useColorFetcher(setValue, watch);
   const basePrice = watch("price") || 0;
   const baseSalePrice = watch("salePrice");
 
@@ -169,15 +164,18 @@ export function VariantsInfoSection() {
               return (
                 <div
                   key={field.id}
-                  className="bg-neutral-50/80 border border-neutral-200 rounded-xl p-5 font-mono text-xs space-y-5 shadow-sm hover:border-neutral-300 transition-colors"
+                  className="bg-white border border-neutral-200 rounded-xl p-6 font-mono text-xs space-y-6 shadow-sm hover:shadow-md hover:border-neutral-300 transition-all"
                 >
-                  <div className="flex items-center justify-between border-b border-neutral-200/80 pb-3">
-                    <div className="flex items-center gap-2.5">
-                      <span className="w-6 h-6 rounded-full bg-neutral-900 text-white flex items-center justify-center text-[10px] font-bold shadow-sm">
+                  {/* Header: Variant Number, Color Pill, Title & Remove Button */}
+                  <div className="flex items-center justify-between border-b border-neutral-100 pb-3.5">
+                    <div className="flex items-center gap-3">
+                      <span className="w-7 h-7 rounded-full bg-neutral-900 text-white flex items-center justify-center text-[11px] font-bold shadow-sm">
                         #{index + 1}
                       </span>
-                      <span className="w-4 h-4 rounded-full border border-neutral-400 shadow-inner" style={{ backgroundColor: currentColorHex }} />
-                      <span className="font-bold text-neutral-900 text-xs uppercase tracking-wider">{currentColorVal || "New Variant"}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="w-5 h-5 rounded-full border border-neutral-300 shadow-inner" style={{ backgroundColor: currentColorHex }} />
+                        <span className="font-bold text-neutral-900 text-sm uppercase tracking-wider">{currentColorVal || "New Variant"}</span>
+                      </div>
                     </div>
 
                     <Button
@@ -185,15 +183,16 @@ export function VariantsInfoSection() {
                       variant="outline"
                       size="sm"
                       onClick={() => removeVariant(index)}
-                      className="text-neutral-400 hover:text-red-600 border-none p-1 h-auto"
+                      leftIcon={<Trash2 className="h-3.5 w-3.5" />}
+                      className="text-neutral-500 hover:text-red-600 hover:bg-red-50 border-neutral-200 text-[11px] font-bold uppercase h-8 px-3 whitespace-nowrap"
                       title="Remove Variant"
                     >
-                      <Trash2 className="h-4 w-4" />
+                      DELETE
                     </Button>
                   </div>
 
                   {/* Section 1: Color Name & Color Hex */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <Input
                       label="COLOR NAME"
                       placeholder="e.g. White, Pink, Dark Grey"
@@ -204,12 +203,12 @@ export function VariantsInfoSection() {
 
                     <div className="space-y-1.5">
                       <label className="block text-[11px] uppercase text-neutral-500 font-mono font-bold tracking-wider">COLOR HEX</label>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2.5">
                         <input
                           type="color"
                           value={formatValidHexForPicker(currentColorHex)}
                           onChange={(e) => handleColorPickerChange(index, e.target.value)}
-                          className="w-10 h-10 border border-neutral-300 rounded-lg cursor-pointer p-0.5 flex-shrink-0 bg-white"
+                          className="w-11 h-11 border border-neutral-300 rounded-lg cursor-pointer p-1 flex-shrink-0 bg-white shadow-xs hover:border-neutral-400 transition-colors"
                         />
                         <Input
                           placeholder="#FFFFFF"
@@ -222,17 +221,17 @@ export function VariantsInfoSection() {
                     </div>
                   </div>
 
-                  {/* Section 2: RAM & Storage / Capacity Dropdown & Input + Stock Status */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
-                    <div className="space-y-1.5 sm:col-span-2">
-                      <label className="block text-[11px] uppercase text-neutral-500 font-mono font-bold tracking-wider">
-                        RAM + STORAGE / CAPACITIES (MULTIPLE SELECTION SUPPORTED)
-                      </label>
-                      <p className="text-[10px] text-neutral-400 font-mono">
-                        Select preset options or enter comma-separated values (e.g., &quot;8 + 128, 12 + 256, 16 + 512&quot;)
-                      </p>
+                  {/* Section 2: RAM & Storage / Capacity Dropdown & Input */}
+                  <div className="grid grid-cols-1 gap-4 items-start pt-2 border-t border-neutral-100">
+                    <div className="space-y-2">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                        <label className="block text-[11px] uppercase text-neutral-600 font-mono font-bold tracking-wider">
+                          RAM + STORAGE / CAPACITIES (MULTIPLE SELECTION SUPPORTED)
+                        </label>
+                        <span className="text-[10px] text-neutral-400 font-mono">Select presets or type comma-separated values</span>
+                      </div>
 
-                      <div className="flex flex-wrap gap-1.5 my-2">
+                      <div className="flex flex-wrap gap-2 py-1">
                         {STORAGE_PRESET_OPTIONS.map((opt) => {
                           const currentArr = (currentStorageVal || "")
                             .split(",")
@@ -259,10 +258,10 @@ export function VariantsInfoSection() {
                               key={opt}
                               type="button"
                               onClick={togglePreset}
-                              className={`px-2.5 py-1 text-[11px] font-mono rounded-md border transition-colors ${
+                              className={`px-3 py-1.5 text-[11px] font-mono rounded-lg border transition-all ${
                                 isSelected
-                                  ? "bg-neutral-900 text-white border-neutral-900 font-bold"
-                                  : "bg-white text-neutral-700 border-neutral-300 hover:bg-neutral-100"
+                                  ? "bg-neutral-900 text-white border-neutral-900 font-bold shadow-xs"
+                                  : "bg-neutral-50 text-neutral-700 border-neutral-200 hover:bg-neutral-100 hover:border-neutral-300"
                               }`}
                             >
                               {isSelected ? `✓ ${opt}` : `+ ${opt}`}
@@ -282,13 +281,13 @@ export function VariantsInfoSection() {
                           const cl = watch(`variants.${index}.color`) || "";
                           setValue(`variants.${index}.name`, `${cl} - ${val}`, { shouldDirty: true });
                         }}
-                        className="w-full bg-white border border-neutral-300 rounded-lg px-3 py-2 text-neutral-900 font-mono text-xs focus:outline-none focus:border-[#D71921]"
+                        className="w-full bg-white border border-neutral-300 rounded-lg px-3.5 py-2.5 text-neutral-900 font-mono text-xs focus:outline-none focus:border-[#D71921] focus:ring-1 focus:ring-[#D71921]"
                       />
                     </div>
                   </div>
 
                   {/* Section 3: Storage Specific Pricing */}
-                  <div className="space-y-4 pt-2 border-t border-neutral-200/80">
+                  <div className="space-y-4 pt-3 border-t border-neutral-100">
                     {(() => {
                       const selectedStorages = (currentStorageVal || "")
                         .split(",")
@@ -298,11 +297,11 @@ export function VariantsInfoSection() {
                       const storagesToRender = selectedStorages.length > 0 ? selectedStorages : ["Standard"];
 
                       return (
-                        <div className="bg-white border border-neutral-200 rounded-lg p-3 space-y-3">
-                          <label className="block text-[11px] uppercase font-bold text-neutral-800 tracking-wider">
+                        <div className="bg-neutral-50/70 border border-neutral-200 rounded-xl p-4 space-y-3">
+                          <label className="block text-[11px] uppercase font-bold text-neutral-700 tracking-wider">
                             STORAGE-SPECIFIC PRICING (SET PRICE PER RAM + STORAGE)
                           </label>
-                          <div className="space-y-2">
+                          <div className="space-y-3">
                             {storagesToRender.map((st) => {
                               const currentPriceObj = watch(`variants.${index}.storagePrices.${st}`);
 
@@ -326,13 +325,10 @@ export function VariantsInfoSection() {
                               const isComingSoon = watch(`variants.${index}.storagePrices.${st}.isComingSoon`) || false;
 
                               return (
-                                <div
-                                  key={st}
-                                  className="flex flex-col gap-2 p-2.5 bg-neutral-50 rounded-md border border-neutral-200"
-                                >
-                                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                                    <span className="font-bold text-xs uppercase text-neutral-800 min-w-[100px]">{st}:</span>
-                                    <div className="grid grid-cols-2 gap-2 flex-1">
+                                <div key={st} className="flex flex-col gap-2.5 p-3 bg-white rounded-lg border border-neutral-200 shadow-xs">
+                                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                    <span className="font-bold text-xs uppercase text-neutral-900 min-w-[110px]">{st}:</span>
+                                    <div className="grid grid-cols-2 gap-3 flex-1">
                                       <input
                                         type="number"
                                         placeholder={isComingSoon ? "Coming Soon" : "Regular Price (e.g. 149999)"}
@@ -343,7 +339,7 @@ export function VariantsInfoSection() {
                                           const num = v === "" || v === null || v === undefined || isNaN(Number(v)) ? undefined : Number(v);
                                           setValue(`variants.${index}.storagePrices.${st}.price` as const, num, { shouldDirty: true });
                                         }}
-                                        className="bg-white border border-neutral-300 rounded px-2.5 py-1.5 font-mono text-xs text-neutral-900 focus:outline-none focus:border-[#D71921] disabled:bg-neutral-200/60 disabled:text-neutral-400 disabled:cursor-not-allowed"
+                                        className="bg-white border border-neutral-300 rounded-md px-3 py-2 font-mono text-xs text-neutral-900 focus:outline-none focus:border-[#D71921] disabled:bg-neutral-100 disabled:text-neutral-400 disabled:cursor-not-allowed"
                                       />
                                       <input
                                         type="number"
@@ -355,7 +351,7 @@ export function VariantsInfoSection() {
                                           const num = v === "" || v === null || v === undefined || isNaN(Number(v)) ? undefined : Number(v);
                                           setValue(`variants.${index}.storagePrices.${st}.salePrice` as const, num, { shouldDirty: true });
                                         }}
-                                        className="bg-white border border-neutral-300 rounded px-2.5 py-1.5 font-mono text-xs text-neutral-900 focus:outline-none focus:border-[#D71921] disabled:bg-neutral-200/60 disabled:text-neutral-400 disabled:cursor-not-allowed"
+                                        className="bg-white border border-neutral-300 rounded-md px-3 py-2 font-mono text-xs text-neutral-900 focus:outline-none focus:border-[#D71921] disabled:bg-neutral-100 disabled:text-neutral-400 disabled:cursor-not-allowed"
                                       />
                                     </div>
                                     <Button
@@ -371,8 +367,8 @@ export function VariantsInfoSection() {
                                   </div>
 
                                   {/* Coming Soon Checkbox Below Storage Inputs */}
-                                  <div className="flex items-center gap-2 pt-1 border-t border-neutral-200/60">
-                                    <label className="inline-flex items-center gap-1.5 cursor-pointer text-[10px] font-mono uppercase font-bold text-neutral-600 select-none hover:text-neutral-900">
+                                  <div className="flex items-center gap-2 pt-2 border-t border-neutral-100">
+                                    <label className="inline-flex items-center gap-2 cursor-pointer text-[10px] font-mono uppercase font-bold text-neutral-600 select-none hover:text-neutral-900">
                                       <input
                                         type="checkbox"
                                         checked={isComingSoon}
@@ -380,7 +376,7 @@ export function VariantsInfoSection() {
                                           const checked = e.target.checked;
                                           setValue(`variants.${index}.storagePrices.${st}.isComingSoon` as const, checked, { shouldDirty: true });
                                         }}
-                                        className="h-3.5 w-3.5 rounded border-neutral-300 text-neutral-900 focus:ring-neutral-900 cursor-pointer"
+                                        className="h-3.5 w-3.5 rounded border-neutral-300 text-neutral-900 focus:ring-neutral-900 cursor-pointer accent-[#D71921]"
                                       />
                                       <span className={isComingSoon ? "text-[#D71921] font-bold" : "text-neutral-500"}>
                                         {isComingSoon ? "✓ COMING SOON ENABLED" : "MARK AS COMING SOON"}
@@ -396,33 +392,72 @@ export function VariantsInfoSection() {
                     })()}
                   </div>
 
-                  {/* Section 4: Variant Image Upload */}
-                  <div className="pt-3 border-t border-neutral-200/80 space-y-2">
-                    <label className="block text-[11px] uppercase font-bold text-neutral-500 tracking-wider">VARIANT SPECIFIC IMAGE</label>
-                    <div className="flex items-center gap-4 bg-white border border-neutral-200 rounded-lg p-3">
-                      <div className="relative w-16 h-16 bg-neutral-50 border border-neutral-200 rounded-md overflow-hidden flex-shrink-0 flex items-center justify-center">
+                  {/* Section 4: Variant Image Upload (ENLARGED PREVIEW) */}
+                  <div className="pt-3 border-t border-neutral-100 space-y-3">
+                    <label className="block text-[11px] uppercase font-bold text-neutral-600 tracking-wider">VARIANT SPECIFIC IMAGE</label>
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 bg-neutral-50/80 border border-neutral-200 rounded-xl p-4">
+                      {/* Larger Image Preview Box (36x36 = 144px wide/high) */}
+                      <div className="relative w-36 h-36 bg-white border border-neutral-300 rounded-xl overflow-hidden flex-shrink-0 flex items-center justify-center shadow-sm group">
                         {variantImage ? (
-                          <Image src={getValidImageUrl(variantImage)} alt="Variant Preview" fill unoptimized className="object-contain p-1" />
+                          <>
+                            <Image
+                              src={getValidImageUrl(variantImage)}
+                              alt="Variant Preview"
+                              fill
+                              unoptimized
+                              className="object-contain p-2 transition-transform duration-300 group-hover:scale-105"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setValue(`variants.${index}.image`, "", { shouldDirty: true })}
+                              className="absolute top-2 right-2 p-1.5 bg-neutral-900/80 hover:bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-all shadow-md"
+                              title="Remove Image"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </button>
+                          </>
                         ) : (
-                          <span className="text-[9px] text-neutral-400 font-mono text-center px-1">NO IMAGE</span>
+                          <div className="text-center p-3 space-y-1.5">
+                            <Upload className="h-8 w-8 text-neutral-300 mx-auto" />
+                            <span className="text-[10px] text-neutral-400 font-mono font-bold block uppercase tracking-wider">No Image</span>
+                          </div>
                         )}
                       </div>
 
-                      <div className="flex-1 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-                        <Input placeholder="Image URL or upload file..." {...register(`variants.${index}.image`)} className="flex-1" />
+                      <div className="flex-1 w-full space-y-3">
+                        <div className="space-y-1">
+                          <label className="block text-[10px] uppercase font-bold text-neutral-500">IMAGE URL OR DIRECT PATH</label>
+                          <Input placeholder="Paste Cloudinary image URL..." {...register(`variants.${index}.image`)} className="w-full bg-white" />
+                        </div>
 
-                        <label className="inline-flex items-center justify-center px-4 py-2.5 bg-neutral-900 hover:bg-neutral-800 text-white rounded-lg font-mono text-[11px] font-bold uppercase cursor-pointer transition-colors whitespace-nowrap gap-2">
-                          <Upload className="h-3.5 w-3.5" />
-                          <span>{uploadingVariantIndex === index ? "UPLOADING..." : "UPLOAD FILE"}</span>
-                          <input type="file" accept="image/*" onChange={(e) => handleVariantImageUpload(e, index)} className="hidden" />
-                        </label>
+                        <div className="flex flex-wrap items-center gap-2.5">
+                          <label className="inline-flex items-center justify-center px-4 py-2.5 bg-neutral-900 hover:bg-neutral-800 text-white rounded-lg font-mono text-[11px] font-bold uppercase cursor-pointer transition-colors whitespace-nowrap gap-2 shadow-xs">
+                            <Upload className="h-3.5 w-3.5" />
+                            <span>{uploadingVariantIndex === index ? "UPLOADING..." : "UPLOAD NEW FILE"}</span>
+                            <input type="file" accept="image/*" onChange={(e) => handleVariantImageUpload(e, index)} className="hidden" />
+                          </label>
+
+                          {variantImage && (
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setValue(`variants.${index}.image`, "", { shouldDirty: true })}
+                              className="text-red-600 border-red-200 hover:bg-red-50 text-[11px] h-[38px] px-3.5 font-bold uppercase"
+                            >
+                              REMOVE IMAGE
+                            </Button>
+                          )}
+                        </div>
+
+                        <p className="text-[10px] text-neutral-400 font-mono">Supports PNG, JPG, WEBP up to 5MB. Clear preview above.</p>
                       </div>
                     </div>
                   </div>
 
                   {/* Section 5: Variant Specifications */}
-                  <div className="pt-3 border-t border-neutral-200/80">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white border border-neutral-200 rounded-lg p-3">
+                  <div className="pt-3 border-t border-neutral-100">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-neutral-50/80 border border-neutral-200 rounded-xl p-3.5">
                       <div className="flex items-center gap-2.5 font-mono text-xs">
                         <FileText className="h-4 w-4 text-neutral-500 shrink-0" />
                         <div>
@@ -438,7 +473,7 @@ export function VariantsInfoSection() {
                         variant="outline"
                         size="sm"
                         onClick={() => setEditingSpecsIndex(index)}
-                        className={`h-8 px-3 text-[11px] font-mono font-bold uppercase tracking-wider transition-all whitespace-nowrap ${
+                        className={`h-8 px-3.5 text-[11px] font-mono font-bold uppercase tracking-wider transition-all whitespace-nowrap ${
                           hasCustomSpecs
                             ? "bg-emerald-50 border-emerald-300 text-emerald-700 hover:bg-emerald-100"
                             : "border-neutral-300 hover:bg-neutral-900 hover:text-white"

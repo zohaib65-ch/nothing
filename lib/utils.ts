@@ -111,6 +111,8 @@ export function getVariantCardsForListing(products: Product[]): ListingCardItem[
   const list: ListingCardItem[] = [];
 
   for (const p of products) {
+    const displayP = getProductDisplayPrice(p);
+
     if (p.variants && p.variants.length > 0) {
       const colorMap = new Map<string, any>();
       for (const v of p.variants) {
@@ -125,7 +127,7 @@ export function getVariantCardsForListing(products: Product[]): ListingCardItem[
         for (const [cKey, v] of colorMap.entries()) {
           const cardImg = v.image || p.images?.[0] || "";
 
-          let regPrice = v.price || p.price || 0;
+          let regPrice = v.price || p.price || displayP;
           let salePrice = v.salePrice || p.salePrice;
           let isComingSoon = !!v.isComingSoon;
 
@@ -135,11 +137,14 @@ export function getVariantCardsForListing(products: Product[]): ListingCardItem[
             if (firstSp) {
               if (firstSp.price) regPrice = firstSp.price;
               if (firstSp.salePrice) salePrice = firstSp.salePrice;
+              if (!firstSp.price && firstSp.salePrice) regPrice = firstSp.salePrice;
             }
             if (spEntries.every((sp) => sp.isComingSoon)) {
               isComingSoon = true;
             }
           }
+
+          if (!regPrice) regPrice = displayP;
 
           list.push({
             id: `${p.id}-${cKey}`,
@@ -162,18 +167,33 @@ export function getVariantCardsForListing(products: Product[]): ListingCardItem[
       }
     }
 
-    const regPrice = p.price || getProductDisplayPrice(p);
-    const salePrice = p.salePrice && p.salePrice < regPrice ? p.salePrice : undefined;
-    const isComingSoon = p.variants?.length > 0 && p.variants.every((v) => v.isComingSoon);
+    let regPrice = p.price || displayP;
+    let salePrice = p.salePrice;
+    let isComingSoon = p.variants?.length > 0 && p.variants.every((v) => v.isComingSoon);
+
+    if (p.variants?.[0]?.storagePrices && Object.keys(p.variants[0].storagePrices).length > 0) {
+      const spEntries = Object.values(p.variants[0].storagePrices) as any[];
+      const firstSp = spEntries.find((sp) => sp.price || sp.salePrice);
+      if (firstSp) {
+        if (firstSp.price) regPrice = firstSp.price;
+        if (firstSp.salePrice && firstSp.price && firstSp.salePrice < firstSp.price) {
+          salePrice = firstSp.salePrice;
+        } else if (!firstSp.price && firstSp.salePrice) {
+          regPrice = firstSp.salePrice;
+        }
+      }
+    }
+
+    if (!regPrice) regPrice = displayP;
 
     list.push({
       id: p.id,
       productId: p.id,
       name: p.name,
       slug: p.slug,
-      image: p.images?.[0] || "",
+      image: p.images?.[0] || p.variants?.[0]?.image || "",
       price: regPrice,
-      salePrice,
+      salePrice: salePrice && salePrice < regPrice ? salePrice : undefined,
       inStock: p.inStock !== false,
       isComingSoon,
       href: `/products/${p.slug}`,
