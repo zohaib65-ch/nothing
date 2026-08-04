@@ -87,34 +87,33 @@ export default function AdminProductsPage() {
     await ProductService.updateProductFieldsApi(prod.id, { status: newStatus });
   }, []);
 
-  const filteredProducts = products.filter((p) => {
-    const query = searchQuery.toLowerCase().trim();
-    const nameMatch = p.name.toLowerCase().includes(query);
-    const categoryMatch = p.category.toLowerCase().includes(query);
+  const filteredProducts = React.useMemo(() => {
+    return products.filter((p) => {
+      const rawQuery = searchQuery.trim().toLowerCase();
 
-    const displayPrice = getProductDisplayPrice(p);
-    const formattedPrice = formatPrice(displayPrice).toLowerCase();
+      const isInStock = p.inStock !== false;
+      const matchesStock = stockFilter === "all" ? true : stockFilter === "in_stock" ? isInStock : !isInStock;
+      const matchesCategory = categoryFilter === "all" ? true : p.category.toLowerCase() === categoryFilter.toLowerCase();
 
-    const pricesToTest = [
-      p.price,
-      p.salePrice,
-      p.originalPrice,
-      displayPrice,
-      ...(p.variants || []).flatMap((v) => [v.price, v.salePrice]),
-    ].filter((val): val is number => val !== undefined && val !== null && !isNaN(val));
+      if (!rawQuery) {
+        return matchesStock && matchesCategory;
+      }
 
-    const priceMatch =
-      formattedPrice.includes(query) ||
-      pricesToTest.some((priceVal) => priceVal.toString().includes(query));
+      const variantInfo = (p.variants || [])
+        .map((v) => `${v.color || ""} ${v.name || ""} ${v.storage || ""} ${v.capacity || ""} ${v.sku || ""}`)
+        .join(" ");
 
-    const matchesSearch = nameMatch || categoryMatch || priceMatch;
+      const displayPrice = getProductDisplayPrice(p);
+      const pricesStr = `${p.price || ""} ${p.salePrice || ""} ${p.originalPrice || ""} ${displayPrice}`;
 
-    const isInStock = p.inStock !== false;
-    const matchesStock = stockFilter === "all" ? true : stockFilter === "in_stock" ? isInStock : !isInStock;
-    const matchesCategory = categoryFilter === "all" ? true : p.category.toLowerCase() === categoryFilter.toLowerCase();
+      const searchableText = `${p.name} ${p.slug} ${p.id || ""} ${p.category} ${p.subcategory || ""} ${variantInfo} ${pricesStr} ${p.tagline || ""} ${p.description || ""}`.toLowerCase();
 
-    return matchesSearch && matchesStock && matchesCategory;
-  });
+      const queryTokens = rawQuery.split(/\s+/).filter(Boolean);
+      const matchesSearch = queryTokens.every((token) => searchableText.includes(token));
+
+      return matchesSearch && matchesStock && matchesCategory;
+    });
+  }, [products, searchQuery, stockFilter, categoryFilter]);
 
   const columns = React.useMemo<ColumnDef<Product>[]>(
     () => getColumns(handleToggleFeatured, handleToggleStatus, handleToggleStock, handleEdit, handlePromptDelete),

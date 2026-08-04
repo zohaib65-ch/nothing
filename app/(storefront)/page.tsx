@@ -6,7 +6,7 @@ import { useCartStore } from "@/store/useCartStore";
 import { ProductService } from "@/services/productService";
 import { Product } from "@/types";
 import { Loader } from "@/components/ui/loader";
-import { getProductDisplayPrice } from "@/lib/utils";
+import { getProductDisplayPrice, getVariantCardsForListing } from "@/lib/utils";
 
 const storeBenefits = [
   {

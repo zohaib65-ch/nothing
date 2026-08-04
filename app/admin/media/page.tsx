@@ -14,6 +14,7 @@ interface MediaItem {
 
 export default function AdminMediaPage() {
   const [mediaList, setMediaList] = React.useState<MediaItem[]>([]);
+  const [searchQuery, setSearchQuery] = React.useState("");
   const [isUploading, setIsUploading] = React.useState(false);
   const [copiedUrl, setCopiedUrl] = React.useState<string | null>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
@@ -33,6 +34,16 @@ export default function AdminMediaPage() {
   React.useEffect(() => {
     loadMedia();
   }, [loadMedia]);
+
+  const filteredMedia = React.useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return mediaList;
+    const tokens = q.split(/\s+/).filter(Boolean);
+    return mediaList.filter((m) => {
+      const text = `${m.filename} ${m.url}`.toLowerCase();
+      return tokens.every((tok) => text.includes(tok));
+    });
+  }, [mediaList, searchQuery]);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -60,7 +71,6 @@ export default function AdminMediaPage() {
   };
 
   const handleCopyUrl = (url: string) => {
-    // Cloudinary URLs are already full URLs
     navigator.clipboard.writeText(url);
     setCopiedUrl(url);
     setTimeout(() => setCopiedUrl(null), 2000);
@@ -79,7 +89,14 @@ export default function AdminMediaPage() {
           </p>
         </div>
 
-        <div>
+        <div className="flex items-center gap-3">
+          <input
+            type="text"
+            placeholder="SEARCH MEDIA..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="bg-white border border-neutral-200 px-3 py-1.5 font-mono text-xs rounded-lg shadow-sm focus:outline-none focus:border-[#D71921]"
+          />
           <input
             ref={fileInputRef}
             type="file"
@@ -100,21 +117,21 @@ export default function AdminMediaPage() {
       </div>
 
       {/* Media Grid */}
-      {mediaList.length === 0 ? (
+      {filteredMedia.length === 0 ? (
         <div className="bg-white border border-neutral-200 p-12 text-center text-neutral-500 space-y-3 rounded-xl shadow-sm">
           <ImageIcon className="h-12 w-12 mx-auto text-neutral-400" />
-          <p className="uppercase tracking-wider text-xs">NO MEDIA FILES UPLOADED YET</p>
+          <p className="uppercase tracking-wider text-xs">NO MEDIA FILES FOUND</p>
           <Button
             variant="outline"
             size="sm"
             onClick={() => fileInputRef.current?.click()}
           >
-            UPLOAD FIRST FILE
+            UPLOAD FILE
           </Button>
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-          {mediaList.map((media) => (
+          {filteredMedia.map((media) => (
             <div
               key={media.filename}
               className="bg-white border border-neutral-200 rounded-lg overflow-hidden group hover:border-neutral-400 transition-all space-y-2 p-2 relative shadow-sm"

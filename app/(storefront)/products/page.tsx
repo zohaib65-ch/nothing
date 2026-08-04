@@ -7,6 +7,7 @@ import { ProductCard } from "@/components/features/products/product-card";
 import { Container } from "@/components/ui/container";
 import { ChevronUp } from "lucide-react";
 import { EmptyState } from "@/components/ui/empty-state";
+import { getVariantCardsForListing } from "@/lib/utils";
 
 export default function ProductsCatalogPage() {
   const [products, setProducts] = React.useState<Product[]>([]);

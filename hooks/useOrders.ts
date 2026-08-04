@@ -114,16 +114,24 @@ export function useOrders() {
   // Filtered orders list (Safe against undefined)
   const filteredOrders = React.useMemo(() => {
     return orders.filter((order) => {
-      const orderId = (order?.id || order?._id || "").toLowerCase();
-      const customer = (order?.fullName || "").toLowerCase();
-      const email = (order?.email || "").toLowerCase();
-      const phone = (order?.phoneNumber || "").toLowerCase();
-      const term = searchTerm.toLowerCase();
+      const rawTerm = searchTerm.trim().toLowerCase();
 
-      const matchesSearch = orderId.includes(term) || customer.includes(term) || email.includes(term) || phone.includes(term);
       const matchesStatus = statusFilter === "all" || order?.status === statusFilter;
       const matchesPayment = paymentFilter === "all" || order?.paymentMethod === paymentFilter;
       const matchesFulfillment = fulfillmentFilter === "all" || (order?.fulfillmentMethod || "ship") === fulfillmentFilter;
+
+      if (!rawTerm) {
+        return matchesStatus && matchesPayment && matchesFulfillment;
+      }
+
+      const itemsText = (order.items || [])
+        .map((i) => `${i.productName || ""} ${i.variantName || ""} ${i.productId || ""}`)
+        .join(" ");
+
+      const searchableText = `${order.id || ""} ${order._id || ""} ${order.customId || ""} ${order.fullName || ""} ${order.email || ""} ${order.phoneNumber || ""} ${order.phone2 || ""} ${order.city || ""} ${order.address || ""} ${order.district || ""} ${order.paymentMethod || ""} ${order.total || ""} ${itemsText}`.toLowerCase();
+
+      const queryTokens = rawTerm.split(/\s+/).filter(Boolean);
+      const matchesSearch = queryTokens.every((token) => searchableText.includes(token));
 
       return matchesSearch && matchesStatus && matchesPayment && matchesFulfillment;
     });
