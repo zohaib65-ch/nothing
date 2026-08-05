@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { useProductStore } from "@/store/useProductStore";
 import { ProductService } from "@/services/productService";
 import { Product } from "@/types";
 import { useParams } from "next/navigation";
@@ -11,26 +12,32 @@ import { getProductDisplayPrice, getVariantCardsForListing } from "@/lib/utils";
 export default function CollectionSlugPage() {
   const params = useParams();
   const slug = (params?.slug as string) || "phones";
-  const [products, setProducts] = React.useState<Product[]>([]);
-  const [isLoading, setIsLoading] = React.useState<boolean>(true);
+  const { products: storeProducts, isLoading: storeLoading, isFetched } = useProductStore();
+
+  // Fallback: direct fetch only when store hasn't loaded (direct navigation)
+  const [fallbackProducts, setFallbackProducts] = React.useState<Product[]>([]);
+  const [fallbackLoading, setFallbackLoading] = React.useState(false);
 
   React.useEffect(() => {
-    const loadProducts = async () => {
-      setIsLoading(true);
-      try {
-        const params = new URLSearchParams({ status: "published" });
-        if (slug !== "shop-all") params.set("category", slug);
-        const data = await ProductService.fetchProductsFromApi(params.toString());
-        setProducts(data);
-      } catch (error) {
-        console.error("Failed to fetch products:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    if (!isFetched && !storeLoading) {
+      setFallbackLoading(true);
+      const urlParams = new URLSearchParams({ status: "published" });
+      if (slug !== "shop-all") urlParams.set("category", slug);
+      ProductService.fetchProductsFromApi(urlParams.toString())
+        .then((data) => setFallbackProducts(data))
+        .catch((error) => console.error("Failed to fetch products:", error))
+        .finally(() => setFallbackLoading(false));
+    }
+  }, [isFetched, storeLoading, slug]);
 
-    loadProducts();
-  }, [slug]);
+  // When using the store, filter by category in-memory
+  const products = isFetched
+    ? slug === "shop-all"
+      ? storeProducts
+      : storeProducts.filter((p) => p.category === slug)
+    : fallbackProducts;
+
+  const isLoading = storeLoading || fallbackLoading;
 
   const titleMap: Record<string, string> = {
     phones: "Nothing & CMF Phones",

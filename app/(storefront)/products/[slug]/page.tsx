@@ -5,6 +5,7 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Product, ProductVariant } from "@/types";
 import { useCartStore } from "@/store/useCartStore";
 import { useSpecsStore } from "@/store/useSpecsStore";
+import { useProductStore } from "@/store/useProductStore";
 import { Heading } from "@/components/ui/heading";
 import { Button } from "@/components/ui/button";
 import { Loader } from "@/components/ui/loader";
@@ -21,41 +22,65 @@ export default function ProductDetailPage() {
 
   const { addItem } = useCartStore();
   const { openSpecs } = useSpecsStore();
+  const { getProductBySlug, isLoading: storeLoading, isFetched } = useProductStore();
 
   const [product, setProduct] = React.useState<Product | null>(null);
   const [selectedVariant, setSelectedVariant] = React.useState<ProductVariant | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
 
+  // Derive product from store when it becomes available
   React.useEffect(() => {
-    const loadProduct = async () => {
-      if (!slug) return;
+    if (!slug) return;
 
-      try {
-        const res = await fetch(`/api/products/${slug}`);
-        if (res.ok) {
-          const item: Product = await res.json();
-          setProduct(item);
-
-          let initialVariant: ProductVariant | null = item?.variants?.[0] || null;
-          if (colorQuery && item?.variants?.length) {
-            const matched = item.variants.find(
-              (v) => v.color && v.color.trim().toLowerCase() === colorQuery.trim().toLowerCase()
-            );
-            if (matched) initialVariant = matched;
-          }
-          setSelectedVariant(initialVariant);
-        } else {
-          setProduct(null);
+    if (isFetched) {
+      // Store is populated — read from memory
+      const found = getProductBySlug(slug);
+      if (found) {
+        setProduct(found);
+        let initialVariant: ProductVariant | null = found.variants?.[0] || null;
+        if (colorQuery && found.variants?.length) {
+          const matched = found.variants.find(
+            (v) => v.color && v.color.trim().toLowerCase() === colorQuery.trim().toLowerCase()
+          );
+          if (matched) initialVariant = matched;
         }
-      } catch {
-        setProduct(null);
-      } finally {
+        setSelectedVariant(initialVariant);
         setIsLoading(false);
+      } else {
+        // Product not found in store — try direct API call as fallback
+        fetchDirect();
       }
-    };
+    } else if (!storeLoading) {
+      // Store not fetching yet — go direct (e.g. user opened this URL fresh)
+      fetchDirect();
+    }
+    // If storeLoading === true, we wait for it to finish (see next effect)
+  }, [slug, colorQuery, isFetched, storeLoading]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    loadProduct();
-  }, [slug, colorQuery]);
+  async function fetchDirect() {
+    setIsLoading(true);
+    try {
+      const res = await fetch(`/api/products/${slug}`);
+      if (res.ok) {
+        const item: Product = await res.json();
+        setProduct(item);
+        let initialVariant: ProductVariant | null = item?.variants?.[0] || null;
+        if (colorQuery && item?.variants?.length) {
+          const matched = item.variants.find(
+            (v) => v.color && v.color.trim().toLowerCase() === colorQuery.trim().toLowerCase()
+          );
+          if (matched) initialVariant = matched;
+        }
+        setSelectedVariant(initialVariant);
+      } else {
+        setProduct(null);
+      }
+    } catch {
+      setProduct(null);
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   const handleOpenSpecs = () => {
     if (product) {
@@ -74,7 +99,8 @@ export default function ProductDetailPage() {
     }
   }, [selectedVariant, product]);
 
-  if (isLoading) {
+  // While the global store is loading (layout triggered fetch), show loader
+  if (isLoading || (storeLoading && !product)) {
     return (
       <div className="min-h-screen bg-white text-slate-900 flex items-center justify-center py-24">
         <Loader />

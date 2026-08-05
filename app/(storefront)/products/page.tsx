@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useProductStore } from "@/store/useProductStore";
 import { ProductService } from "@/services/productService";
 import { Product } from "@/types";
 import { ProductCard } from "@/components/features/products/product-card";
@@ -10,21 +11,28 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { getVariantCardsForListing } from "@/lib/utils";
 
 export default function ProductsCatalogPage() {
-  const [products, setProducts] = React.useState<Product[]>([]);
-  const [isLoading, setIsLoading] = React.useState(true);
+  const { products: storeProducts, isLoading: storeLoading, isFetched } = useProductStore();
+
+  // Local state for fallback (if store hasn't fetched yet on direct page load)
+  const [fallbackProducts, setFallbackProducts] = React.useState<Product[]>([]);
+  const [fallbackLoading, setFallbackLoading] = React.useState(false);
+
   const [selectedCategory, setSelectedCategory] = React.useState<string>("all");
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isFilterOpen, setIsFilterOpen] = React.useState(false);
 
+  // Fallback: if layout hasn't fetched yet (e.g. direct navigation), fetch ourselves
   React.useEffect(() => {
-    const loadProducts = async () => {
-      const data = await ProductService.fetchProductsFromApi("status=published");
-      setProducts(data);
-      setIsLoading(false);
-    };
+    if (!isFetched && !storeLoading) {
+      setFallbackLoading(true);
+      ProductService.fetchProductsFromApi("status=published")
+        .then((data) => setFallbackProducts(data))
+        .finally(() => setFallbackLoading(false));
+    }
+  }, [isFetched, storeLoading]);
 
-    loadProducts();
-  }, []);
+  const products = isFetched ? storeProducts : fallbackProducts;
+  const isLoading = storeLoading || fallbackLoading;
 
   const filteredProducts = React.useMemo(() => {
     return products.filter((product) => {

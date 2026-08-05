@@ -3,8 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { useCartStore } from "@/store/useCartStore";
-import { ProductService } from "@/services/productService";
-import { Product } from "@/types";
+import { useProductStore } from "@/store/useProductStore";
 import { Loader } from "@/components/ui/loader";
 import { getVariantCardsForListing } from "@/lib/utils";
 
@@ -336,21 +335,10 @@ const verifiedReviews = [
 /* ───── COMPONENT ───── */
 export default function HomePage() {
   const { addItem } = useCartStore();
-  const [products, setProducts] = React.useState<Product[]>([]);
-  const [isLoading, setIsLoading] = React.useState<boolean>(true);
+  const { products, isLoading } = useProductStore();
   const [activeFaqCategory, setActiveFaqCategory] = React.useState("general");
   const [openFaqIndex, setOpenFaqIndex] = React.useState<number | null>(null);
   const reviewsRef = React.useRef<HTMLDivElement>(null);
-
-  React.useEffect(() => {
-    setIsLoading(true);
-    ProductService.fetchProductsFromApi("status=published")
-      .then((data) => {
-        setProducts(data);
-      })
-      .catch((err) => console.error(err))
-      .finally(() => setIsLoading(false));
-  }, []);
 
   const rawGems = products.filter((p) => p.isFeatured).length > 0 ? products.filter((p) => p.isFeatured) : products.slice(0, 6);
   const selectedGems = getVariantCardsForListing(rawGems);

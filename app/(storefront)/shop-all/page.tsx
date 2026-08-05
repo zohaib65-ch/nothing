@@ -2,30 +2,31 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { useProductStore } from "@/store/useProductStore";
 import { ProductService } from "@/services/productService";
 import { Product } from "@/types";
 import { Loader } from "@/components/ui/loader";
 import { getVariantCardsForListing } from "@/lib/utils";
 
 export default function ShopAllPage() {
-  const [products, setProducts] = React.useState<Product[]>([]);
-  const [isLoading, setIsLoading] = React.useState<boolean>(true);
+  const { products: storeProducts, isLoading: storeLoading, isFetched } = useProductStore();
+
+  // Fallback: direct fetch only when store hasn't loaded (direct navigation)
+  const [fallbackProducts, setFallbackProducts] = React.useState<Product[]>([]);
+  const [fallbackLoading, setFallbackLoading] = React.useState(false);
 
   React.useEffect(() => {
-    const loadProducts = async () => {
-      setIsLoading(true);
-      try {
-        const data = await ProductService.fetchProductsFromApi("status=published");
-        setProducts(data);
-      } catch (error) {
-        console.error("Failed to fetch products:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    if (!isFetched && !storeLoading) {
+      setFallbackLoading(true);
+      ProductService.fetchProductsFromApi("status=published")
+        .then((data) => setFallbackProducts(data))
+        .catch((error) => console.error("Failed to fetch products:", error))
+        .finally(() => setFallbackLoading(false));
+    }
+  }, [isFetched, storeLoading]);
 
-    loadProducts();
-  }, []);
+  const products = isFetched ? storeProducts : fallbackProducts;
+  const isLoading = storeLoading || fallbackLoading;
 
   const cardItems = React.useMemo(() => getVariantCardsForListing(products), [products]);
 

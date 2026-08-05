@@ -3,6 +3,7 @@
 import * as React from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
+import { useProductStore } from "@/store/useProductStore";
 import { ProductService } from "@/services/productService";
 import { Product, CategoryInfo } from "@/types";
 import { ProductGrid } from "@/components/features/products/product-grid";
@@ -13,28 +14,42 @@ export default function CategoryPage() {
   const params = useParams();
   const slug = params?.slug as string;
 
-  const [category, setCategory] = React.useState<CategoryInfo | null>(null);
-  const [products, setProducts] = React.useState<Product[]>([]);
-  const [isLoading, setIsLoading] = React.useState(true);
+  const {
+    products: storeProducts,
+    categories: storeCategories,
+    isLoading: storeLoading,
+    isFetched,
+  } = useProductStore();
+
+  // Fallback state for direct navigation
+  const [fallbackProducts, setFallbackProducts] = React.useState<Product[]>([]);
+  const [fallbackCategories, setFallbackCategories] = React.useState<CategoryInfo[]>([]);
+  const [fallbackLoading, setFallbackLoading] = React.useState(false);
 
   React.useEffect(() => {
-    const loadCategory = async () => {
-      if (!slug) return;
-
-      // Fetch categories + filtered products in parallel
-      const [categories, catProducts] = await Promise.all([
+    if (!slug) return;
+    if (!isFetched && !storeLoading) {
+      setFallbackLoading(true);
+      Promise.all([
         ProductService.fetchCategoriesFromApi(),
         ProductService.fetchProductsFromApi(`status=published&category=${slug}`),
-      ]);
+      ])
+        .then(([cats, prods]) => {
+          setFallbackCategories(cats);
+          setFallbackProducts(prods);
+        })
+        .finally(() => setFallbackLoading(false));
+    }
+  }, [slug, isFetched, storeLoading]);
 
-      const cat = categories.find((c) => c.slug === slug || c.id === slug) || null;
-      setCategory(cat);
-      setProducts(catProducts);
-      setIsLoading(false);
-    };
+  const isLoading = storeLoading || fallbackLoading;
 
-    loadCategory();
-  }, [slug]);
+  const products = isFetched
+    ? storeProducts.filter((p) => p.category === slug)
+    : fallbackProducts;
+
+  const categories = isFetched ? storeCategories : fallbackCategories;
+  const category = categories.find((c) => c.slug === slug || c.id === slug) || null;
 
   if (isLoading) {
     return (
