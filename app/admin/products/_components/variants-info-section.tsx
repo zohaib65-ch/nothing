@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Image from "next/image";
-import { Layers, Plus, Trash2, Upload, FileText } from "lucide-react";
+import { Layers, Plus, Trash2, Upload, FileText, Copy } from "lucide-react";
 import { useFormContext, useFieldArray } from "react-hook-form";
 import { ProductFormValues } from "@/lib/validations/product.schema";
 import { Input } from "@/components/ui/input";
@@ -33,6 +33,17 @@ export function VariantsInfoSection() {
 
   const [uploadingVariantIndex, setUploadingVariantIndex] = React.useState<number | null>(null);
   const [editingSpecsIndex, setEditingSpecsIndex] = React.useState<number | null>(null);
+
+  const handleCopySpecsFromAbove = (index: number) => {
+    if (index === 0) return;
+    const aboveSpecs = watch(`variants.${index - 1}.specifications` as const);
+    if (!aboveSpecs || !Array.isArray(aboveSpecs) || aboveSpecs.length === 0) {
+      toast.error(`Variant #${index} has no specifications to copy.`);
+      return;
+    }
+    setValue(`variants.${index}.specifications` as const, aboveSpecs, { shouldDirty: true });
+    toast.success(`Specifications copied from Variant #${index} to Variant #${index + 1}`);
+  };
 
   const {
     fields: variantFields,
@@ -468,19 +479,34 @@ export function VariantsInfoSection() {
                         </div>
                       </div>
 
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setEditingSpecsIndex(index)}
-                        className={`h-8 px-3.5 text-[11px] font-mono font-bold uppercase tracking-wider transition-all whitespace-nowrap ${
-                          hasCustomSpecs
-                            ? "bg-emerald-50 border-emerald-300 text-emerald-700 hover:bg-emerald-100"
-                            : "border-neutral-300 hover:bg-neutral-900 hover:text-white"
-                        }`}
-                      >
-                        {hasCustomSpecs ? "EDIT SPECS" : "+ CONFIGURE SPECS"}
-                      </Button>
+                      <div className="flex items-center gap-2">
+                        {index > 0 && (
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleCopySpecsFromAbove(index)}
+                            leftIcon={<Copy className="h-3.5 w-3.5" />}
+                            className="h-8 px-3 text-[11px] font-mono font-bold uppercase tracking-wider border-neutral-300 text-neutral-500 hover:text-blue-600 hover:bg-blue-50 whitespace-nowrap"
+                            title={`Copy specs from Variant #${index}`}
+                          >
+                            COPY SPECS
+                          </Button>
+                        )}
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setEditingSpecsIndex(index)}
+                          className={`h-8 px-3.5 text-[11px] font-mono font-bold uppercase tracking-wider transition-all whitespace-nowrap ${
+                            hasCustomSpecs
+                              ? "bg-emerald-50 border-emerald-300 text-emerald-700 hover:bg-emerald-100"
+                              : "border-neutral-300 hover:bg-neutral-900 hover:text-white"
+                          }`}
+                        >
+                          {hasCustomSpecs ? "EDIT SPECS" : "+ CONFIGURE SPECS"}
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
