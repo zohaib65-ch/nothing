@@ -34,7 +34,7 @@ function getIconPath(category: string): string {
 
 function SpecsAccordionRow({ group, isOpen, onToggle }: { group: SpecificationGroup; isOpen: boolean; onToggle: () => void }) {
   return (
-    <div className="bg-[#EDEBED] rounded-xl overflow-hidden shrink-0">
+    <div className="bg-white rounded-xl overflow-hidden shrink-0">
       <button
         type="button"
         onClick={onToggle}
@@ -117,7 +117,7 @@ export function SpecsDropdownOverlay() {
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex flex-col items-center px-3 pt-4 md:px-6 md:pt-5 select-none bg-black/40 backdrop-blur-md animate-in fade-in duration-200"
+      className="fixed inset-0 z-[100] flex flex-col items-center px-3 pt-4 md:px-6 md:pt-5 select-none backdrop-blur-lg animate-in fade-in duration-200"
       onClick={(e) => {
         if (e.target === e.currentTarget) closeSpecs();
       }}
