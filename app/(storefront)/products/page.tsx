@@ -50,7 +50,7 @@ export default function ProductsCatalogPage() {
         </div>
         {isFilterOpen && (
           <div className="max-w-xl mx-auto floating-pill rounded-2xl p-4 flex flex-wrap items-center justify-center gap-2 animate-in fade-in duration-200">
-            {["all", "phones", "audio", "cmf", "accessories"].map((cat) => (
+            {["all", "phones", "audio", "apparel", "accessories"].map((cat) => (
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}

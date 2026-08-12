@@ -11,7 +11,7 @@ const footerNavLinks = [
   { label: "Audio", href: "/collections/audio" },
   { label: "Watches", href: "/collections/watches" },
   { label: "Accessories", href: "/collections/accessories" },
-  { label: "CMF", href: "/collections/cmf" },
+  { label: "Apparel", href: "/collections/apparel" },
 ];
 
 export function Footer() {

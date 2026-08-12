@@ -45,6 +45,7 @@ export default function CollectionSlugPage() {
     audio: "Audio & Wireless Earbuds",
     protectors: "Screen & Glass Protectors",
     "shop-all": "Shop All Catalog",
+    apparel: "Nothing Apparel",
   };
 
   const currentTitle = titleMap[slug] || `Collection: ${slug.toUpperCase()}`;

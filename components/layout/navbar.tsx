@@ -22,7 +22,7 @@ export function Navbar() {
     { name: "AUDIO", href: "/collections/audio" },
     { name: "WATCHES", href: "/collections/watches" },
     { name: "ACCESSORIES", href: "/collections/accessories" },
-    { name: "CMF", href: "/collections/cmf" },
+    { name: "APPAREL", href: "/collections/apparel" },
   ];
 
   return (

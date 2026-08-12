@@ -1,4 +1,4 @@
-export type ProductCategory = "phones" | "audio" | "cmf" | "accessories" | string;
+export type ProductCategory = "phones" | "audio" | "apparel" | "accessories" | string;
 
 export interface ProductVariant {
   id: string;
