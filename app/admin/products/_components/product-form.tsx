@@ -126,7 +126,12 @@ export function ProductForm({ initialProduct, isEditMode = false, onSave, isSubm
       };
     });
 
-    const primaryRawImage = data.images?.[0] || updatedVariants[0]?.image || "";
+    let primaryRawImage = "";
+    if (updatedVariants.length > 0) {
+      primaryRawImage = updatedVariants.find((v) => v.image)?.image || updatedVariants[0]?.image || "";
+    } else {
+      primaryRawImage = data.images?.[0] || "";
+    }
     const validImage = getValidImageUrl(primaryRawImage);
 
     if (updatedVariants.length === 0) {
