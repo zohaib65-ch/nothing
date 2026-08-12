@@ -131,12 +131,12 @@ export function SpecsDropdownOverlay() {
           </button>
 
           <Link
-            className="header-brand-logo inline-flex h-full items-center justify-center px-1 text-[16px] font-normal leading-[19px] uppercase tracking-normal text-black mt-[2px]"
+            className="header-brand-logo inline-flex h-full items-center justify-center px-1 text-[18px] font-normal leading-[19px] uppercase tracking-normal text-black mt-[2px]"
             style={{ fontFamily: "var(--font-ndot55-caps), sans-serif" }}
             href="/"
             onClick={closeSpecs}
           >
-            NOTHING (R)
+            Specs
           </Link>
           <button
             type="button"

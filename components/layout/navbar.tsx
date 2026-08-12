@@ -18,7 +18,6 @@ export function Navbar() {
     { name: "SHOP ALL", href: "/collections/shop-all" },
     { name: "PHONES", href: "/collections/phones" },
     { name: "CHARGERS", href: "/collections/chargers" },
-    { name: "OFFERS", href: "/collections/offers" },
     { name: "AUDIO", href: "/collections/audio" },
     { name: "WATCHES", href: "/collections/watches" },
     { name: "ACCESSORIES", href: "/collections/accessories" },
