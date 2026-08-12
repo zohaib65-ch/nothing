@@ -87,6 +87,7 @@ export interface Product {
   isFeatured: boolean;
   isNewArrival: boolean;
   inStock?: boolean;
+  isComingSoon?: boolean;
   sortOrder: number;
   warranty?: string;
   status: "draft" | "published";

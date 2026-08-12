@@ -129,7 +129,11 @@ export function getVariantCardsForListing(products: Product[]): ListingCardItem[
 
           let regPrice = v.price || p.price || displayP;
           let salePrice = v.salePrice || p.salePrice;
-          let isComingSoon = !!v.isComingSoon;
+          let isComingSoon = Boolean(
+            p.isComingSoon ||
+            v.isComingSoon ||
+            (v.storagePrices && Object.values(v.storagePrices).some((sp: any) => sp?.isComingSoon))
+          );
 
           if (v.storagePrices && Object.keys(v.storagePrices).length > 0) {
             const spEntries = Object.values(v.storagePrices) as any[];
@@ -138,9 +142,6 @@ export function getVariantCardsForListing(products: Product[]): ListingCardItem[
               if (firstSp.price) regPrice = firstSp.price;
               if (firstSp.salePrice) salePrice = firstSp.salePrice;
               if (!firstSp.price && firstSp.salePrice) regPrice = firstSp.salePrice;
-            }
-            if (spEntries.every((sp) => sp.isComingSoon)) {
-              isComingSoon = true;
             }
           }
 
@@ -169,7 +170,17 @@ export function getVariantCardsForListing(products: Product[]): ListingCardItem[
 
     let regPrice = p.price || displayP;
     let salePrice = p.salePrice;
-    let isComingSoon = p.variants?.length > 0 && p.variants.every((v) => v.isComingSoon);
+    let isComingSoon = Boolean(
+      p.isComingSoon ||
+      (p.variants && p.variants.length > 0 && p.variants.some((v) => {
+        if (v.isComingSoon) return true;
+        if (v.storagePrices && Object.keys(v.storagePrices).length > 0) {
+          const spEntries = Object.values(v.storagePrices) as any[];
+          return spEntries.some((sp: any) => sp?.isComingSoon);
+        }
+        return false;
+      }))
+    );
 
     if (p.variants?.[0]?.storagePrices && Object.keys(p.variants[0].storagePrices).length > 0) {
       const spEntries = Object.values(p.variants[0].storagePrices) as any[];

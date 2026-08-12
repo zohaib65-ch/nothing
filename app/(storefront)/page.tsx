@@ -441,6 +441,8 @@ export default function HomePage() {
                         <div className="mt-1">
                           {isOutOfStock ? (
                             <p className="text-[11px] text-red-600 font-mono font-bold uppercase tracking-wider">OUT OF STOCK</p>
+                          ) : p.isComingSoon ? (
+                            <p className="text-[11px] text-[#D71921] font-mono font-bold uppercase tracking-wider">COMING SOON</p>
                           ) : (
                             <>
                               <p className="text-[11px] text-black/62 font-[system-ui] font-normal"> Rs {p.price.toLocaleString()} </p>
@@ -500,6 +502,8 @@ export default function HomePage() {
                         <div className="mt-1">
                           {isOutOfStock ? (
                             <p className="text-[11px] text-red-600 font-mono font-bold uppercase tracking-wider">OUT OF STOCK</p>
+                          ) : p.isComingSoon ? (
+                            <p className="text-[11px] text-[#D71921] font-mono font-bold uppercase tracking-wider">COMING SOON</p>
                           ) : (
                             <>
                               <p className="text-[11px] text-black/62 font-[system-ui] font-normal"> Rs {p.price.toLocaleString()} </p>

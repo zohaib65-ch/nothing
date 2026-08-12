@@ -152,6 +152,7 @@ export function ProductBuyCard({ product, selectedVariant, onSelectVariant, onAd
   };
 
   const isCurrentCapacityComingSoon = React.useMemo(() => {
+    if (product?.isComingSoon) return true;
     if (!selectedVariant) return false;
     if (selectedVariant.storagePrices && currentCapacity) {
       const trimmedCap = currentCapacity.trim();
@@ -161,7 +162,7 @@ export function ProductBuyCard({ product, selectedVariant, onSelectVariant, onAd
       }
     }
     return !!selectedVariant.isComingSoon;
-  }, [selectedVariant, currentCapacity]);
+  }, [product, selectedVariant, currentCapacity]);
 
   const activePrices = getEffectiveVariantPrices(selectedVariant, currentCapacity);
   const activeDisplayPrice =
