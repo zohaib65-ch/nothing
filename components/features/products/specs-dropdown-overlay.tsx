@@ -88,13 +88,16 @@ export function SpecsDropdownOverlay() {
     if (isOpen) {
       document.documentElement.style.overflow = "hidden";
       document.body.style.overflow = "hidden";
+      document.body.classList.add("specs-open");
     } else {
       document.documentElement.style.overflow = "";
       document.body.style.overflow = "";
+      document.body.classList.remove("specs-open");
     }
     return () => {
       document.documentElement.style.overflow = "";
       document.body.style.overflow = "";
+      document.body.classList.remove("specs-open");
     };
   }, [isOpen]);
 
@@ -132,7 +135,7 @@ export function SpecsDropdownOverlay() {
 
           <Link
             className="header-brand-logo inline-flex h-full items-center justify-center px-1 text-[18px] font-normal leading-[19px] uppercase tracking-normal text-black mt-[2px]"
-            style={{ fontFamily: "var(--font-ndot55-caps), sans-serif" }}
+            style={{ fontFamily: "var(--font-ndot-regular)" }}
             href="/"
             onClick={closeSpecs}
           >

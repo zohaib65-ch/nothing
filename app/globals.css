@@ -32,6 +32,15 @@
     font-display: swap;
   }
 
+  /* Ndot-Regular */
+  @font-face {
+    font-family: 'Ndot-Regular';
+    src: url('/fonts/ndot-5.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
   /* ntype82 — body/sans text */
   @font-face {
     font-family: 'ntype82';
@@ -97,6 +106,7 @@
 }
 
 @theme {
+  --font-ndot-regular: 'Ndot-Regular', 'ndot55', sans-serif;
   --font-ndot55: 'ndot55', 'Arial', sans-serif;
   --font-ndot55-caps: 'ndot55Caps', 'Arial', sans-serif;
   --font-ndot57: 'ndot57', 'Arial', sans-serif;
@@ -194,6 +204,15 @@ body {
   background-size: 114px 114px;
   mix-blend-mode: difference;
   opacity: 0.76;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+body.menu-open .site-dot-overlay,
+body.specs-open .site-dot-overlay,
+body:has([data-navbar-menu]) .site-dot-overlay {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }
 
 @media (max-width: 767px) {
