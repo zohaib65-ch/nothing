@@ -53,7 +53,7 @@ export function OrderDetailsModal({ isOpen, onClose, order, onUpdateDiscount }: 
       setAppliedDiscount(val);
       setIsEditingDiscount(false);
       toast.success(val > 0 ? `Discount of Rs ${val} saved to database!` : "Discount reset & total updated in DB!");
-    } catch (err) {
+    } catch {
       toast.error("Failed to save discount.");
     } finally {
       setIsSaving(false);
@@ -78,7 +78,7 @@ export function OrderDetailsModal({ isOpen, onClose, order, onUpdateDiscount }: 
       }
       setAppliedDiscount(0);
       toast.success("Discount cleared from database!");
-    } catch (err) {
+    } catch {
       toast.error("Failed to clear discount.");
     } finally {
       setIsSaving(false);
@@ -180,7 +180,11 @@ export function OrderDetailsModal({ isOpen, onClose, order, onUpdateDiscount }: 
             {/* Delivery / Pickup Address Card */}
             <div className="bg-slate-50 border border-slate-100 p-4 rounded-2xl space-y-2">
               <div className="flex items-center space-x-2 text-slate-400">
-                {order.fulfillmentMethod === "pickup" ? <Store className="h-4 w-4 text-emerald-600" /> : <MapPin className="h-4 w-4 text-slate-600" />}
+                {order.fulfillmentMethod === "pickup" ? (
+                  <Store className="h-4 w-4 text-emerald-600" />
+                ) : (
+                  <MapPin className="h-4 w-4 text-slate-600" />
+                )}
                 <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500 font-sans">
                   {order.fulfillmentMethod === "pickup" ? "Office Pickup" : "Shipping Address"}
                 </span>
@@ -188,7 +192,9 @@ export function OrderDetailsModal({ isOpen, onClose, order, onUpdateDiscount }: 
               {order.fulfillmentMethod === "pickup" ? (
                 <div className="space-y-1">
                   <p className="text-xs font-bold text-emerald-700">Official Experience Office Pickup</p>
-                  <p className="text-[11px] text-slate-600 leading-relaxed">Nothing Official Office, Al Qadir Heights, Babar Block, Garden Town, Lahore</p>
+                  <p className="text-[11px] text-slate-600 leading-relaxed">
+                    Nothing Official Office, Al Qadir Heights, Babar Block, Garden Town, Lahore
+                  </p>
                 </div>
               ) : (
                 <p className="text-xs font-semibold text-slate-800 leading-relaxed">

@@ -135,7 +135,7 @@ export default function CheckoutPage() {
         toast.success("IBAN copied!");
         setTimeout(() => setCopiedIban(false), 2000);
       }
-    } catch (err) {
+    } catch {
       toast.error("Failed to copy to clipboard.");
     }
   };
@@ -235,7 +235,7 @@ export default function CheckoutPage() {
         const errorData = await response.json();
         toast.error(errorData.error || "Failed to place order. Please try again.");
       }
-    } catch (err) {
+    } catch {
       toast.error("Something went wrong. Please check your internet connection.");
     } finally {
       setIsSubmitPending(false);
@@ -348,11 +348,7 @@ export default function CheckoutPage() {
                 <div className="flex justify-between">
                   <span className="text-slate-500">Fulfillment</span>
                   <span className="font-bold text-slate-800">
-                    {fulfillmentMethod === "pickup" ? (
-                      <span className="text-emerald-600 font-bold">Store Pickup (Free)</span>
-                    ) : (
-                      "Door Delivery"
-                    )}
+                    {fulfillmentMethod === "pickup" ? <span className="text-emerald-600 font-bold">Store Pickup (Free)</span> : "Door Delivery"}
                   </span>
                 </div>
                 <div className="flex justify-between">

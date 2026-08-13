@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Image from "next/image";
-import { Sparkles, Camera, Zap, ShoppingBag } from "lucide-react";
+import { ShoppingBag } from "lucide-react";
 import { Product, ProductVariant } from "@/types";
 import { formatPrice, getValidImageUrl } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,7 @@ interface ProductBuyCardProps {
   className?: string;
 }
 
-export function ProductBuyCard({ product, selectedVariant, onSelectVariant, onAddToCart, className = "" }: ProductBuyCardProps) {
+export function ProductBuyCard({ product, selectedVariant, onSelectVariant, className = "" }: ProductBuyCardProps) {
   const [isScrolled, setIsScrolled] = React.useState(false);
 
   React.useEffect(() => {
@@ -277,8 +277,13 @@ export function ProductBuyCard({ product, selectedVariant, onSelectVariant, onAd
           </SelectTrigger>
           <SelectContent>
             {displayCapacities.map((cap) => {
-              const exactKey = selectedVariant?.storagePrices ? Object.keys(selectedVariant.storagePrices).find((k) => k.trim().toLowerCase() === cap.trim().toLowerCase()) : undefined;
-              const isCapComingSoon = exactKey && selectedVariant?.storagePrices ? !!selectedVariant.storagePrices[exactKey]?.isComingSoon : !!selectedVariant?.isComingSoon;
+              const exactKey = selectedVariant?.storagePrices
+                ? Object.keys(selectedVariant.storagePrices).find((k) => k.trim().toLowerCase() === cap.trim().toLowerCase())
+                : undefined;
+              const isCapComingSoon =
+                exactKey && selectedVariant?.storagePrices
+                  ? !!selectedVariant.storagePrices[exactKey]?.isComingSoon
+                  : !!selectedVariant?.isComingSoon;
               return (
                 <SelectItem key={cap} value={cap} className="text-xs uppercase flex items-center justify-between">
                   <span>{cap}</span>

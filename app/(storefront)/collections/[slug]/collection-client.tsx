@@ -3,7 +3,6 @@
 import * as React from "react";
 import Link from "next/link";
 import { Product } from "@/types";
-import { Loader } from "@/components/ui/loader";
 import { getVariantCardsForListing } from "@/lib/utils";
 
 interface CollectionClientProps {

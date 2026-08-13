@@ -13,7 +13,10 @@ export async function POST(request: Request) {
     if (nameParts.length === 1) {
       initials = nameParts[0].substring(0, 3).toUpperCase();
     } else {
-      initials = nameParts.map((n: string) => n[0]).join("").toUpperCase();
+      initials = nameParts
+        .map((n: string) => n[0])
+        .join("")
+        .toUpperCase();
       if (initials.length > 4) {
         initials = initials.substring(0, 4);
       }
@@ -26,17 +29,14 @@ export async function POST(request: Request) {
     const order = await OrderModel.create(body);
     return NextResponse.json(order, { status: 201 });
   } catch (error: any) {
-    return NextResponse.json(
-      { error: error.message || "Failed to place order" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: error.message || "Failed to place order" }, { status: 500 });
   }
 }
 
 // .lean() skips Mongoose toJSON transforms, so we replicate _id → id here
 function normalizeLeanDoc(doc: any) {
   if (!doc) return doc;
-  const { _id, __v, ...rest } = doc;
+  const { _id, ...rest } = doc;
   return { id: _id?.toString?.() ?? _id, ...rest };
 }
 
@@ -46,9 +46,6 @@ export async function GET() {
     const docs = await OrderModel.find().sort({ createdAt: -1 }).lean();
     return NextResponse.json(docs.map(normalizeLeanDoc));
   } catch (error: any) {
-    return NextResponse.json(
-      { error: error.message || "Failed to fetch orders" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: error.message || "Failed to fetch orders" }, { status: 500 });
   }
 }

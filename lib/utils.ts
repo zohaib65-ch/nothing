@@ -129,7 +129,7 @@ export function getVariantCardsForListing(products: Product[]): ListingCardItem[
 
           let regPrice = v.price || p.price || displayP;
           let salePrice = v.salePrice || p.salePrice;
-          let isComingSoon = Boolean(
+          const isComingSoon = Boolean(
             p.isComingSoon ||
             v.isComingSoon ||
             (v.storagePrices && Object.values(v.storagePrices).some((sp: any) => sp?.isComingSoon))
@@ -170,7 +170,7 @@ export function getVariantCardsForListing(products: Product[]): ListingCardItem[
 
     let regPrice = p.price || displayP;
     let salePrice = p.salePrice;
-    let isComingSoon = Boolean(
+    const isComingSoon = Boolean(
       p.isComingSoon ||
       (p.variants && p.variants.length > 0 && p.variants.some((v) => {
         if (v.isComingSoon) return true;

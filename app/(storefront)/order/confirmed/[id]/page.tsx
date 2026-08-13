@@ -9,7 +9,8 @@ import { Container } from "@/components/ui/container";
 import { Heading } from "@/components/ui/heading";
 import { Button } from "@/components/ui/button";
 import { WHATSAPP_NUMBER } from "@/lib/config";
-import { CheckCircle2, MessageSquare, ShoppingBag, ShieldCheck, FileText, ArrowRight, Info, Copy, Check } from "lucide-react";
+import { CheckCircle2, MessageSquare, ShoppingBag, ShieldCheck, ArrowRight, Info, Copy, Check } from "lucide-react";
+import { toast } from "sonner";
 
 export default function OrderConfirmedPage() {
   const params = useParams();
@@ -30,7 +31,7 @@ export default function OrderConfirmedPage() {
           setOrder(data);
         }
       } catch (err) {
-        console.error("Failed to fetch order details", err);
+        toast.error("Failed to load order details.");
       } finally {
         setIsLoading(false);
       }
@@ -47,7 +48,7 @@ export default function OrderConfirmedPage() {
       setCopiedOrderId(true);
       setTimeout(() => setCopiedOrderId(false), 2000);
     } catch (err) {
-      console.error(err);
+      toast.error("Failed to copy Order ID.");
     }
   };
 

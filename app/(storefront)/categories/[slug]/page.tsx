@@ -74,8 +74,7 @@ export async function generateStaticParams() {
     return categories.map((cat: any) => ({
       slug: cat.slug,
     }));
-  } catch (error) {
-    console.error("Failed to generate static params for categories:", error);
+  } catch {
     return [];
   }
 }

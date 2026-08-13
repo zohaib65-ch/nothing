@@ -6,6 +6,7 @@ import { ProductService } from "@/services/productService";
 import { Product, CategoryInfo } from "@/types";
 import { Package, FolderTree, Plus, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 export default function AdminDashboardPage() {
   const [products, setProducts] = React.useState<Product[]>([]);
@@ -21,7 +22,7 @@ export default function AdminDashboardPage() {
         setProducts(productsData);
         setCategories(categoriesData);
       } catch (err) {
-        console.error("Failed to load dashboard data:", err);
+        toast.error("Failed to load dashboard data. Please reload.");
       }
     };
     loadData();

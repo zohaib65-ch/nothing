@@ -5,7 +5,7 @@ import { CategoryModel } from "@/models/Category";
 // .lean() skips Mongoose toJSON transforms, so we replicate _id → id here
 function normalizeLeanDoc(doc: any) {
   if (!doc) return doc;
-  const { _id, __v, ...rest } = doc;
+  const { _id, ...rest } = doc;
   return { id: _id?.toString?.() ?? _id, ...rest };
 }
 
@@ -31,7 +31,7 @@ export async function POST(request: Request) {
     const category = await CategoryModel.findOneAndUpdate(
       { slug: categorySlug },
       { ...body, slug: categorySlug },
-      { new: true, upsert: true, runValidators: false }
+      { new: true, upsert: true, runValidators: false },
     );
 
     return NextResponse.json(category, { status: 200 });

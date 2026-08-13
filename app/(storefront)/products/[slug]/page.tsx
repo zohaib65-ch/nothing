@@ -16,7 +16,7 @@ async function getProduct(slug: string) {
   await connectToDatabase();
   const doc = await ProductModel.findOne({ slug, status: "published" }).lean();
   if (!doc) return null;
-  const { _id, __v, ...rest } = doc;
+  const { _id, ...rest } = doc;
   return { id: _id?.toString?.() ?? _id, ...rest } as any;
 }
 
@@ -70,8 +70,7 @@ export async function generateStaticParams() {
     return products.map((prod: any) => ({
       slug: prod.slug,
     }));
-  } catch (error) {
-    console.error("Failed to generate static params for products:", error);
+  } catch {
     return [];
   }
 }

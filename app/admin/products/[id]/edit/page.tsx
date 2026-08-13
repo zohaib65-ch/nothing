@@ -28,9 +28,18 @@ export default function EditProductPage() {
           const heroLeftSections = Array.from({ length: 3 }, (_, idx) => prod.heroLeftSections?.[idx] || { title: "", description: "", image: "" });
           const heroRightSections = Array.from({ length: 3 }, (_, idx) => prod.heroRightSections?.[idx] || { title: "", description: "", image: "" });
           const bentoSections = Array.from({ length: 7 }, (_, idx) => prod.bentoSections?.[idx] || { title: "", description: "", image: "" });
-          const threeColumnSections = Array.from({ length: 3 }, (_, idx) => prod.threeColumnSections?.[idx] || { title: "", description: "", image: "" });
-          const fourColumnSections = Array.from({ length: 4 }, (_, idx) => prod.fourColumnSections?.[idx] || { title: "", description: "", image: "" });
-          const fiveColumnSections = Array.from({ length: 5 }, (_, idx) => prod.fiveColumnSections?.[idx] || { title: "", description: "", image: "" });
+          const threeColumnSections = Array.from(
+            { length: 3 },
+            (_, idx) => prod.threeColumnSections?.[idx] || { title: "", description: "", image: "" },
+          );
+          const fourColumnSections = Array.from(
+            { length: 4 },
+            (_, idx) => prod.fourColumnSections?.[idx] || { title: "", description: "", image: "" },
+          );
+          const fiveColumnSections = Array.from(
+            { length: 5 },
+            (_, idx) => prod.fiveColumnSections?.[idx] || { title: "", description: "", image: "" },
+          );
 
           setProduct({
             ...prod,
@@ -45,7 +54,7 @@ export default function EditProductPage() {
           toast.error("Product not found");
           router.push("/admin/products");
         }
-      } catch (err) {
+      } catch {
         toast.error("Failed to load product");
       } finally {
         setIsLoading(false);

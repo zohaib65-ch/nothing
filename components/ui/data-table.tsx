@@ -1,23 +1,9 @@
 "use client";
 
 import * as React from "react";
-import {
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  getPaginationRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
+import { ColumnDef, flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { TablePagination } from "./table-pagination";
 
 interface DataTableProps<TData, TValue> {
@@ -27,12 +13,7 @@ interface DataTableProps<TData, TValue> {
   showPagination?: boolean;
 }
 
-export function DataTable<TData, TValue>({
-  columns,
-  data,
-  pageSize = 10,
-  showPagination = false,
-}: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({ columns, data, pageSize = 10, showPagination = false }: DataTableProps<TData, TValue>) {
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
     pageSize,
@@ -58,16 +39,8 @@ export function DataTable<TData, TValue>({
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className="hover:bg-transparent">
                 {headerGroup.headers.map((header) => (
-                  <TableHead
-                    key={header.id}
-                    className="font-mono text-[10px] h-11 py-3 px-4 text-neutral-500 uppercase tracking-wider"
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                  <TableHead key={header.id} className="font-mono text-[10px] h-11 py-3 px-4 text-neutral-500 uppercase tracking-wider">
+                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                   </TableHead>
                 ))}
               </TableRow>
@@ -76,26 +49,17 @@ export function DataTable<TData, TValue>({
           <TableBody className="divide-y divide-neutral-100 font-mono text-xs text-neutral-800">
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  className="hover:bg-neutral-50/50 transition-colors border-b border-neutral-100"
-                >
+                <TableRow key={row.id} className="hover:bg-neutral-50/50 transition-colors border-b border-neutral-100">
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className="py-3 px-4">
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center text-neutral-500 font-mono text-xs"
-                >
+                <TableCell colSpan={columns.length} className="h-24 text-center text-neutral-500 font-mono text-xs">
                   NO RESULTS FOUND.
                 </TableCell>
               </TableRow>
@@ -104,9 +68,7 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
 
-      {showPagination && (
-        <TablePagination table={table} totalItems={data.length} />
-      )}
+      {showPagination && <TablePagination table={table} totalItems={data.length} />}
     </div>
   );
 }

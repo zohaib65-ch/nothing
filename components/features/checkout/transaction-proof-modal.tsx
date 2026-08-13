@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Upload, HelpCircle, ArrowRight, FileText, CheckCircle2, Image as ImageIcon, Trash2, ShieldAlert } from "lucide-react";
+import { Upload, FileText, CheckCircle2, Image as ImageIcon, Trash2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -41,7 +41,7 @@ export function TransactionProofModal({ isOpen, onClose, orderId, onComplete }: 
         toast.error("Failed to process receipt image. Please try again.");
         setFileName("");
       }
-    } catch (err) {
+    } catch {
       toast.error("Something went wrong while uploading receipt.");
       setFileName("");
     } finally {
@@ -106,7 +106,7 @@ export function TransactionProofModal({ isOpen, onClose, orderId, onComplete }: 
         const errData = await res.json().catch(() => ({}));
         toast.error(errData.error || "Failed to update order with receipt image.");
       }
-    } catch (error) {
+    } catch {
       toast.error("Failed to submit transaction proof. Please check your internet connection.");
     } finally {
       setIsSubmitting(false);
@@ -133,7 +133,8 @@ export function TransactionProofModal({ isOpen, onClose, orderId, onComplete }: 
             <div>
               <p className="font-bold text-emerald-900 text-xs uppercase tracking-wider"> Order Successfully Confirmed! </p>
               <p className="text-[11px] text-emerald-800 leading-relaxed mt-1">
-                Your order has been safely registered in our system.Uploading the transfer receipt is only required to verify the payment so we can dispatch your package today.
+                Your order has been safely registered in our system.Uploading the transfer receipt is only required to verify the payment so we can
+                dispatch your package today.
               </p>
             </div>
           </div>
@@ -176,7 +177,11 @@ export function TransactionProofModal({ isOpen, onClose, orderId, onComplete }: 
                 onDragLeave={handleDrag}
                 onDrop={handleDrop}
                 className={`border-2 border-dashed rounded-[20px] transition-all duration-200 flex flex-col items-center justify-center p-8 min-h-[160px] cursor-pointer ${
-                  dragActive ? "border-black bg-slate-50/80" : isUploading ? "border-neutral-300 bg-slate-50/20 cursor-wait" : "border-slate-200 hover:border-slate-300 bg-slate-50/40"
+                  dragActive
+                    ? "border-black bg-slate-50/80"
+                    : isUploading
+                      ? "border-neutral-300 bg-slate-50/20 cursor-wait"
+                      : "border-slate-200 hover:border-slate-300 bg-slate-50/40"
                 }`}
                 onClick={() => {
                   if (!isUploading) document.getElementById("file-upload-popup")?.click();

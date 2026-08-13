@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { Product, CategoryInfo } from "@/types";
 import { ProductService } from "@/services/productService";
+import { toast } from "sonner";
 
 interface ProductStoreState {
   products: Product[];
@@ -32,7 +33,7 @@ export const useProductStore = create<ProductStoreState>((set, get) => ({
       ]);
       set({ products, categories, isFetched: true });
     } catch (err) {
-      console.error("[useProductStore] Failed to fetch products:", err);
+      toast.error("Failed to fetch products. Please try again.");
     } finally {
       set({ isLoading: false });
     }

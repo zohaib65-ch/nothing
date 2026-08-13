@@ -23,7 +23,6 @@ export async function POST(request: Request) {
       type: file.type,
     });
   } catch (error: any) {
-    console.error("Cloudinary upload error:", error);
     return NextResponse.json({ error: error.message || "Failed to upload image to Cloudinary" }, { status: 500 });
   }
 }

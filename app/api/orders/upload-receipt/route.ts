@@ -23,7 +23,6 @@ export async function POST(request: Request) {
       type: file.type,
     });
   } catch (error: any) {
-    console.error("Receipt upload error:", error);
     return NextResponse.json({ error: error.message || "Failed to upload receipt image" }, { status: 500 });
   }
 }

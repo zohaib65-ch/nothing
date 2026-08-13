@@ -1,6 +1,5 @@
 import * as React from "react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { WHATSAPP_NUMBER } from "@/lib/config";
 
 export const metadata: Metadata = {
@@ -17,16 +16,6 @@ export const metadata: Metadata = {
     url: "https://www.nothingcmf.pk/pages/terms-of-sale",
   },
 };
-
-const policies = [
-  { label: "Privacy Policy", href: "/pages/privacy-policy" },
-  { label: "Terms of Sale", href: "/pages/terms-of-sale", active: true },
-  { label: "Shipping and Delivery Policy", href: "/pages/shipping-and-delivery-policy" },
-  { label: "Return and Refund Policy", href: "/pages/return-and-refund-policy" },
-  { label: "Warranty Policy", href: "/pages/warranty-policy" },
-  { label: "Acceptable Use Policy", href: "/pages/acceptable-use-policy" },
-  { label: "User Agreement", href: "/pages/user-agreement" },
-];
 
 export default function TermsOfSalePage() {
   return (

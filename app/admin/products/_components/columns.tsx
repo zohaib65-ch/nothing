@@ -6,7 +6,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Product } from "@/types";
 import { formatPrice, getValidImageUrl, getProductDisplayPrice } from "@/lib/utils";
 import { Switch } from "@/components/ui/switch";
-import { Star, Edit2, Trash2 } from "lucide-react";
+import { Edit2, Trash2 } from "lucide-react";
 
 export const getColumns = (
   handleToggleFeatured: (prod: Product) => void,

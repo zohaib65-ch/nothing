@@ -3,7 +3,7 @@
 import * as React from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Upload, Check, Copy, Trash2, Image as ImageIcon } from "lucide-react";
+import { Upload, Check, Copy, Image as ImageIcon } from "lucide-react";
 
 interface MediaItem {
   filename: string;
@@ -81,12 +81,8 @@ export default function AdminMediaPage() {
       {/* Header Controls */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-200 pb-6">
         <div>
-          <h2 className="font-mono text-lg font-bold uppercase tracking-wider text-neutral-900">
-            MEDIA LIBRARY
-          </h2>
-          <p className="text-xs text-neutral-500 font-sans">
-            Upload and manage product photos, specs diagrams, and media assets.
-          </p>
+          <h2 className="font-mono text-lg font-bold uppercase tracking-wider text-neutral-900">MEDIA LIBRARY</h2>
+          <p className="text-xs text-neutral-500 font-sans">Upload and manage product photos, specs diagrams, and media assets.</p>
         </div>
 
         <div className="flex items-center gap-3">
@@ -97,13 +93,7 @@ export default function AdminMediaPage() {
             onChange={(e) => setSearchQuery(e.target.value)}
             className="bg-white border border-neutral-200 px-3 py-1.5 font-mono text-xs rounded-lg shadow-sm focus:outline-none focus:border-[#D71921]"
           />
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            onChange={handleFileUpload}
-            className="hidden"
-          />
+          <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileUpload} className="hidden" />
           <Button
             variant="red"
             size="md"
@@ -121,11 +111,7 @@ export default function AdminMediaPage() {
         <div className="bg-white border border-neutral-200 p-12 text-center text-neutral-500 space-y-3 rounded-xl shadow-sm">
           <ImageIcon className="h-12 w-12 mx-auto text-neutral-400" />
           <p className="uppercase tracking-wider text-xs">NO MEDIA FILES FOUND</p>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => fileInputRef.current?.click()}
-          >
+          <Button variant="outline" size="sm" onClick={() => fileInputRef.current?.click()}>
             UPLOAD FILE
           </Button>
         </div>
@@ -137,14 +123,7 @@ export default function AdminMediaPage() {
               className="bg-white border border-neutral-200 rounded-lg overflow-hidden group hover:border-neutral-400 transition-all space-y-2 p-2 relative shadow-sm"
             >
               <div className="relative aspect-square bg-neutral-50 border border-neutral-100 rounded overflow-hidden">
-                <Image
-                  src={media.url}
-                  alt={media.filename}
-                  fill
-                  unoptimized
-                  sizes="200px"
-                  className="object-contain p-2"
-                />
+                <Image src={media.url} alt={media.filename} fill unoptimized sizes="200px" className="object-contain p-2" />
               </div>
 
               <div className="space-y-1">
@@ -157,11 +136,7 @@ export default function AdminMediaPage() {
                     className="p-1 text-neutral-500 hover:text-neutral-900 flex items-center space-x-1 cursor-pointer"
                     title="Copy URL"
                   >
-                    {copiedUrl === media.url ? (
-                      <Check className="h-3.5 w-3.5 text-green-600" />
-                    ) : (
-                      <Copy className="h-3.5 w-3.5" />
-                    )}
+                    {copiedUrl === media.url ? <Check className="h-3.5 w-3.5 text-green-600" /> : <Copy className="h-3.5 w-3.5" />}
                     <span className="text-[9px] uppercase">{copiedUrl === media.url ? "COPIED" : "COPY"}</span>
                   </button>
                 </div>

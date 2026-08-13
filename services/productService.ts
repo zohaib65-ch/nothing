@@ -1,4 +1,5 @@
 import { Product, CategoryInfo } from "@/types";
+import { toast } from "sonner";
 
 export class ProductService {
   private static isBrowser(): boolean {
@@ -89,7 +90,7 @@ export class ProductService {
         return updated;
       }
     } catch (err) {
-      console.error("Failed to update product fields", err);
+      toast.error("Failed to update product fields. Please try again.");
     }
     return null;
   }

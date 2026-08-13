@@ -8,7 +8,7 @@ interface MongooseCache {
 }
 
 declare global {
-  // eslint-disable-next-line no-var
+   
   var mongooseCache: MongooseCache | undefined;
 }
 
@@ -44,7 +44,6 @@ export async function connectToDatabase(): Promise<typeof mongoose> {
       .then((mongooseInstance) => mongooseInstance)
       .catch((err) => {
         cache.promise = null;
-        console.warn("MongoDB Connection Notice (Fallback Active):", err.message);
         return mongoose;
       });
   }

@@ -12,7 +12,7 @@ import { getColumns } from "./_components/columns";
 import { Plus, Search, Loader2 } from "lucide-react";
 import { DeleteProductModal } from "./_components/delete-product-modal";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { formatPrice, getProductDisplayPrice } from "@/lib/utils";
+import { getProductDisplayPrice } from "@/lib/utils";
 
 export default function AdminProductsPage() {
   const router = useRouter();
@@ -32,7 +32,7 @@ export default function AdminProductsPage() {
     try {
       const data = await ProductService.fetchProductsFromApi();
       setProducts(data);
-      
+
       // Extract unique categories for filter
       const cats = Array.from(new Set(data.map((p) => p.category).filter(Boolean)));
       setCategoriesList(cats);
@@ -106,7 +106,8 @@ export default function AdminProductsPage() {
       const displayPrice = getProductDisplayPrice(p);
       const pricesStr = `${p.price || ""} ${p.salePrice || ""} ${p.originalPrice || ""} ${displayPrice}`;
 
-      const searchableText = `${p.name} ${p.slug} ${p.id || ""} ${p.category} ${p.subcategory || ""} ${variantInfo} ${pricesStr} ${p.tagline || ""} ${p.description || ""}`.toLowerCase();
+      const searchableText =
+        `${p.name} ${p.slug} ${p.id || ""} ${p.category} ${p.subcategory || ""} ${variantInfo} ${pricesStr} ${p.tagline || ""} ${p.description || ""}`.toLowerCase();
 
       const queryTokens = rawQuery.split(/\s+/).filter(Boolean);
       const matchesSearch = queryTokens.every((token) => searchableText.includes(token));

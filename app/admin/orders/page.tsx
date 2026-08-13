@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Download, ShoppingBag, Clock, CheckCircle2, CreditCard, Store } from "lucide-react";
+import { Download, ShoppingBag, Clock, CreditCard, Store } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useOrders, Order } from "@/hooks/useOrders";
 import { OrdersFilter } from "./_components/OrdersFilter";

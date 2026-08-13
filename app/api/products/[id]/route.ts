@@ -13,14 +13,11 @@ function getProductQuery(id: string) {
 // .lean() skips Mongoose toJSON transforms, so we replicate _id → id here
 function normalizeLeanDoc(doc: any) {
   if (!doc) return doc;
-  const { _id, __v, ...rest } = doc;
+  const { _id, ...rest } = doc;
   return { id: _id?.toString?.() ?? _id, ...rest };
 }
 
-export async function GET(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     await connectToDatabase();
@@ -39,10 +36,7 @@ export async function GET(
   }
 }
 
-export async function PUT(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const body = await request.json();
@@ -73,10 +67,7 @@ export async function PUT(
   }
 }
 
-export async function PATCH(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const body = await request.json();
@@ -95,10 +86,7 @@ export async function PATCH(
   }
 }
 
-export async function DELETE(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     await connectToDatabase();

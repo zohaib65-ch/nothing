@@ -38,13 +38,7 @@ export function ProductForm({ initialProduct, isEditMode = false, onSave, isSubm
     defaultValues: initialProduct as any,
   });
 
-  const {
-    handleSubmit,
-    trigger,
-    setValue,
-    getValues,
-    formState: { errors },
-  } = methods;
+  const { handleSubmit, trigger, setValue, getValues } = methods;
 
   // Upload image for dynamic custom sections → Cloudinary
   const handleSectionImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, section: string, idx: number) => {

@@ -78,8 +78,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly",
       priority: 0.7,
     }));
-  } catch (error) {
-    console.error("Sitemap generation error:", error);
+  } catch {
   }
 
   return [...staticRoutes, ...collectionRoutes, ...productRoutes, ...categoryRoutes];

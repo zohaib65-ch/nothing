@@ -18,7 +18,7 @@ export default function ProductsCatalogClient() {
   const [fallbackLoading, setFallbackLoading] = React.useState(false);
 
   const [selectedCategory, setSelectedCategory] = React.useState<string>("all");
-  const [searchQuery, setSearchQuery] = React.useState("");
+  const [searchQuery] = React.useState("");
   const [isFilterOpen, setIsFilterOpen] = React.useState(false);
 
   // Fallback: if layout hasn't fetched yet (e.g. direct navigation), fetch ourselves
@@ -46,9 +46,7 @@ export default function ProductsCatalogClient() {
     <div className="bg-[#F4F4F4] min-h-screen text-black py-12 bg-dot-plus-grid relative pb-32">
       <Container className="space-y-12">
         <div className="text-center pt-8 space-y-4">
-          <h1 className="font-ndot text-4xl sm:text-6xl uppercase tracking-[0.2em] text-black">
-            ALL PRODUCTS
-          </h1>
+          <h1 className="font-ndot text-4xl sm:text-6xl uppercase tracking-[0.2em] text-black">ALL PRODUCTS</h1>
         </div>
         {isFilterOpen && (
           <div className="max-w-xl mx-auto floating-pill rounded-2xl p-4 flex flex-wrap items-center justify-center gap-2 animate-in fade-in duration-200">
@@ -57,9 +55,7 @@ export default function ProductsCatalogClient() {
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
                 className={`px-4 py-1.5 rounded-full font-lattera text-xs uppercase tracking-wider transition-all ${
-                  selectedCategory === cat
-                    ? "bg-black text-white"
-                    : "bg-neutral-100 text-black hover:bg-neutral-200"
+                  selectedCategory === cat ? "bg-black text-white" : "bg-neutral-100 text-black hover:bg-neutral-200"
                 }`}
               >
                 {cat}
@@ -69,9 +65,7 @@ export default function ProductsCatalogClient() {
         )}
 
         {isLoading ? (
-          <div className="py-24 text-center font-lattera text-xs text-neutral-500 animate-pulse">
-            LOADING CATALOG...
-          </div>
+          <div className="py-24 text-center font-lattera text-xs text-neutral-500 animate-pulse">LOADING CATALOG...</div>
         ) : filteredProducts.length === 0 ? (
           <EmptyState />
         ) : (
@@ -96,9 +90,7 @@ export default function ProductsCatalogClient() {
           className="pointer-events-auto floating-pill h-11 px-8 rounded-full flex items-center space-x-2 font-lattera text-xs font-bold uppercase tracking-widest text-black hover:bg-black hover:text-white transition-all shadow-xl"
         >
           <span>REFINE</span>
-          <ChevronUp
-            className={`h-4 w-4 transition-transform duration-200 ${isFilterOpen ? "rotate-180" : ""}`}
-          />
+          <ChevronUp className={`h-4 w-4 transition-transform duration-200 ${isFilterOpen ? "rotate-180" : ""}`} />
         </button>
       </div>
     </div>

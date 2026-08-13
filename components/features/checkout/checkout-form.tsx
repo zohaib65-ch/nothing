@@ -1,6 +1,6 @@
 import * as React from "react";
 import { UseFormRegister, FieldErrors, UseFormSetValue } from "react-hook-form";
-import { Check, Copy, Calendar, Loader2, CreditCard, Landmark, Banknote, ShieldCheck } from "lucide-react";
+import { Check, Copy, Calendar, Loader2, CreditCard, Landmark, Banknote } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FulfillmentTabs } from "./fulfillment-tabs";
 
@@ -36,7 +36,7 @@ export const formatPakistaniPhone = (value: string): string => {
   if (!value) return "";
 
   // Keep only digits and '+' at the start
-  let cleaned = value.replace(/[^\d+]/g, "");
+  const cleaned = value.replace(/[^\d+]/g, "");
 
   // Handle +92 format
   if (cleaned.startsWith("+92")) {
@@ -117,8 +117,8 @@ export function SharedCheckoutForm({
                 <span>★ CUSTOMER BENEFIT</span>
               </span>
               <p className="text-slate-700 font-sans leading-relaxed">
-                For the safety and accountability of high-value shipments, we highly recommend bank transfer pre-payment. Orders paid via Bank Transfer
-                receive priority processing and express next-day delivery.
+                For the safety and accountability of high-value shipments, we highly recommend bank transfer pre-payment. Orders paid via Bank
+                Transfer receive priority processing and express next-day delivery.
               </p>
             </div>
           )}
@@ -279,7 +279,8 @@ export function SharedCheckoutForm({
                     PAY AT OFFICE COUNTER (CASH / POS CARD / ONLINE)
                   </span>
                   <span className="font-ntype text-xs text-slate-500 block leading-relaxed">
-                    Pay in person upon inspecting your unit. Cash, POS Debit & Credit Card Machine, and Instant Online Bank Transfer are accepted at the office counter.
+                    Pay in person upon inspecting your unit. Cash, POS Debit & Credit Card Machine, and Instant Online Bank Transfer are accepted at
+                    the office counter.
                   </span>
                 </div>
                 <div className="shrink-0 ml-4">

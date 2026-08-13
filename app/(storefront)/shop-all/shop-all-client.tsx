@@ -7,6 +7,7 @@ import { ProductService } from "@/services/productService";
 import { Product } from "@/types";
 import { Loader } from "@/components/ui/loader";
 import { getVariantCardsForListing } from "@/lib/utils";
+import { toast } from "sonner";
 
 export default function ShopAllClient() {
   const { products: storeProducts, isLoading: storeLoading, isFetched } = useProductStore();
@@ -20,7 +21,7 @@ export default function ShopAllClient() {
       setFallbackLoading(true);
       ProductService.fetchProductsFromApi("status=published")
         .then((data) => setFallbackProducts(data))
-        .catch((error) => console.error("Failed to fetch products:", error))
+        .catch((error) => toast.error("Failed to load catalog products."))
         .finally(() => setFallbackLoading(false));
     }
   }, [isFetched, storeLoading]);

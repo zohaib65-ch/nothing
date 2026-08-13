@@ -9,6 +9,7 @@ import { useFormContext, Controller } from "react-hook-form";
 import { ProductFormValues } from "@/lib/validations/product.schema";
 import { CategoryInfo } from "@/types";
 import { VariantsInfoSection } from "./variants-info-section";
+import { toast } from "sonner";
 
 export function GeneralInfoSection() {
   const { register, control, setValue, formState } = useFormContext<ProductFormValues>();
@@ -26,7 +27,7 @@ export function GeneralInfoSection() {
           }
         }
       } catch (err) {
-        console.error("Failed to load categories in product form", err);
+        toast.error("Failed to load categories.");
       }
     }
     loadCategories();

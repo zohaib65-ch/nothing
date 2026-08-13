@@ -1,5 +1,6 @@
 import * as React from "react";
 import { jsPDF } from "jspdf";
+import { toast } from "sonner";
 
 export interface OrderItem {
   productId: string;
@@ -55,8 +56,8 @@ export function useOrders() {
         const data = await res.json();
         setOrders(data);
       }
-    } catch (error) {
-      console.error("Failed to fetch orders:", error);
+    } catch {
+      toast.error("Failed to fetch orders.");
     } finally {
       setIsLoading(false);
     }
@@ -80,7 +81,7 @@ export function useOrders() {
         return updated;
       }
     } catch (error) {
-      console.error("Failed to update status:", error);
+      toast.error("Failed to update status.");
     }
     return null;
   };
@@ -99,7 +100,7 @@ export function useOrders() {
         return updated;
       }
     } catch (error) {
-      console.error("Failed to update discount:", error);
+      toast.error("Failed to update discount.");
     }
     return null;
   };
@@ -124,11 +125,10 @@ export function useOrders() {
         return matchesStatus && matchesPayment && matchesFulfillment;
       }
 
-      const itemsText = (order.items || [])
-        .map((i) => `${i.productName || ""} ${i.variantName || ""} ${i.productId || ""}`)
-        .join(" ");
+      const itemsText = (order.items || []).map((i) => `${i.productName || ""} ${i.variantName || ""} ${i.productId || ""}`).join(" ");
 
-      const searchableText = `${order.id || ""} ${order._id || ""} ${order.customId || ""} ${order.fullName || ""} ${order.email || ""} ${order.phoneNumber || ""} ${order.phone2 || ""} ${order.city || ""} ${order.address || ""} ${order.district || ""} ${order.paymentMethod || ""} ${order.total || ""} ${itemsText}`.toLowerCase();
+      const searchableText =
+        `${order.id || ""} ${order._id || ""} ${order.customId || ""} ${order.fullName || ""} ${order.email || ""} ${order.phoneNumber || ""} ${order.phone2 || ""} ${order.city || ""} ${order.address || ""} ${order.district || ""} ${order.paymentMethod || ""} ${order.total || ""} ${itemsText}`.toLowerCase();
 
       const queryTokens = rawTerm.split(/\s+/).filter(Boolean);
       const matchesSearch = queryTokens.every((token) => searchableText.includes(token));

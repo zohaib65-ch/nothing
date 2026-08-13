@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { useCartStore } from "@/store/useCartStore";
 import { useProductStore } from "@/store/useProductStore";
 import { Loader } from "@/components/ui/loader";
 import { getVariantCardsForListing } from "@/lib/utils";
@@ -334,7 +333,6 @@ const verifiedReviews = [
 
 /* ───── COMPONENT ───── */
 export default function HomePage() {
-  const { addItem } = useCartStore();
   const { products, isLoading } = useProductStore();
   const [activeFaqCategory, setActiveFaqCategory] = React.useState("general");
   const [openFaqIndex, setOpenFaqIndex] = React.useState<number | null>(null);
@@ -356,7 +354,7 @@ export default function HomePage() {
 
       {/* ═══════ 1 · HERO ═══════ */}
       <section className="relative flex h-screen min-h-[640px] max-h-[100svh] items-end overflow-hidden border-b border-black/10">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
+        {}
         <img
           alt="Nothing Phone 3 hero background"
           src="https://nothingshop.b-cdn.net/banner/nothing_pakistan.avif"
