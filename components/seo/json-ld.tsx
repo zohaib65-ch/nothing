@@ -33,6 +33,7 @@ export function JsonLd({ type, data }: JsonLdProps) {
       "contactPoint": {
         "@type": "ContactPoint",
         "telephone": data.telephone || "+923361070111",
+        "email": "Contact@nothingofficial.pk",
         "contactType": "customer support",
         "areaServed": "PK",
         "availableLanguage": ["English", "Urdu"]

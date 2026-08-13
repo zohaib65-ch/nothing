@@ -152,7 +152,15 @@ export default function TermsOfSalePage() {
           </div>
           <div className="mt-10 rounded-xl border border-black/15 bg-transparent p-4 text-sm leading-7 text-black/75 font-normal">
             This policy is published by Nothing Official Pakistan, operated by NOTHING OFFICIAL (SMC-PRIVATE) LIMITED (CUIN 0337422). For legal,
-            order, return, warranty, or account-specific help, contact support@nothingcmf.pk, call {WHATSAPP_NUMBER}, or open the support centre.
+            order, return, warranty, or account-specific help, contact{" "}
+            <a href="mailto:Contact@nothingofficial.pk" className="underline hover:text-black transition-colors">
+              Contact@nothingofficial.pk
+            </a>
+            , call{" "}
+            <a href={`https://wa.me/${WHATSAPP_NUMBER.replace(/\+/g, "").replace(/\s/g, "")}`} className="underline hover:text-black transition-colors" target="_blank" rel="noopener noreferrer">
+              {WHATSAPP_NUMBER}
+            </a>
+            , or open the support centre.
           </div>
         </article>
       </section>

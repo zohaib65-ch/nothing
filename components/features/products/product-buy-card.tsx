@@ -213,7 +213,7 @@ export function ProductBuyCard({ product, selectedVariant, onSelectVariant, clas
 
   return (
     <div
-      className={`fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-[calc(100%-2rem)] max-w-md bg-white/80 backdrop-blur-md rounded-xl p-4 sm:p-5 shadow-2xl space-y-3 transition-all duration-500 ease-in-out dark:bg-[#0F0F10] dark:border-[#26262A] ${
+      className={`fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-[calc(100%-2rem)] max-w-xl !bg-white/70 backdrop-blur-2xl rounded-xl px-5 py-2.5 shadow-2xl space-y-2 transition-all duration-500 ease-in-out ${
         isNearFooter ? "opacity-0 pointer-events-none translate-y-10" : "opacity-100 translate-y-0"
       } ${className}`}
     >
@@ -223,128 +223,138 @@ export function ProductBuyCard({ product, selectedVariant, onSelectVariant, clas
         }`}
       >
         <div className="overflow-hidden">
-          <div className="flex justify-between items-start pt-1 pb-1">
-            <h2 className="dot-heading text-base tracking-wider text-neutral-900 dark:text-white lowercase">{product.name}</h2>
-            <div className="relative w-20 h-20 flex-shrink-0 bg-neutral-50 dark:bg-neutral-900 rounded-lg p-1 border border-neutral-200 dark:border-neutral-800">
-              <Image
-                src={getValidImageUrl(selectedVariant?.image || product.images?.[0] || "")}
-                alt={currentColor}
-                fill
-                unoptimized
-                className="object-contain p-1"
-              />
+          <div className="flex items-center justify-between pt-1 pb-1">
+            <h2 className="dot-heading text-base tracking-wider text-neutral-900 lowercase">{product.name}</h2>
+            <div className="flex items-center gap-3">
+              <div className="relative w-24 h-24 flex-shrink-0">
+                <Image
+                  src={getValidImageUrl(selectedVariant?.image || product.images?.[0] || "")}
+                  alt={currentColor}
+                  fill
+                  unoptimized
+                  className="object-contain p-1"
+                />
+              </div>
+              {/* Price next to image */}
+              <div className="text-right">
+                {activePrices.salePrice !== undefined &&
+                activePrices.salePrice !== null &&
+                !isNaN(activePrices.salePrice) &&
+                Number(activePrices.salePrice) > 0 &&
+                Number(activePrices.price) > Number(activePrices.salePrice) ? (
+                  <div className="flex flex-col items-end">
+                    <span className="line-through text-neutral-400 text-xs font-mono">{formatPrice(activePrices.price)}</span>
+                    <span className="font-bold text-neutral-900 text-base font-mono">{formatPrice(activePrices.salePrice)}</span>
+                  </div>
+                ) : (
+                  <span className="font-bold text-neutral-900 text-base font-mono">{formatPrice(activeDisplayPrice)}</span>
+                )}
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Color Circles Swatches & Capacity Dropdown */}
-      <div className="space-y-3">
+      {/* Color Circles & Capacity Dropdown — same line */}
+      <div className="flex items-center gap-3">
         {/* Color Circles */}
-        <div className="flex flex-col space-y-1.5">
-          <div className="flex items-center justify-between text-[11px] font-mono uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
-            <span>
-              COLOR: <strong className="text-neutral-900 dark:text-white font-bold">{currentColor}</strong>
-            </span>
-          </div>
-          <div className="flex items-center gap-2.5 flex-wrap">
-            {displayColors.map((colorName) => {
-              const matchedColorObj = product.colors?.find((c) => c.name.toLowerCase() === colorName.toLowerCase());
-              const matchedVariantObj = product.variants?.find((v) => v.color && v.color.toLowerCase() === colorName.toLowerCase());
-              const hexColor =
-                matchedColorObj?.hex ||
-                matchedVariantObj?.colorHex ||
-                (colorName.toLowerCase().includes("white")
-                  ? "#FFFFFF"
-                  : colorName.toLowerCase().includes("grey") || colorName.toLowerCase().includes("gray")
-                    ? "#6B7280"
-                    : "#111111");
-              const isSelected = currentColor.toLowerCase() === colorName.toLowerCase();
+        <div className="w-1/2 flex items-center gap-2 flex-wrap">
+          {displayColors.map((colorName) => {
+            const matchedColorObj = product.colors?.find((c) => c.name.toLowerCase() === colorName.toLowerCase());
+            const matchedVariantObj = product.variants?.find((v) => v.color && v.color.toLowerCase() === colorName.toLowerCase());
+            const hexColor =
+              matchedColorObj?.hex ||
+              matchedVariantObj?.colorHex ||
+              (colorName.toLowerCase().includes("white")
+                ? "#FFFFFF"
+                : colorName.toLowerCase().includes("grey") || colorName.toLowerCase().includes("gray")
+                  ? "#6B7280"
+                  : "#111111");
+            const isSelected = currentColor.toLowerCase() === colorName.toLowerCase();
 
-              return (
-                <button
-                  key={colorName}
-                  type="button"
-                  onClick={() => handleColorChange(colorName)}
-                  title={colorName}
-                  className={`group relative h-7 w-7 rounded-full transition-all duration-200 cursor-pointer flex items-center justify-center p-0.5 ${
-                    isSelected
-                      ? "ring-2 ring-[#D71921] ring-offset-2 ring-offset-white dark:ring-offset-[#0F0F10] scale-110"
-                      : "hover:scale-105 opacity-80 hover:opacity-100"
-                  }`}
-                >
-                  <span
-                    className="h-full w-full rounded-full border border-neutral-300 dark:border-neutral-700 shadow-inner"
-                    style={{ backgroundColor: hexColor }}
-                  />
-                </button>
-              );
-            })}
-          </div>
+            return (
+              <button
+                key={colorName}
+                type="button"
+                onClick={() => handleColorChange(colorName)}
+                title={colorName}
+                className={`group relative h-7 w-7 rounded-full transition-all duration-200 cursor-pointer flex items-center justify-center p-0.5 ${
+                  isSelected ? "ring-2 ring-[#D71921] ring-offset-2 ring-offset-white scale-110" : "hover:scale-105 opacity-80 hover:opacity-100"
+                }`}
+              >
+                <span className="h-full w-full rounded-full border border-neutral-300 shadow-inner" style={{ backgroundColor: hexColor }} />
+              </button>
+            );
+          })}
         </div>
 
         {/* Capacity Select */}
-        <Select value={currentCapacity} onValueChange={handleCapacityChange}>
-          <SelectTrigger
-            className="w-full text-[12px] shadow-none bg-white font-medium uppercase border-neutral-200 dark:border-neutral-800"
-            style={{ fontFamily: "var(--font-ntype82), serif" }}
-          >
-            <SelectValue placeholder="SELECT CAPACITY" />
-          </SelectTrigger>
-          <SelectContent>
-            {displayCapacities.map((cap) => {
-              const exactKey = selectedVariant?.storagePrices
-                ? Object.keys(selectedVariant.storagePrices).find((k) => k.trim().toLowerCase() === cap.trim().toLowerCase())
-                : undefined;
-              const isCapComingSoon =
-                exactKey && selectedVariant?.storagePrices
-                  ? !!selectedVariant.storagePrices[exactKey]?.isComingSoon
-                  : !!selectedVariant?.isComingSoon;
-              return (
-                <SelectItem key={cap} value={cap} className="text-xs uppercase flex items-center justify-between">
-                  <span>{cap}</span>
-                  {isCapComingSoon && <span className="ml-2 text-[10px] text-[#D71921] font-bold font-mono">(COMING SOON)</span>}
-                </SelectItem>
-              );
-            })}
-          </SelectContent>
-        </Select>
+        <div className="w-1/2">
+          <Select value={currentCapacity} onValueChange={handleCapacityChange}>
+            <SelectTrigger
+              className="w-full text-[12px] shadow-none !bg-white !text-neutral-900 font-medium uppercase border-neutral-200"
+              style={{ fontFamily: "var(--font-ntype82), serif" }}
+            >
+              <SelectValue placeholder="SELECT CAPACITY" />
+            </SelectTrigger>
+            <SelectContent>
+              {displayCapacities.map((cap) => {
+                const exactKey = selectedVariant?.storagePrices
+                  ? Object.keys(selectedVariant.storagePrices).find((k) => k.trim().toLowerCase() === cap.trim().toLowerCase())
+                  : undefined;
+                const isCapComingSoon =
+                  exactKey && selectedVariant?.storagePrices
+                    ? !!selectedVariant.storagePrices[exactKey]?.isComingSoon
+                    : !!selectedVariant?.isComingSoon;
+                return (
+                  <SelectItem key={cap} value={cap} className="text-xs uppercase flex items-center justify-between">
+                    <span>{cap}</span>
+                    {isCapComingSoon && <span className="ml-2 text-[10px] text-[#D71921] font-bold font-mono">(COMING SOON)</span>}
+                  </SelectItem>
+                );
+              })}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
-      <Button
-        type="button"
-        variant={isCurrentCapacityComingSoon ? "outline" : "primary"}
-        size="lg"
-        disabled={isCurrentCapacityComingSoon}
-        onClick={handleAddToCart}
-        style={{ fontFamily: "'LatteraMonoLL', 'letteraRegular', monospace" }}
-        className={`w-full font-lattera-mono text-xs font-medium uppercase tracking-widest py-3 rounded-lg shadow-md flex items-center justify-center gap-2 ${
-          isCurrentCapacityComingSoon
-            ? "bg-[#D71921] text-white cursor-not-allowed border-none opacity-90"
-            : "bg-neutral-950 hover:bg-neutral-800 text-white cursor-pointer dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200"
-        }`}
-        leftIcon={isCurrentCapacityComingSoon ? undefined : <ShoppingBag className="h-4 w-4" />}
-      >
-        <span style={{ fontFamily: "'LatteraMonoLL', 'letteraRegular', monospace" }} className="flex items-center gap-2">
-          {isCurrentCapacityComingSoon ? (
-            <span className="font-bold text-white tracking-widest">— COMING SOON —</span>
-          ) : activePrices.salePrice !== undefined &&
-            activePrices.salePrice !== null &&
-            !isNaN(activePrices.salePrice) &&
-            Number(activePrices.salePrice) > 0 &&
-            Number(activePrices.price) > Number(activePrices.salePrice) ? (
-            <>
-              <span className="line-through text-white dark:text-neutral-900 font-normal">{formatPrice(activePrices.price)}</span>
-              <span className="font-bold text-white dark:text-neutral-900">{formatPrice(activePrices.salePrice)}</span>
-              <span>— ADD TO BAG</span>
-            </>
-          ) : (
-            <>
-              <span>{formatPrice(activeDisplayPrice)}</span>
-              <span>— ADD TO BAG</span>
-            </>
-          )}
-        </span>
-      </Button>
+
+      {/* ADD TO BAG & WhatsApp — side by side */}
+      <div className="flex items-center gap-2">
+        <Button
+          type="button"
+          variant={isCurrentCapacityComingSoon ? "outline" : "primary"}
+          disabled={isCurrentCapacityComingSoon}
+          onClick={handleAddToCart}
+          style={{ fontFamily: "'LatteraMonoLL', 'letteraRegular', monospace" }}
+          className={`w-1/2 font-lattera-mono text-xs font-medium uppercase tracking-widest py-3 rounded-lg flex items-center justify-center gap-2 h-auto border-none ${
+            isCurrentCapacityComingSoon
+              ? "bg-[#D71921] text-white cursor-not-allowed border-none opacity-90"
+              : "!bg-neutral-950 hover:!bg-neutral-800 !text-white cursor-pointer"
+          }`}
+          leftIcon={isCurrentCapacityComingSoon ? undefined : <ShoppingBag className="h-4 w-4" />}
+        >
+          <span style={{ fontFamily: "'LatteraMonoLL', 'letteraRegular', monospace" }} className="flex items-center gap-1">
+            {isCurrentCapacityComingSoon ? <span className="font-bold text-white tracking-widest">COMING SOON</span> : <span>ADD TO BAG</span>}
+          </span>
+        </Button>
+
+        <a
+          href={`https://wa.me/${(process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "").replace(/[^0-9]/g, "")}?text=${encodeURIComponent(
+            isCurrentCapacityComingSoon
+              ? `Hi, when will ${product.name} (${currentColor}, ${currentCapacity}) be available?`
+              : `Hi, I'm interested in ${product.name} (${currentColor}, ${currentCapacity}) — ${formatPrice(activeDisplayPrice)}`
+          )}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ fontFamily: "'LatteraMonoLL', 'letteraRegular', monospace" }}
+          className="w-1/2 inline-flex items-center justify-center gap-2 py-3 rounded-lg text-xs font-medium uppercase tracking-widest border border-[#25D366] text-[#25D366] hover:bg-[#25D366] hover:text-white transition-colors duration-200 cursor-pointer"
+        >
+          <svg className="h-4 w-4 fill-current" viewBox="0 0 24 24">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+          </svg>
+          <span>WHATSAPP</span>
+        </a>
+      </div>
     </div>
   );
 }

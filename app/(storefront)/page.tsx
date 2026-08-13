@@ -198,18 +198,18 @@ const faqCategories = [
 const allFaqs = [
   {
     category: "general",
-    q: "What is Nothing Pakistan?",
-    a: "Nothing Pakistan is an online storefront operated by NOTHING OFFICIAL (SMC-PRIVATE) LIMITED, an SECP registered Pakistani company with CUIN 0337422. It focuses on Nothing phones, CMF accessories, chargers, protectors, earbuds, and shopping support for customers in Pakistan.",
+    q: "What is Nothing CMF Pakistan?",
+    a: "Nothing CMF Pakistan is an online storefront operated by NOTHING OFFICIAL (SMC-PRIVATE) LIMITED, an SECP registered Pakistani company with CUIN 0337422. It focuses on Nothing phones, CMF accessories, chargers, protectors, earbuds, and shopping support for customers in Pakistan.",
   },
   {
     category: "general",
-    q: "Is Nothing Pakistan a registered company?",
-    a: "Yes. Nothing Pakistan is operated by NOTHING OFFICIAL (SMC-PRIVATE) LIMITED, an SECP registered Pakistani company with CUIN 0337422. Customers can view the Company Verification page and SECP certificate before buying.",
+    q: "Is Nothing CMF Pakistan a registered company?",
+    a: "Yes. Nothing CMF Pakistan is operated by NOTHING OFFICIAL (SMC-PRIVATE) LIMITED, an SECP registered Pakistani company with CUIN 0337422. Customers can view the Company Verification page and SECP certificate before buying.",
   },
   {
     category: "general",
     q: "What is the legal company name?",
-    a: "The official registered company name behind the Nothing Pakistan storefront is NOTHING OFFICIAL (SMC-PRIVATE) LIMITED. The company details are published for transparency on the Company Verification page.",
+    a: "The official registered company name behind the Nothing CMF Pakistan storefront is NOTHING OFFICIAL (SMC-PRIVATE) LIMITED. The company details are published for transparency on the Company Verification page.",
   },
   {
     category: "general",
@@ -218,42 +218,52 @@ const allFaqs = [
   },
   {
     category: "general",
-    q: "Are prices on Nothing Pakistan shown in PKR?",
-    a: "Yes, product prices on Nothing Pakistan are displayed in Pakistani Rupees so customers can review local pricing before placing an order.",
+    q: "Who brought Nothing to Pakistan?",
+    a: "Nothing was brought to Pakistan by Software Suite as its official distributor, establishing sales, distribution, and local support for Nothing phones and CMF accessories.",
   },
   {
     category: "general",
-    q: "Which cities does Nothing Pakistan serve?",
-    a: "Nothing Pakistan serves customers across Pakistan through online ordering, including Lahore, Karachi, Islamabad, Rawalpindi, Faisalabad, Multan, and other major cities.",
+    q: "Is Software Suite the distributor of Nothing in Pakistan?",
+    a: "Yes, Software Suite is the distributor behind Nothing in Pakistan, operating Nothing CMF Pakistan and NOTHING OFFICIAL (SMC-PRIVATE) LIMITED for authentic distribution and customer support.",
+  },
+  {
+    category: "general",
+    q: "Are prices on Nothing CMF Pakistan shown in PKR?",
+    a: "Yes, product prices on Nothing CMF Pakistan are displayed in Pakistani Rupees so customers can review local pricing before placing an order.",
+  },
+  {
+    category: "general",
+    q: "Which cities does Nothing CMF Pakistan serve?",
+    a: "Nothing CMF Pakistan serves customers across Pakistan through online ordering, including Lahore, Karachi, Islamabad, Rawalpindi, Faisalabad, Multan, and other major cities.",
   },
   {
     category: "products",
-    q: "What products can I buy from Nothing Pakistan?",
+    q: "What products can I buy from Nothing CMF Pakistan?",
     a: "You can browse Nothing and CMF chargers, cables, protectors, earbuds, and phone-related accessories through the live product catalog.",
   },
   {
     category: "products",
-    q: "Does Nothing Pakistan sell CMF accessories too?",
-    a: "Yes, Nothing Pakistan lists CMF audio and charging products alongside other compatible accessories for Pakistan shoppers.",
+    q: "Does Nothing CMF Pakistan sell CMF accessories too?",
+    a: "Yes, Nothing CMF Pakistan lists CMF audio and charging products alongside other compatible accessories for Pakistan shoppers.",
   },
   {
     category: "products",
-    q: "Does Nothing Pakistan list earbuds and audio products?",
+    q: "Does Nothing CMF Pakistan list earbuds and audio products?",
     a: "Yes, audio listings such as Nothing and CMF earbuds are available so users can compare options from one page.",
   },
   {
     category: "products",
-    q: "Does Nothing Pakistan offer screen protection options?",
+    q: "Does Nothing CMF Pakistan offer screen protection options?",
     a: "Yes, the store includes UV protectors, jelly sheets, and standard protectors for supported phones.",
   },
   {
     category: "orders",
-    q: "How do I place an order on Nothing Pakistan?",
+    q: "How do I place an order on Nothing CMF Pakistan?",
     a: "Open any product page or the order route, confirm the item you want, and submit your contact and delivery details through the checkout form.",
   },
   {
     category: "orders",
-    q: "Does Nothing Pakistan offer cash on delivery?",
+    q: "Does Nothing CMF Pakistan offer cash on delivery?",
     a: "Yes, cash on delivery is available as a convenient payment option for customers who prefer paying at the time of delivery.",
   },
   {
@@ -263,22 +273,22 @@ const allFaqs = [
   },
   {
     category: "orders",
-    q: "Does Nothing Pakistan have a return policy?",
+    q: "Does Nothing CMF Pakistan have a return policy?",
     a: "Yes, the website highlights a 7 days return policy and also links to detailed return and refund information for customers.",
   },
   {
     category: "support",
-    q: "How can I contact Nothing Pakistan support?",
+    q: "How can I contact Nothing CMF Pakistan support?",
     a: "You can contact support through the website support pages, WhatsApp contact route, and the available contact information shared across the store.",
   },
   {
     category: "support",
-    q: "Does Nothing Pakistan have WhatsApp support?",
+    q: "Does Nothing CMF Pakistan have WhatsApp support?",
     a: "Yes, WhatsApp support is available so customers can quickly ask about products, order status, and compatibility before purchase.",
   },
   {
     category: "support",
-    q: "Does Nothing Pakistan offer 24/7 support?",
+    q: "Does Nothing CMF Pakistan offer 24/7 support?",
     a: "The homepage highlights 24/7 support to reassure shoppers that help is available when they need order or product guidance.",
   },
   {
@@ -368,7 +378,7 @@ export default function HomePage() {
               </h1>
               <p className="mt-3 max-w-xl text-center font-sans text-[0.82rem] leading-6 text-black sm:mt-3 sm:max-w-xl sm:text-[0.95rem] sm:leading-6 lg:max-w-xl lg:text-[0.88rem] lg:leading-5">
                 Shop Nothing and CMF phones, earbuds, chargers, cables, and accessories with live pricing, product details, and WhatsApp support
-                through Nothing Pakistan.
+                through Nothing CMF Pakistan.
               </p>
             </div>
           </div>
@@ -404,7 +414,7 @@ export default function HomePage() {
                           </div>
                         )}
                         <img
-                          alt={`${p.name} original product price in Pakistan from Nothing Pakistan`}
+                          alt={`${p.name} original product price in Pakistan from Nothing CMF Pakistan`}
                           loading="lazy"
                           className={`absolute inset-0 h-full w-full object-contain object-center transition-transform duration-500 ease-out ${
                             !isOutOfStock ? "group-hover:scale-[1.02]" : "grayscale-[30%]"
@@ -465,7 +475,7 @@ export default function HomePage() {
                           </div>
                         )}
                         <img
-                          alt={`${p.name} original product price in Pakistan from Nothing Pakistan`}
+                          alt={`${p.name} original product price in Pakistan from Nothing CMF Pakistan`}
                           loading="lazy"
                           className={`absolute inset-0 h-full w-full object-contain object-center transition-transform duration-500 ease-out ${
                             !isOutOfStock ? "group-hover:scale-[1.02]" : "grayscale-[30%]"
@@ -667,15 +677,14 @@ export default function HomePage() {
           <div className="mx-auto max-w-screen-2xl">
             <div className="max-w-3xl">
               <p className="text-[10px] uppercase tracking-[0.3em] text-black/42"> Store Benefits </p>
-              <h2 className="mt-3 text-3xl leading-tight text-black sm:text-4xl"> Why people order from Nothing Pakistan </h2>
-              <p className="mt-3 max-w-2xl text-sm leading-7 text-black/64 sm:text-[15px]">
-                {" "}
+              <h2 className="collection-product-name mt-3 text-3xl  leading-tight text-black sm:text-4xl">Why people order from Nothing CMF Pakistan </h2>
+              <p className="mt-3 font-ntype82 text-sm leading-7 text-black/64 sm:text-[15px]">
                 Clear pricing, fast replies, and simple help for choosing the right Nothing and CMF accessories in Pakistan.
               </p>
             </div>
             <div className="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-5">
               {storeBenefits.map((b, i) => (
-                <article key={i} className="rounded-[8px] border border-black/8 bg-white p-4 sm:p-5">
+                <article key={i} className="rounded-[8px] border font-ntype82 border-black/8 bg-white p-4 sm:p-5">
                   <div className="flex h-10 w-10 items-center justify-center text-black/82">{b.icon}</div>
                   <h3 className="mt-4 text-[15px] leading-6 text-black sm:text-base"> {b.title} </h3>
                   <p className="mt-2 text-[12px] leading-6 text-black/62 sm:text-[13px]"> {b.desc} </p>
@@ -690,17 +699,16 @@ export default function HomePage() {
       <section className="py-12 md:py-16">
         <div className="mx-auto max-w-[1180px] px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
-            <p className="text-[10px] uppercase tracking-[0.3em] text-black/42"> Nothing Pakistan FAQs </p>
+            <p className="text-[10px] uppercase tracking-[0.3em] text-black/42"> Nothing CMF Pakistan FAQs </p>
             <h2 className="collection-product-name mt-3 text-4xl leading-none text-black sm:text-5xl"> Frequently asked questions </h2>
-            <p className="mt-4 font-sans text-[15px] leading-7 text-black/70">
-              {" "}
+            <p className="mt-4 font-ntype82 text-[15px] leading-7 text-black/70">
               Quick answers about shopping Nothing accessories, CMF earbuds, chargers, protectors, orders, delivery, returns, and support in Pakistan.
             </p>
           </div>
 
           <div className="mt-8">
             {/* Category tab pills */}
-            <div className="flex flex-wrap gap-2" role="tablist" aria-label="Nothing Pakistan FAQ categories">
+            <div className="flex flex-wrap gap-2" role="tablist" aria-label="Nothing CMF Pakistan FAQ categories">
               {faqCategories.map((cat) => (
                 <button
                   key={cat.id}
@@ -756,3 +764,5 @@ export default function HomePage() {
     </div>
   );
 }
+
+

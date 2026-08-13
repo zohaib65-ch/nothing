@@ -1,14 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Inter } from "next/font/google";
 import { WHATSAPP_NUMBER } from "@/lib/config";
 import { JsonLd } from "@/components/seo/json-ld";
-
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  display: "swap",
-});
 
 /* ── SEO metadata (server component) ───────────────────────── */
 export const metadata: Metadata = {
@@ -93,7 +86,7 @@ const helpfulLinks = [
 /* ── Page Component ────────────────────────────────────────── */
 export default function AboutUsPage() {
   return (
-    <div className={inter.className}>
+    <div className="font-ntype82">
       <JsonLd
         type="organization"
         data={{

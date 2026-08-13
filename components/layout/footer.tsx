@@ -285,6 +285,9 @@ export function Footer() {
                 <p className="text-[10px] uppercase tracking-[0.24em] text-white/58">SECP Registered Company</p>
                 <p className="mt-2 text-sm leading-6 text-white/88">NOTHING OFFICIAL (SMC-PRIVATE) LIMITED</p>
                 <p className="mt-1 text-xs text-white/58">CUIN: 0337422</p>
+                <p className="mt-1 text-xs text-white/58">
+                  <a href="mailto:Contact@nothingofficial.pk" className="hover:text-white transition-colors">Contact@nothingofficial.pk</a>
+                </p>
                 <Link
                   className="mt-3 inline-block text-[10px] uppercase tracking-[0.2em] underline-offset-4 hover:underline text-white"
                   href="/company-verification"
@@ -394,6 +397,9 @@ export function Footer() {
             <p className="text-[10px] uppercase tracking-[0.24em] text-white/58">SECP Registered Company</p>
             <p className="mt-2 text-sm leading-6 text-white/88">NOTHING OFFICIAL (SMC-PRIVATE) LIMITED</p>
             <p className="mt-1 text-xs text-white/58">CUIN: 0337422</p>
+            <p className="mt-1 text-xs text-white/58">
+              <a href="mailto:Contact@nothingofficial.pk" className="hover:text-white transition-colors">Contact@nothingofficial.pk</a>
+            </p>
             <Link
               className="mt-3 inline-block text-[10px] uppercase tracking-[0.2em] underline-offset-4 hover:underline text-white"
               href="/company-verification"
