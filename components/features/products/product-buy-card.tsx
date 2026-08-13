@@ -19,18 +19,32 @@ interface ProductBuyCardProps {
 
 export function ProductBuyCard({ product, selectedVariant, onSelectVariant, className = "" }: ProductBuyCardProps) {
   const [isScrolled, setIsScrolled] = React.useState(false);
+  const [isNearFooter, setIsNearFooter] = React.useState(false);
 
   React.useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 250) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
+      const scrollY = window.scrollY || document.documentElement.scrollTop;
+      setIsScrolled(scrollY > 250);
+
+      const footerEl = document.querySelector("footer");
+      if (footerEl) {
+        const footerTop = footerEl.getBoundingClientRect().top;
+        const viewportHeight = window.innerHeight;
+        // Vanishes 200px BEFORE the top of footer enters the viewport
+        if (scrollY > 300 && footerTop <= viewportHeight + 200) {
+          setIsNearFooter(true);
+        } else {
+          setIsNearFooter(false);
+        }
       }
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    handleScroll();
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
   const getVariantCapacityStr = (v: any) => {
@@ -199,7 +213,9 @@ export function ProductBuyCard({ product, selectedVariant, onSelectVariant, clas
 
   return (
     <div
-      className={`fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-[calc(100%-2rem)] max-w-md bg-white/80 backdrop-blur-md rounded-xl p-4 sm:p-5 shadow-2xl space-y-3 transition-all duration-500 ease-in-out dark:bg-[#0F0F10] dark:border-[#26262A] ${className}`}
+      className={`fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-[calc(100%-2rem)] max-w-md bg-white/80 backdrop-blur-md rounded-xl p-4 sm:p-5 shadow-2xl space-y-3 transition-all duration-500 ease-in-out dark:bg-[#0F0F10] dark:border-[#26262A] ${
+        isNearFooter ? "opacity-0 pointer-events-none translate-y-10" : "opacity-100 translate-y-0"
+      } ${className}`}
     >
       <div
         className={`grid transition-all duration-500 ease-in-out overflow-hidden ${

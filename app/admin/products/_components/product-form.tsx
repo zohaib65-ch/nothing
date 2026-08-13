@@ -15,6 +15,7 @@ import { GeneralInfoSection } from "./general-info-section";
 import { HeroShowcaseSection } from "./hero-showcase-section";
 import { BentoGridSection } from "./bento-grid-section";
 import { ColumnGridsSection } from "./column-grids-section";
+import { DisclaimerSection } from "./disclaimer-section";
 
 interface ProductFormProps {
   initialProduct: Partial<Product>;
@@ -28,6 +29,7 @@ const STEPS = [
   { id: 2, label: "HERO SHOWCASE" },
   { id: 3, label: "BENTO GRID (7)" },
   { id: 4, label: "COLUMN GRIDS" },
+  { id: 5, label: "DISCLAIMER" },
 ];
 
 export function ProductForm({ initialProduct, isEditMode = false, onSave, isSubmitting }: ProductFormProps) {
@@ -179,6 +181,9 @@ export function ProductForm({ initialProduct, isEditMode = false, onSave, isSubm
       }
     }
 
+    const rawDisclaimers = getValues("disclaimers") || data.disclaimers || [];
+    const cleanDisclaimers = rawDisclaimers.filter((d) => typeof d === "string" && d.trim().length > 0);
+
     const fullProduct = {
       ...data,
       slug: finalSlug,
@@ -188,6 +193,7 @@ export function ProductForm({ initialProduct, isEditMode = false, onSave, isSubm
       storageOptions: finalStorageOptions,
       colors: finalColors,
       variants: updatedVariants,
+      disclaimers: cleanDisclaimers,
       createdAt: data.createdAt || now,
       updatedAt: now,
     } as Product;
@@ -226,6 +232,7 @@ export function ProductForm({ initialProduct, isEditMode = false, onSave, isSubm
           {currentStep === 2 && <HeroShowcaseSection onFileUpload={handleSectionImageUpload} uploadingIndex={uploadingIndex} />}
           {currentStep === 3 && <BentoGridSection onFileUpload={handleSectionImageUpload} uploadingIndex={uploadingIndex} />}
           {currentStep === 4 && <ColumnGridsSection onFileUpload={handleSectionImageUpload} uploadingIndex={uploadingIndex} />}
+          {currentStep === 5 && <DisclaimerSection />}
 
           <div className="flex sm:flex-row flex-col w-full gap-3 justify-between items-center pt-6 px-6 border-t border-neutral-200 bg-white sticky bottom-0 py-4 shadow-[0_-10px_20px_rgba(0,0,0,0.05)] rounded-b-lg px-2 z-10">
             <div className="w-full sm:w-auto">
@@ -250,7 +257,7 @@ export function ProductForm({ initialProduct, isEditMode = false, onSave, isSubm
             </div>
 
             <div className="flex sm:flex-row flex-col items-center gap-3 w-full sm:w-auto sm:ml-auto">
-              {currentStep < 4 && (
+              {currentStep < 5 && (
                 <Button
                   type="button"
                   variant="primary"

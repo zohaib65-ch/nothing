@@ -95,6 +95,7 @@ const ProductSchema = new Schema<IProductDocument>(
     threeColumnSections: { type: [CustomSectionItemSchema], default: [] },
     fourColumnSections: { type: [CustomSectionItemSchema], default: [] },
     fiveColumnSections: { type: [CustomSectionItemSchema], default: [] },
+    disclaimers: [{ type: String }],
     seo: {
       metaTitle: { type: String, default: "" },
       metaDescription: { type: String, default: "" },
@@ -121,4 +122,9 @@ ProductSchema.set("toJSON", {
 ProductSchema.index({ status: 1, category: 1, sortOrder: 1 });
 ProductSchema.index({ slug: 1 }, { unique: true });
 
-export const ProductModel: Model<IProductDocument> = mongoose.models.Product || mongoose.model<IProductDocument>("Product", ProductSchema);
+if (process.env.NODE_ENV === "development") {
+  delete (mongoose.models as any).Product;
+}
+
+export const ProductModel: Model<IProductDocument> =
+  mongoose.models.Product || mongoose.model<IProductDocument>("Product", ProductSchema);

@@ -49,6 +49,7 @@ export default function EditProductPage() {
             threeColumnSections,
             fourColumnSections,
             fiveColumnSections,
+            disclaimers: prod.disclaimers && prod.disclaimers.length > 0 ? prod.disclaimers : [""],
           });
         } else {
           toast.error("Product not found");

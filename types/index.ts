@@ -99,6 +99,7 @@ export interface Product {
   threeColumnSections?: CustomSectionItem[];
   fourColumnSections?: CustomSectionItem[];
   fiveColumnSections?: CustomSectionItem[];
+  disclaimers?: string[];
 }
 
 export interface CategoryInfo {

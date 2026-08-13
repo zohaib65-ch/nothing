@@ -3,7 +3,7 @@ import { connectToDatabase } from "@/lib/mongodb";
 import { ProductModel } from "@/models/Product";
 
 const LIST_FIELDS =
-  "name slug price salePrice category images status inStock isFeatured isNewArrival sortOrder warranty variants createdAt updatedAt";
+  "name slug price salePrice category images status inStock isFeatured isNewArrival sortOrder warranty variants disclaimers createdAt updatedAt";
 function normalizeLeanDoc(doc: any) {
   if (!doc) return doc;
   const { _id, ...rest } = doc;

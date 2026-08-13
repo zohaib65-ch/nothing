@@ -99,6 +99,7 @@ export const ProductSchema = z.object({
   threeColumnSections: z.array(CustomSectionItemSchema).optional(),
   fourColumnSections: z.array(CustomSectionItemSchema).optional(),
   fiveColumnSections: z.array(CustomSectionItemSchema).optional(),
+  disclaimers: z.array(z.string()).optional(),
 });
 
 export type ProductFormValues = z.infer<typeof ProductSchema>;

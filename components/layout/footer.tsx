@@ -1,7 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { WHATSAPP_NUMBER } from "@/lib/config";
+import { useProductStore } from "@/store/useProductStore";
+import { ProductDisclaimer } from "@/components/features/products/product-disclaimer";
 
 const AboutIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -195,6 +198,11 @@ const footerNavLinks = [
 ];
 
 export function Footer() {
+  const params = useParams();
+  const slug = params?.slug as string;
+  const product = useProductStore((s) => (slug ? s.getProductBySlug(slug) : undefined));
+  const disclaimers = product?.disclaimers;
+
   const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER.replace(/\+/g, "")}`;
 
   const actionLinks = [
@@ -212,9 +220,10 @@ export function Footer() {
 
   return (
     <footer className="bg-black text-white uppercase" style={{ fontFamily: "var(--font-ndot57), sans-serif" }}>
+      <ProductDisclaimer disclaimers={disclaimers} />
       {/* ═══ DESKTOP FOOTER ═══ */}
       <div className="hidden lg:block">
-        <div className="relative overflow-hidden rounded-t-[28px] border-t border-white/10 bg-[#020202]">
+        <div className="relative overflow-hidden rounded-t-[28px] bg-[#020202]">
           <div className="relative min-h-[920px] px-10 pb-8 pt-10  xl:px-12">
             <div className="mx-auto flex w-full max-w-[1220px] flex-col items-center text-center">
               <div className="flex w-full max-w-[560px] flex-col items-center">
