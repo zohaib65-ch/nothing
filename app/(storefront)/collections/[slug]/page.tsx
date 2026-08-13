@@ -16,6 +16,8 @@ const titleMap: Record<string, string> = {
   protectors: "Screen & Glass Protectors",
   "shop-all": "Shop All Catalog",
   apparel: "Nothing Apparel",
+  watches: "CMF Watch & Smartwatches",
+  accessories: "Nothing & CMF Accessories",
 };
 
 const descMap: Record<string, string> = {
@@ -25,6 +27,8 @@ const descMap: Record<string, string> = {
   protectors: "Buy premium tempered glass screen protectors and official cases for Nothing smartphones. Precise fit, high protection.",
   "shop-all": "Browse the entire Nothing Pakistan catalog. Phones, audio devices, chargers, and premium compatible accessories.",
   apparel: "Shop Nothing official apparel, premium minimalist t-shirts, caps, and limited edition designer clothing.",
+  watches: "Shop CMF Watch Pro and Nothing smartwatches in Pakistan. Stylish design, fitness tracking, and long battery life.",
+  accessories: "Shop official Nothing & CMF accessories in Pakistan. Cases, cables, magnetic chargers, and more premium add-ons.",
 };
 
 async function getCollectionProducts(slug: string) {
@@ -78,6 +82,8 @@ export async function generateStaticParams() {
     { slug: "protectors" },
     { slug: "shop-all" },
     { slug: "apparel" },
+    { slug: "watches" },
+    { slug: "accessories" },
   ];
 }
 
