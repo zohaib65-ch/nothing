@@ -1,0 +1,53 @@
+"use client";
+
+import * as React from "react";
+import Image from "next/image";
+import { Product, CategoryInfo } from "@/types";
+import { ProductGrid } from "@/components/features/products/product-grid";
+import { Container } from "@/components/ui/container";
+import { Heading } from "@/components/ui/heading";
+
+interface CategoryClientProps {
+  category: CategoryInfo;
+  initialProducts: Product[];
+}
+
+export default function CategoryClient({ category, initialProducts }: CategoryClientProps) {
+  return (
+    <div className="bg-[#050505] min-h-screen text-white space-y-16 pb-24">
+      {/* Category Banner Hero */}
+      <div className="relative min-h-[40vh] w-full bg-[#0F0F10] border-b border-[#26262A] flex items-center overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <Image
+            src={category.heroImage}
+            alt={category.name}
+            fill
+            priority
+            className="object-cover opacity-35"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/60 to-transparent" />
+          <div className="absolute inset-0 bg-dot-grid opacity-30" />
+        </div>
+
+        <Container className="relative z-10 py-16 space-y-4">
+          <Heading badgeText={category.badge || "CATEGORY"} dotMatrix size="xl">
+            {category.name}
+          </Heading>
+          <p className="text-neutral-300 font-sans text-base max-w-xl leading-relaxed">
+            {category.description}
+          </p>
+        </Container>
+      </div>
+
+      {/* Category Products */}
+      <Container space-y-8>
+        <div className="flex justify-between items-center font-mono text-xs text-neutral-500 uppercase border-b border-[#26262A] pb-4">
+          <span>{initialProducts.length} PRODUCTS AVAILABLE</span>
+          <span className="text-[#D71921]">CATEGORY: {category.name}</span>
+        </div>
+
+        <ProductGrid products={initialProducts} isLoading={false} />
+      </Container>
+    </div>
+  );
+}

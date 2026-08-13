@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Inter } from "next/font/google";
 import { WHATSAPP_NUMBER } from "@/lib/config";
+import { JsonLd } from "@/components/seo/json-ld";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -28,16 +29,25 @@ export const metadata: Metadata = {
     title: "About Nothing Official Pakistan | SECP Registered Storefront",
     description:
       "Learn about Nothing Pakistan, the storefront operated by NOTHING OFFICIAL (SMC-PRIVATE) LIMITED, an SECP registered Pakistani company.",
-    url: "https://www.nothingshop.pk/about-us",
+    url: "https://www.nothingcmf.pk/about-us",
     type: "website",
+    images: [
+      {
+        url: "/nothing_pakistan.avif",
+        width: 1200,
+        height: 630,
+        alt: "About Nothing Pakistan",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "About Nothing Official Pakistan | SECP Registered Storefront",
     description:
       "Learn about Nothing Pakistan, the storefront operated by NOTHING OFFICIAL (SMC-PRIVATE) LIMITED, an SECP registered Pakistani company.",
+    images: ["/nothing_pakistan.avif"],
   },
-  alternates: { canonical: "https://www.nothingshop.pk/about-us" },
+  alternates: { canonical: "https://www.nothingcmf.pk/about-us" },
 };
 
 const sections = [
@@ -84,6 +94,16 @@ const helpfulLinks = [
 export default function AboutUsPage() {
   return (
     <div className={inter.className}>
+      <JsonLd
+        type="organization"
+        data={{
+          name: "NOTHING OFFICIAL (SMC-PRIVATE) LIMITED",
+          url: "https://www.nothingcmf.pk",
+          logo: "https://www.nothingcmf.pk/nothing_logo.webp",
+          telephone: WHATSAPP_NUMBER,
+          sameAs: [],
+        }}
+      />
       <div className="min-h-screen overflow-x-hidden bg-[#f4f4f0] text-[#111] pt-20">
         <section className="border-b border-black/10 px-4 py-12 md:px-8 md:py-16">
           <div className="mx-auto grid max-w-screen-2xl gap-8 lg:grid-cols-[minmax(0,1fr)_380px] lg:items-end">

@@ -1,109 +1,105 @@
-"use client";
-
 import * as React from "react";
-import { useParams } from "next/navigation";
-import Image from "next/image";
-import { useProductStore } from "@/store/useProductStore";
-import { ProductService } from "@/services/productService";
-import { Product, CategoryInfo } from "@/types";
-import { ProductGrid } from "@/components/features/products/product-grid";
-import { Container } from "@/components/ui/container";
-import { Heading } from "@/components/ui/heading";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { connectToDatabase } from "@/lib/mongodb";
+import { CategoryModel } from "@/models/Category";
+import { ProductModel } from "@/models/Product";
+import CategoryClient from "./category-client";
+import { JsonLd } from "@/components/seo/json-ld";
 
-export default function CategoryPage() {
-  const params = useParams();
-  const slug = params?.slug as string;
+interface PageProps {
+  params: Promise<{ slug: string }>;
+}
 
-  const {
-    products: storeProducts,
-    categories: storeCategories,
-    isLoading: storeLoading,
-    isFetched,
-  } = useProductStore();
+async function getCategoryData(slug: string) {
+  await connectToDatabase();
+  const categoryDoc = await CategoryModel.findOne({ slug }).lean();
+  if (!categoryDoc) return null;
 
-  // Fallback state for direct navigation
-  const [fallbackProducts, setFallbackProducts] = React.useState<Product[]>([]);
-  const [fallbackCategories, setFallbackCategories] = React.useState<CategoryInfo[]>([]);
-  const [fallbackLoading, setFallbackLoading] = React.useState(false);
+  const productDocs = await ProductModel.find({ category: slug, status: "published" })
+    .sort({ sortOrder: 1, createdAt: -1 })
+    .lean();
 
-  React.useEffect(() => {
-    if (!slug) return;
-    if (!isFetched && !storeLoading) {
-      setFallbackLoading(true);
-      Promise.all([
-        ProductService.fetchCategoriesFromApi(),
-        ProductService.fetchProductsFromApi(`status=published&category=${slug}`),
-      ])
-        .then(([cats, prods]) => {
-          setFallbackCategories(cats);
-          setFallbackProducts(prods);
-        })
-        .finally(() => setFallbackLoading(false));
-    }
-  }, [slug, isFetched, storeLoading]);
+  const category = JSON.parse(JSON.stringify(categoryDoc));
+  const products = JSON.parse(JSON.stringify(productDocs));
 
-  const isLoading = storeLoading || fallbackLoading;
+  return { category, products };
+}
 
-  const products = isFetched
-    ? storeProducts.filter((p) => p.category === slug)
-    : fallbackProducts;
-
-  const categories = isFetched ? storeCategories : fallbackCategories;
-  const category = categories.find((c) => c.slug === slug || c.id === slug) || null;
-
-  if (isLoading) {
-    return (
-      <div className="py-24 text-center bg-[#050505] text-white">
-        <div className="font-mono text-sm animate-pulse">LOADING CATEGORY...</div>
-      </div>
-    );
-  }
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  await connectToDatabase();
+  const category = await CategoryModel.findOne({ slug }).lean();
 
   if (!category) {
-    return (
-      <div className="py-24 text-center bg-[#050505] text-white space-y-4">
-        <Heading dotMatrix size="lg">
-          CATEGORY NOT FOUND
-        </Heading>
-      </div>
-    );
+    return {
+      title: "Category Not Found | Nothing Pakistan",
+    };
   }
 
+  const title = `${category.name} | Nothing Pakistan`;
+  const description =
+    category.description || `Browse original Nothing and CMF ${category.name} products in Pakistan.`;
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: `https://www.nothingcmf.pk/categories/${slug}`,
+    },
+    openGraph: {
+      title,
+      description,
+      url: `https://www.nothingcmf.pk/categories/${slug}`,
+      images: [
+        {
+          url: category.heroImage || "/nothing_pakistan.avif",
+          alt: category.name,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [category.heroImage || "/nothing_pakistan.avif"],
+    },
+  };
+}
+
+export async function generateStaticParams() {
+  try {
+    await connectToDatabase();
+    const categories = await CategoryModel.find().select("slug").lean();
+    return categories.map((cat: any) => ({
+      slug: cat.slug,
+    }));
+  } catch (error) {
+    console.error("Failed to generate static params for categories:", error);
+    return [];
+  }
+}
+
+export default async function CategoryPage({ params }: PageProps) {
+  const { slug } = await params;
+  const data = await getCategoryData(slug);
+
+  if (!data) {
+    notFound();
+  }
+
+  const breadcrumbData = {
+    items: [
+      { name: "Home", url: "https://www.nothingcmf.pk" },
+      { name: "Categories", url: "https://www.nothingcmf.pk/products" },
+      { name: data.category.name, url: `https://www.nothingcmf.pk/categories/${slug}` },
+    ],
+  };
+
   return (
-    <div className="bg-[#050505] min-h-screen text-white space-y-16 pb-24">
-      {/* Category Banner Hero */}
-      <div className="relative min-h-[40vh] w-full bg-[#0F0F10] border-b border-[#26262A] flex items-center overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <Image
-            src={category.heroImage}
-            alt={category.name}
-            fill
-            priority
-            className="object-cover opacity-35"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/60 to-transparent" />
-          <div className="absolute inset-0 bg-dot-grid opacity-30" />
-        </div>
-
-        <Container className="relative z-10 py-16 space-y-4">
-          <Heading badgeText={category.badge || "CATEGORY"} dotMatrix size="xl">
-            {category.name}
-          </Heading>
-          <p className="text-neutral-300 font-sans text-base max-w-xl leading-relaxed">
-            {category.description}
-          </p>
-        </Container>
-      </div>
-
-      {/* Category Products */}
-      <Container space-y-8>
-        <div className="flex justify-between items-center font-mono text-xs text-neutral-500 uppercase border-b border-[#26262A] pb-4">
-          <span>{products.length} PRODUCTS AVAILABLE</span>
-          <span className="text-[#D71921]">CATEGORY: {category.name}</span>
-        </div>
-
-        <ProductGrid products={products} isLoading={isLoading} />
-      </Container>
-    </div>
+    <>
+      <JsonLd type="breadcrumb" data={breadcrumbData} />
+      <CategoryClient category={data.category} initialProducts={data.products} />
+    </>
   );
 }

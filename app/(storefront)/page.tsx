@@ -385,28 +385,6 @@ export default function HomePage() {
               <p className="text-[10px] uppercase tracking-[0.3em] text-black/42"> Best Product Sale </p>
               <h2 className="collection-product-name mt-3 text-4xl leading-none text-black sm:text-5xl"> Selected Gems </h2>
             </div>
-            <div className="hidden items-center gap-2 lg:flex">
-              <button
-                type="button"
-                aria-label="Show previous selected gems"
-                className="inline-flex h-11 w-11 items-center justify-center border border-black/10 bg-white text-black shadow-[0_14px_30px_rgba(17,17,17,0.08)] transition hover:bg-black hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
-              >
-                <svg width="21" height="21" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  {" "}
-                  <path d="m14 6-6 6 6 6" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" />{" "}
-                </svg>
-              </button>
-              <button
-                type="button"
-                aria-label="Show next selected gems"
-                className="inline-flex h-11 w-11 items-center justify-center border border-black/10 bg-white text-black shadow-[0_14px_30px_rgba(17,17,17,0.08)] transition hover:bg-black hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
-              >
-                <svg width="21" height="21" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  {" "}
-                  <path d="m10 6 6 6-6 6" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" />{" "}
-                </svg>
-              </button>
-            </div>
           </div>
 
           {isLoading ? (

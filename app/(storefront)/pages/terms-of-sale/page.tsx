@@ -7,6 +7,15 @@ export const metadata: Metadata = {
   title: "Terms of Sale | Nothing Official Pakistan",
   description:
     "These Terms of Sale govern product purchases made through the Nothing Pakistan, including pricing, delivery, returns, and warranty handling.",
+  alternates: {
+    canonical: "https://www.nothingcmf.pk/pages/terms-of-sale",
+  },
+  openGraph: {
+    title: "Terms of Sale | Nothing Official Pakistan",
+    description:
+      "These Terms of Sale govern product purchases made through the Nothing Pakistan, including pricing, delivery, returns, and warranty handling.",
+    url: "https://www.nothingcmf.pk/pages/terms-of-sale",
+  },
 };
 
 const policies = [
@@ -154,7 +163,7 @@ export default function TermsOfSalePage() {
           </div>
           <div className="mt-10 rounded-xl border border-black/15 bg-transparent p-4 text-sm leading-7 text-black/75 font-normal">
             This policy is published by Nothing Official Pakistan, operated by NOTHING OFFICIAL (SMC-PRIVATE) LIMITED (CUIN 0337422). For legal,
-            order, return, warranty, or account-specific help, contact support@nothingshop.pk, call {WHATSAPP_NUMBER}, or open the support centre.
+            order, return, warranty, or account-specific help, contact support@nothingcmf.pk, call {WHATSAPP_NUMBER}, or open the support centre.
           </div>
         </article>
       </section>
