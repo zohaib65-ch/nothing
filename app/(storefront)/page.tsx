@@ -538,7 +538,7 @@ export default function HomePage() {
                     className={`flex flex-col h-full items-center justify-between w-full ${isOutOfStock ? "opacity-60 cursor-not-allowed select-none" : ""}`}
                   >
                     <div className="w-full">
-                      <div className="relative mx-auto h-[215px] w-full max-w-[190px] sm:h-[265px] sm:max-w-[230px] lg:h-[365px] lg:max-w-[275px] bg-black/[0.01] rounded-2xl flex items-center justify-center">
+                      <div className="relative mx-auto h-[215px] w-full max-w-[190px] sm:h-[265px] sm:max-w-[230px] lg:h-[365px] lg:max-w-[275px] rounded-2xl flex items-center justify-center">
                         {isOutOfStock && (
                           <div className="absolute inset-0 z-30 bg-black/40 backdrop-blur-[1px] flex items-center justify-center">
                             <span className="bg-red-600 text-white font-mono text-[9px] sm:text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded shadow-md">

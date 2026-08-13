@@ -7,8 +7,8 @@
 @layer base {
   /* ntype82Headline — used for big section headings (Selected Gems, Choose Your Model, etc.) */
   @font-face {
-    font-family: 'ntype82Headline';
-    src: url('/fonts/ndot-1.otf') format('opentype');
+    font-family: "ntype82Headline";
+    src: url("/fonts/ndot-1.otf") format("opentype");
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -16,8 +16,8 @@
 
   /* letteraRegular — mono/lettera text */
   @font-face {
-    font-family: 'letteraRegular';
-    src: url('/fonts/ndot-2.otf') format('opentype');
+    font-family: "letteraRegular";
+    src: url("/fonts/ndot-2.otf") format("opentype");
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -25,8 +25,8 @@
 
   /* ndot57 — dot pattern font variant */
   @font-face {
-    font-family: 'ndot57';
-    src: url('/fonts/ndot-3.otf') format('opentype');
+    font-family: "ndot57";
+    src: url("/fonts/ndot-3.otf") format("opentype");
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -34,8 +34,8 @@
 
   /* Ndot-Regular */
   @font-face {
-    font-family: 'Ndot-Regular';
-    src: url('/fonts/ndot-5.otf') format('opentype');
+    font-family: "Ndot-Regular";
+    src: url("/fonts/ndot-5.otf") format("opentype");
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -43,8 +43,8 @@
 
   /* ntype82 — body/sans text */
   @font-face {
-    font-family: 'ntype82';
-    src: url('/fonts/ndot-4.otf') format('opentype');
+    font-family: "ntype82";
+    src: url("/fonts/ndot-4.otf") format("opentype");
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -52,8 +52,8 @@
 
   /* ndot55 — dot heading font (small labels like "Phones", "WHY US") */
   @font-face {
-    font-family: 'ndot55';
-    src: url('/fonts/ndot-5.otf') format('opentype');
+    font-family: "ndot55";
+    src: url("/fonts/ndot-5.otf") format("opentype");
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -61,8 +61,8 @@
 
   /* ndot55Caps — caps variant of ndot55 */
   @font-face {
-    font-family: 'ndot55Caps';
-    src: url('/fonts/ndot-6.otf') format('opentype');
+    font-family: "ndot55Caps";
+    src: url("/fonts/ndot-6.otf") format("opentype");
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -70,8 +70,8 @@
 
   /* interLight — Inter Light 300 */
   @font-face {
-    font-family: 'interLight';
-    src: url('/fonts/ndot-7.otf') format('opentype');
+    font-family: "interLight";
+    src: url("/fonts/ndot-7.otf") format("opentype");
     font-weight: 300;
     font-style: normal;
     font-display: swap;
@@ -79,8 +79,8 @@
 
   /* interMedium — Inter Medium 500 */
   @font-face {
-    font-family: 'interMedium';
-    src: url('/fonts/ndot-8.otf') format('opentype');
+    font-family: "interMedium";
+    src: url("/fonts/ndot-8.otf") format("opentype");
     font-weight: 500;
     font-style: normal;
     font-display: swap;
@@ -88,8 +88,8 @@
 
   /* LatteraMonoLL — Custom Monospace */
   @font-face {
-    font-family: 'LatteraMonoLL';
-    src: url('/fonts/LatteraMonoLL.otf') format('opentype');
+    font-family: "LatteraMonoLL";
+    src: url("/fonts/LatteraMonoLL.otf") format("opentype");
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -106,27 +106,27 @@
 }
 
 @theme {
-  --font-ndot-regular: 'Ndot-Regular', 'ndot55', sans-serif;
-  --font-ndot55: 'ndot55', 'Arial', sans-serif;
-  --font-ndot55-caps: 'ndot55Caps', 'Arial', sans-serif;
-  --font-ndot57: 'ndot57', 'Arial', sans-serif;
-  --font-ntype82: 'ntype82', 'Arial', sans-serif;
-  --font-ntype82-headline: 'ntype82Headline', 'Arial', sans-serif;
-  --font-lettera-regular: 'letteraRegular', 'Arial', monospace;
-  --font-inter-light: 'interLight', 'Arial', sans-serif;
-  --font-inter-medium: 'interMedium', 'Arial', sans-serif;
-  --font-lattera-mono: 'LatteraMonoLL';
+  --font-ndot-regular: "Ndot-Regular", "ndot55", sans-serif;
+  --font-ndot55: "ndot55", "Arial", sans-serif;
+  --font-ndot55-caps: "ndot55Caps", "Arial", sans-serif;
+  --font-ndot57: "ndot57", "Arial", sans-serif;
+  --font-ntype82: "ntype82", "Arial", sans-serif;
+  --font-ntype82-headline: "ntype82Headline", "Arial", sans-serif;
+  --font-lettera-regular: "letteraRegular", "Arial", monospace;
+  --font-inter-light: "interLight", "Arial", sans-serif;
+  --font-inter-medium: "interMedium", "Arial", sans-serif;
+  --font-lattera-mono: "LatteraMonoLL";
 
-  --font-sans: 'ntype82', 'Arial', sans-serif;
-  --font-mono: 'letteraRegular', 'Arial', monospace;
+  --font-sans: "ntype82", "Arial", sans-serif;
+  --font-mono: "letteraRegular", "Arial", monospace;
 
   --color-nothing-black: #111111;
-  --color-nothing-red: #D71921;
+  --color-nothing-red: #d71921;
 }
 
 body {
   background-color: var(--background);
-  font-family: 'ntype82', 'Arial', sans-serif;
+  font-family: "ntype82", "Arial", sans-serif;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -144,7 +144,7 @@ body {
 }
 
 .font-lattera-mono {
-  font-family: 'LatteraMonoLL' !important;
+  font-family: "LatteraMonoLL" !important;
 }
 
 /* Custom Scrollbar */
@@ -160,22 +160,22 @@ body {
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #D71921;
+  background: #d71921;
 }
 
 /* Authentic Nothing Dot & Plus Grid Backgrounds */
 .bg-nothing-grid {
-  background-color: #F4F4F4;
-  background-image: 
-    radial-gradient(#999999 1.2px, transparent 1.2px),
-    radial-gradient(#999999 1.2px, #F4F4F4 1.2px);
-  background-size: 80px 80px;
-  background-position: 0 0, 40px 40px;
+  background-color: #f4f4f4;
+  background-image: radial-gradient(#ffffff 1.2px, transparent 1.2px), radial-gradient(#ffffff 1.2px, #f4f4f4 1.2px);
+  background-size: 90px 90px;
+  background-position:
+    0 0,
+    40px 40px;
 }
 
 .bg-dot-plus-grid {
-  background-color: #F4F4F4;
-  background-image: radial-gradient(rgba(0, 0, 0, 0.2) 1.5px, transparent 1.5px);
+  background-color: #f4f4f4;
+  background-image: radial-gradient(#ffffff 1.5px, transparent 1.5px);
   background-size: 60px 60px;
 }
 
@@ -199,12 +199,13 @@ body {
   position: fixed;
   inset: 0;
   z-index: 100;
-  background-image: radial-gradient(circle, rgba(238, 238, 238, 0.96) 0 1px, transparent 1.7px);
+  background-image: radial-gradient(circle, #ffffff 0 1px, transparent 1.7px);
   background-position: -25px -25px;
   background-size: 114px 114px;
-  mix-blend-mode: difference;
   opacity: 0.76;
-  transition: opacity 0.2s ease, visibility 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    visibility 0.2s ease;
 }
 
 body.menu-open .site-dot-overlay,
@@ -245,12 +246,12 @@ body:has([data-navbar-menu]) .site-dot-overlay {
 
 /* spaceMono: used for footer links, mono labels */
 .__className_1c23be {
-  font-family: 'letteraRegular', 'Arial', monospace;
+  font-family: "letteraRegular", "Arial", monospace;
 }
 
 /* FAQ dotted separator line — matches original inline style */
 .faq-dot-line {
-  background-image: radial-gradient(circle, rgba(17,17,17,0.9) 1.15px, transparent 1.35px);
+  background-image: radial-gradient(circle, rgba(17, 17, 17, 0.9) 1.15px, transparent 1.35px);
   background-position: left center;
   background-repeat: repeat-x;
   background-size: 7px 4px;
@@ -266,7 +267,8 @@ body:has([data-navbar-menu]) .site-dot-overlay {
 }
 
 /* Lenis Smooth Scroll */
-html.lenis, html.lenis body {
+html.lenis,
+html.lenis body {
   height: auto;
 }
 .lenis.lenis-smooth {
