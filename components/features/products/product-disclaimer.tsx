@@ -58,10 +58,9 @@ export function ProductDisclaimer({ disclaimers }: ProductDisclaimerProps) {
         </button>
 
         {isOpen && (
-          <div className="px-6 pb-5 font-ntype82 space-y-3 font-mono text-xs text-neutral-400 leading-relaxed overflow-hidden w-full normal-case">
+          <div className="px-5 pb-5 font-ntype82 space-y-3 font-mono text-xs text-neutral-400 leading-relaxed overflow-hidden w-full normal-case">
             {validDisclaimers.map((item, index) => (
               <div key={index} className="flex items-start gap-2.5 min-w-0 w-full">
-                <span className="text-white font-bold select-none shrink-0">{index + 1}.</span>
                 <p className="flex-1 min-w-0 text-white text-base font-normal whitespace-pre-wrap break-words [overflow-wrap:anywhere] normal-case">
                   {item}
                 </p>
