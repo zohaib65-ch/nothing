@@ -348,7 +348,9 @@ export default function HomePage() {
   const [openFaqIndex, setOpenFaqIndex] = React.useState<number | null>(null);
   const reviewsRef = React.useRef<HTMLDivElement>(null);
 
-  const rawGems = products.filter((p) => p.isFeatured).length > 0 ? products.filter((p) => p.isFeatured) : products.slice(0, 6);
+  const rawGems = products.filter((p) => p.isFeatured).length > 0
+    ? [...products.filter((p) => p.isFeatured)].sort((a, b) => new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime())
+    : products.slice(0, 6);
   const selectedGems = getVariantCardsForListing(rawGems);
   const phoneModels = getVariantCardsForListing(products.filter((p) => p.category === "phones"));
 
@@ -401,7 +403,7 @@ export default function HomePage() {
             <>
               {/* Mobile: 2-col grid */}
               <div className="mt-8 grid grid-cols-2 gap-x-4 gap-y-9 lg:hidden">
-                {selectedGems.map((p) => {
+                {selectedGems.slice(0, 6).map((p) => {
                   const isOutOfStock = p.inStock === false;
                   const CardContent = (
                     <article className={`flex h-full flex-col ${isOutOfStock ? "opacity-60 cursor-not-allowed select-none" : ""}`}>
@@ -431,11 +433,15 @@ export default function HomePage() {
                             <p className="text-[11px] text-[#D71921] font-mono font-bold uppercase tracking-wider">COMING SOON</p>
                           ) : (
                             <>
-                              <p className="text-[11px] text-black/62 font-[system-ui] font-normal"> Rs {p.price.toLocaleString()} </p>
-                              {p.salePrice && p.salePrice > 0 && (
-                                <p className="mt-0.5 text-[10px] text-black/65 line-through decoration-black/65 font-[system-ui] font-normal">
-                                  {p.salePrice.toLocaleString()}
-                                </p>
+                              {p.salePrice && p.salePrice > 0 ? (
+                                <>
+                                  <p className="text-[11px] text-black/62 font-[system-ui] font-normal"> Rs {p.salePrice.toLocaleString()} </p>
+                                  <p className="mt-0.5 text-[10px] text-black/65 line-through decoration-black/65 font-[system-ui] font-normal">
+                                    Rs {p.price.toLocaleString()}
+                                  </p>
+                                </>
+                              ) : (
+                                <p className="text-[11px] text-black/62 font-[system-ui] font-normal"> Rs {p.price.toLocaleString()} </p>
                               )}
                             </>
                           )}
@@ -462,7 +468,7 @@ export default function HomePage() {
 
               {/* Desktop: 5-col grid */}
               <div className="mt-8 hidden grid-cols-5 gap-x-7 gap-y-14 lg:grid">
-                {selectedGems.map((p) => {
+                {selectedGems.slice(0, 10).map((p) => {
                   const isOutOfStock = p.inStock === false;
                   const CardContent = (
                     <article className={`flex h-full flex-col ${isOutOfStock ? "opacity-60 cursor-not-allowed select-none" : ""}`}>
@@ -492,11 +498,15 @@ export default function HomePage() {
                             <p className="text-[11px] text-[#D71921] font-mono font-bold uppercase tracking-wider">COMING SOON</p>
                           ) : (
                             <>
-                              <p className="text-[11px] text-black/62 font-[system-ui] font-normal"> Rs {p.price.toLocaleString()} </p>
-                              {p.salePrice && p.salePrice > 0 && (
-                                <p className="mt-0.5 text-[10px] text-black/65 line-through decoration-black/65 font-[system-ui] font-normal">
-                                  {p.salePrice.toLocaleString()}
-                                </p>
+                              {p.salePrice && p.salePrice > 0 ? (
+                                <>
+                                  <p className="text-[11px] text-black/62 font-[system-ui] font-normal"> Rs {p.salePrice.toLocaleString()} </p>
+                                  <p className="mt-0.5 text-[10px] text-black/65 line-through decoration-black/65 font-[system-ui] font-normal">
+                                    Rs {p.price.toLocaleString()}
+                                  </p>
+                                </>
+                              ) : (
+                                <p className="text-[11px] text-black/62 font-[system-ui] font-normal"> Rs {p.price.toLocaleString()} </p>
                               )}
                             </>
                           )}
@@ -570,7 +580,24 @@ export default function HomePage() {
                       <p className="font-sans font-normal mx-auto min-h-[2.5rem] w-full text-center text-[0.92rem] leading-[1.25] text-black/78 sm:min-h-[2.8rem] sm:text-[1rem] lg:min-h-[3rem] lg:text-[1.08rem]">
                         {phone.name}
                       </p>
-                      {isOutOfStock && <p className="text-[11px] text-red-600 font-mono font-bold uppercase tracking-wider -mt-2">OUT OF STOCK</p>}
+                      {isOutOfStock ? (
+                        <p className="text-[11px] text-red-600 font-mono font-bold uppercase tracking-wider">OUT OF STOCK</p>
+                      ) : phone.isComingSoon ? (
+                        <p className="text-[11px] text-[#D71921] font-mono font-bold uppercase tracking-wider">COMING SOON</p>
+                      ) : (
+                        <div className="mt-1">
+                          {phone.salePrice && phone.salePrice > 0 ? (
+                            <>
+                              <p className="text-[11px] text-black/62 font-[system-ui] font-normal"> Rs {phone.salePrice.toLocaleString()} </p>
+                              <p className="mt-0.5 text-[10px] text-black/65 line-through decoration-black/65 font-[system-ui] font-normal">
+                                Rs {phone.price.toLocaleString()}
+                              </p>
+                            </>
+                          ) : (
+                            <p className="text-[11px] text-black/62 font-[system-ui] font-normal"> Rs {phone.price.toLocaleString()} </p>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
                 );
