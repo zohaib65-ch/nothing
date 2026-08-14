@@ -11,6 +11,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { getColumns } from "./_components/columns";
 import { Plus, Search, Loader2 } from "lucide-react";
 import { DeleteProductModal } from "./_components/delete-product-modal";
+import { FeatureVariantsModal } from "./_components/feature-variants-modal";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { getProductDisplayPrice } from "@/lib/utils";
 
@@ -25,6 +26,9 @@ export default function AdminProductsPage() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
   const [productToDelete, setProductToDelete] = React.useState<Product | null>(null);
   const [isDeleting, setIsDeleting] = React.useState(false);
+  const [isFeatureModalOpen, setIsFeatureModalOpen] = React.useState(false);
+  const [productToFeature, setProductToFeature] = React.useState<Product | null>(null);
+  const [isSavingFeature, setIsSavingFeature] = React.useState(false);
   const [mounted, setMounted] = React.useState(false);
 
   const loadProducts = React.useCallback(async (showLoader = true) => {
@@ -70,9 +74,44 @@ export default function AdminProductsPage() {
 
   const handleToggleFeatured = React.useCallback(async (prod: Product) => {
     const nextVal = !prod.isFeatured;
-    setProducts((prev) => prev.map((p) => (p.id === prod.id ? { ...p, isFeatured: nextVal } : p)));
-    await ProductService.updateProductFieldsApi(prod.id, { isFeatured: nextVal });
+    if (nextVal && prod.variants && prod.variants.length > 0) {
+      setProductToFeature(prod);
+      setIsFeatureModalOpen(true);
+    } else {
+      const updatedVariants = (prod.variants || []).map((v) => ({ ...v, isFeatured: false }));
+      setProducts((prev) => prev.map((p) => (p.id === prod.id ? { ...p, isFeatured: false, variants: updatedVariants } : p)));
+      await ProductService.updateProductFieldsApi(prod.id, { isFeatured: false, variants: updatedVariants });
+    }
   }, []);
+
+  const handleConfirmFeature = async (selectedVariantIds: string[]) => {
+    if (!productToFeature) return;
+    setIsSavingFeature(true);
+    try {
+      const updatedVariants = (productToFeature.variants || []).map((v) => ({
+        ...v,
+        isFeatured: selectedVariantIds.includes(v.id),
+      }));
+      const hasFeaturedVariants = selectedVariantIds.length > 0;
+
+      setProducts((prev) =>
+        prev.map((p) =>
+          p.id === productToFeature.id
+            ? { ...p, isFeatured: hasFeaturedVariants, variants: updatedVariants }
+            : p
+        )
+      );
+
+      await ProductService.updateProductFieldsApi(productToFeature.id, {
+        isFeatured: hasFeaturedVariants,
+        variants: updatedVariants,
+      });
+      setIsFeatureModalOpen(false);
+      setProductToFeature(null);
+    } finally {
+      setIsSavingFeature(false);
+    }
+  };
 
   const handleToggleStock = React.useCallback(async (prod: Product) => {
     const currentStock = prod.inStock !== false;
@@ -203,6 +242,17 @@ export default function AdminProductsPage() {
         product={productToDelete}
         isDeleting={isDeleting}
         onConfirmDelete={handleConfirmDelete}
+      />
+
+      <FeatureVariantsModal
+        isOpen={isFeatureModalOpen}
+        onClose={() => {
+          setIsFeatureModalOpen(false);
+          setProductToFeature(null);
+        }}
+        product={productToFeature}
+        isSaving={isSavingFeature}
+        onConfirm={handleConfirmFeature}
       />
     </div>
   );

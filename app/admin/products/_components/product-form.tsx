@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Product } from "@/types";
+import { Product, ProductVariant } from "@/types";
 import { slugify, getValidImageUrl } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -103,7 +103,7 @@ export function ProductForm({ initialProduct, isEditMode = false, onSave, isSubm
     const finalSlug = data.slug || slugify(data.name || "");
 
     // Ensure variants array is formatted properly
-    let updatedVariants = (data.variants || []).map((v) => {
+    let updatedVariants: ProductVariant[] = (data.variants || []).map((v) => {
       const st = v.storage || (v as any).capacity || "Standard";
       let hex = (v.colorHex || "#000000").trim();
       if (hex && !hex.startsWith("#")) {
@@ -111,6 +111,9 @@ export function ProductForm({ initialProduct, isEditMode = false, onSave, isSubm
       }
       return {
         ...v,
+        id: v.id || `var-${Date.now()}`,
+        name: v.name || `${v.color || "Standard"} - ${st}`,
+        sku: v.sku || `SKU-${Date.now()}`,
         specifications: v.specifications || [],
         storage: st,
         capacity: st,
@@ -119,7 +122,7 @@ export function ProductForm({ initialProduct, isEditMode = false, onSave, isSubm
         price: v.price !== undefined && v.price !== null ? Number(v.price) : Number(data.price) || 0,
         salePrice: v.salePrice !== undefined && v.salePrice !== null ? Number(v.salePrice) : data.salePrice,
         storagePrices: v.storagePrices || {},
-      };
+      } as ProductVariant;
     });
 
     let primaryRawImage = "";

@@ -113,6 +113,51 @@ export function getVariantCardsForListing(products: Product[]): ListingCardItem[
   for (const p of products) {
     const displayP = getProductDisplayPrice(p);
 
+    const hasFeaturedVariants = p.isFeatured && p.variants && p.variants.some((v) => v.isFeatured);
+    if (hasFeaturedVariants) {
+      for (const v of p.variants.filter((v) => v.isFeatured)) {
+        const cardImg = v.image || p.images?.[0] || "";
+        let regPrice = v.price || p.price || displayP;
+        let salePrice = v.salePrice || p.salePrice;
+
+        if (v.storagePrices && Object.keys(v.storagePrices).length > 0) {
+          const spEntries = Object.values(v.storagePrices) as any[];
+          const firstSp = spEntries.find((sp) => sp.price || sp.salePrice) || spEntries[0];
+          if (firstSp) {
+            if (firstSp.price) regPrice = firstSp.price;
+            if (firstSp.salePrice) salePrice = firstSp.salePrice;
+            if (!firstSp.price && firstSp.salePrice) regPrice = firstSp.salePrice;
+          }
+        }
+
+        if (!regPrice) regPrice = displayP;
+
+        const isComingSoon = Boolean(
+          p.isComingSoon ||
+          v.isComingSoon ||
+          (v.storagePrices && Object.values(v.storagePrices).some((sp: any) => sp?.isComingSoon))
+        );
+
+        list.push({
+          id: `${p.id}-${v.id}`,
+          productId: p.id,
+          name: p.name,
+          slug: p.slug,
+          image: cardImg,
+          price: regPrice,
+          salePrice: salePrice && salePrice < regPrice ? salePrice : undefined,
+          colorName: v.color,
+          colorHex: v.colorHex,
+          inStock: p.inStock !== false && v.inStock !== false,
+          isComingSoon,
+          href: `/products/${p.slug}?color=${encodeURIComponent(v.color || "")}`,
+          product: p,
+          variant: v,
+        });
+      }
+      continue;
+    }
+
     if (p.variants && p.variants.length > 0) {
       const colorMap = new Map<string, any>();
       for (const v of p.variants) {

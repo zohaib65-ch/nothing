@@ -14,6 +14,7 @@ export interface ProductVariant {
   sku: string;
   inStock?: boolean;
   isComingSoon?: boolean;
+  isFeatured?: boolean;
   image?: string;
   specifications?: SpecificationGroup[];
 }

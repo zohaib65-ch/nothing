@@ -44,6 +44,7 @@ export const ProductVariantSchema = z.object({
   sku: z.string().optional(),
   inStock: z.boolean().optional().default(true),
   isComingSoon: z.boolean().optional(),
+  isFeatured: z.boolean().optional().default(false),
   image: z.string().optional(),
   specifications: z.array(SpecificationGroupSchema).optional(),
 });
