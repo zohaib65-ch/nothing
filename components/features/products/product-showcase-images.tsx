@@ -29,15 +29,15 @@ export function ProductShowcaseImages({ product }: ProductShowcaseImagesProps) {
   if (sections.length === 0) return null;
 
   return (
-    <div className="w-full space-y-16 py-12 bg-transparent text-neutral-900 select-none">
+    <div className="w-full py-12 bg-transparent text-neutral-900 select-none">
       {sections.map((item, idx) => {
         if (!item?.image) return null;
         const imageUrl = getValidImageUrl(item.image);
         const isVid = isVideoMedia(item.image);
 
         return (
-          <section key={idx} className="w-full max-w-7xl mx-auto px-4 sm:px-8">
-            <div className="relative w-full h-[400px] sm:h-[600px] md:h-[700px] overflow-hidden shadow-2xl border border-neutral-200/90 bg-neutral-900 group">
+          <section key={idx} className="w-full">
+            <div className="relative w-full h-[400px] sm:h-[600px] md:h-[700px] overflow-hidden bg-neutral-900 group">
               {isVid ? (
                 <video src={imageUrl} autoPlay loop muted playsInline className="w-full h-full object-cover" />
               ) : (

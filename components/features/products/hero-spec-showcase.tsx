@@ -55,7 +55,7 @@ export function HeroSpecShowcase({ product, selectedVariant, onSelectVariant, on
 
   return (
     <div className="relative z-30 w-full bg-transparent text-neutral-900 px-3 sm:px-8 select-none flex flex-col justify-between">
-      <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 items-center relative z-10 my-auto">
+      <div className="w-full grid grid-cols-1 h-screen lg:grid-cols-12 gap-6 items-center relative z-10 my-auto">
         {/* Left Column */}
         <div className="lg:col-span-3 order-2 lg:order-1 flex flex-col gap-6 sm:gap-8 items-center lg:items-start mt-4 sm:mt-8 lg:mt-24">
           {(item0Left?.image || item0Left?.title) && (
@@ -86,7 +86,7 @@ export function HeroSpecShowcase({ product, selectedVariant, onSelectVariant, on
 
         {/* Center Column (Main Hero Product Image) */}
         <div className="lg:col-span-6 order-1 lg:order-2 lg:pt-0 pt-14 flex flex-col items-center justify-center relative ">
-          <div className="relative w-full max-w-[320px] sm:max-w-[420px] lg:max-w-[420px] h-[320px] sm:h-[460px] lg:h-[460px] flex items-center justify-center transition-all duration-300 mt-8">
+          <div className="relative w-full max-w-[320px] sm:max-w-[420px] lg:max-w-[520px] h-[320px] sm:h-[460px] lg:h-[560px] flex items-center justify-center transition-all duration-300 mt-8">
             {heroMainImage ? (
               <Image
                 src={heroMainImage}
