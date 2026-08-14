@@ -2,6 +2,9 @@ import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import { OrderModel } from "@/models/Order";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -44,7 +47,13 @@ export async function GET() {
   try {
     await connectToDatabase();
     const docs = await OrderModel.find().sort({ createdAt: -1 }).lean();
-    return NextResponse.json(docs.map(normalizeLeanDoc));
+    return NextResponse.json(docs.map(normalizeLeanDoc), {
+      headers: {
+        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+        Pragma: "no-cache",
+        Expires: "0",
+      },
+    });
   } catch (error: any) {
     return NextResponse.json({ error: error.message || "Failed to fetch orders" }, { status: 500 });
   }

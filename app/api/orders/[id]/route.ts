@@ -3,6 +3,9 @@ import { connectToDatabase } from "@/lib/mongodb";
 import { OrderModel } from "@/models/Order";
 import mongoose from "mongoose";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> | any }

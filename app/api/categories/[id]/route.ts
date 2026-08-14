@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { connectToDatabase } from "@/lib/mongodb";
 import { CategoryModel } from "@/models/Category";
 import mongoose from "mongoose";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export async function DELETE(
   request: Request,
@@ -18,6 +22,12 @@ export async function DELETE(
       : { $or: [{ id: id }, { slug: id }] };
 
     const result = await CategoryModel.deleteMany(query);
+
+    try {
+      revalidatePath("/categories");
+      revalidatePath("/collections/shop-all");
+      revalidatePath("/");
+    } catch {}
 
     return NextResponse.json({
       success: true,

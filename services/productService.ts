@@ -9,7 +9,10 @@ export class ProductService {
   public static async fetchProductsFromApi(queryString?: string): Promise<Product[]> {
     try {
       const url = queryString ? `/api/products?${queryString}` : "/api/products";
-      const res = await fetch(url);
+      const res = await fetch(url, {
+        cache: "no-store",
+        headers: { "Pragma": "no-cache", "Cache-Control": "no-cache" },
+      });
       if (res.ok) {
         const data = await res.json();
         if (Array.isArray(data)) return data;
@@ -22,7 +25,10 @@ export class ProductService {
 
   public static async fetchProductByIdFromApi(id: string): Promise<Product | null> {
     try {
-      const res = await fetch(`/api/products/${id}`);
+      const res = await fetch(`/api/products/${id}`, {
+        cache: "no-store",
+        headers: { "Pragma": "no-cache", "Cache-Control": "no-cache" },
+      });
       if (res.ok) {
         return await res.json();
       }
@@ -156,7 +162,10 @@ export class ProductService {
 
   public static async fetchCategoriesFromApi(): Promise<CategoryInfo[]> {
     try {
-      const res = await fetch("/api/categories");
+      const res = await fetch("/api/categories", {
+        cache: "no-store",
+        headers: { "Pragma": "no-cache", "Cache-Control": "no-cache" },
+      });
       if (res.ok) {
         const data = await res.json();
         if (Array.isArray(data)) return data;
