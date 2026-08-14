@@ -8,6 +8,9 @@ import ProductDetailClient from "./product-detail-client";
 import { JsonLd } from "@/components/seo/json-ld";
 import { Loader } from "@/components/ui/loader";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 interface PageProps {
   params: Promise<{ slug: string }>;
 }

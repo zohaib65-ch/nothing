@@ -7,6 +7,9 @@ import { ProductModel } from "@/models/Product";
 import CategoryClient from "./category-client";
 import { JsonLd } from "@/components/seo/json-ld";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 interface PageProps {
   params: Promise<{ slug: string }>;
 }

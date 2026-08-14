@@ -61,11 +61,13 @@ function SpecsAccordionRow({ group, isOpen, onToggle }: { group: SpecificationGr
                 {item.name}
               </span>
               <div className="space-y-0.5 ml-5">
-                {item.value.split(/[,\n]/).map((v, vi) => (
-                  <div key={vi} className="font-lattera-mono text-[12px] sm:text-[13px] font-medium uppercase text-neutral-900">
-                    {v.trim()}
-                  </div>
-                ))}
+                {String(item.value || "")
+                  .split(/[,\n]/)
+                  .map((v, vi) => (
+                    <div key={vi} className="font-lattera-mono text-[12px] sm:text-[13px] font-medium uppercase text-neutral-900">
+                      {v.trim()}
+                    </div>
+                  ))}
               </div>
             </div>
           ))}
@@ -108,7 +110,9 @@ export function SpecsDropdownOverlay() {
     return specifications
       .map((group) => ({
         ...group,
-        items: (group.items || []).filter((item) => item.value && item.value.trim() !== ""),
+        items: (group.items || []).filter(
+          (item) => item && item.value != null && String(item.value).trim() !== ""
+        ),
       }))
       .filter((group) => group.category && group.items.length > 0);
   }, [specifications]);

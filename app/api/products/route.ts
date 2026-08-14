@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { connectToDatabase } from "@/lib/mongodb";
 import { ProductModel } from "@/models/Product";
+
+export const dynamic = "force-dynamic";
 
 const LIST_FIELDS =
   "name slug price salePrice category images status inStock isFeatured isNewArrival sortOrder warranty variants disclaimers createdAt updatedAt";
@@ -53,6 +56,21 @@ export async function POST(request: Request) {
     }
 
     const product = await ProductModel.create(body);
+
+    try {
+      if (product?.slug) {
+        revalidatePath(`/products/${product.slug}`);
+        revalidatePath(`/products/${product.slug}`, "page");
+      }
+      if (product?.category) {
+        revalidatePath(`/categories/${product.category}`);
+        revalidatePath(`/collections/${product.category}`);
+      }
+      revalidatePath("/products");
+      revalidatePath("/collections/shop-all");
+      revalidatePath("/");
+    } catch {}
+
     return NextResponse.json(product, { status: 201 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

@@ -23,8 +23,12 @@ export default function ProductDetailClient({ initialProduct }: ProductDetailCli
   const { addItem } = useCartStore();
   const { openSpecs } = useSpecsStore();
 
-  const [product] = React.useState<Product>(initialProduct);
+  const [product, setProduct] = React.useState<Product>(initialProduct);
   const [selectedVariant, setSelectedVariant] = React.useState<ProductVariant | null>(null);
+
+  React.useEffect(() => {
+    setProduct(initialProduct);
+  }, [initialProduct]);
 
   React.useEffect(() => {
     if (product) {
@@ -39,26 +43,35 @@ export default function ProductDetailClient({ initialProduct }: ProductDetailCli
     }
   }, [product, colorQuery]);
 
+  const getActiveSpecs = React.useCallback(
+    (variant: ProductVariant | null, prod: Product) => {
+      if (Array.isArray(variant?.specifications) && variant.specifications.length > 0) {
+        return variant.specifications;
+      }
+      if (Array.isArray(prod?.specifications) && prod.specifications.length > 0) {
+        return prod.specifications;
+      }
+      return [];
+    },
+    []
+  );
+
   const handleOpenSpecs = () => {
     if (product) {
-      const activeSpecs = Array.isArray(selectedVariant?.specifications)
-        ? selectedVariant.specifications
-        : product.specifications;
-      openSpecs(activeSpecs || [], product.name);
+      const activeSpecs = getActiveSpecs(selectedVariant, product);
+      openSpecs(activeSpecs, product.name);
     }
   };
 
   React.useEffect(() => {
     if (product && selectedVariant) {
-      const activeSpecs = Array.isArray(selectedVariant.specifications)
-        ? selectedVariant.specifications
-        : product.specifications;
+      const activeSpecs = getActiveSpecs(selectedVariant, product);
       useSpecsStore.setState({
-        specifications: activeSpecs || [],
+        specifications: activeSpecs,
         productName: product.name,
       });
     }
-  }, [selectedVariant, product]);
+  }, [selectedVariant, product, getActiveSpecs]);
 
   if (!product || !selectedVariant) {
     return (

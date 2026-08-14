@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { connectToDatabase } from "@/lib/mongodb";
 import { ProductModel } from "@/models/Product";
 import mongoose from "mongoose";
+
+export const dynamic = "force-dynamic";
 
 function getProductQuery(id: string) {
   if (mongoose.isValidObjectId(id)) {
@@ -56,10 +59,23 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       returnDocument: "after",
     });
 
-    if (!product) {
-      // If product doesn't exist yet, create it with upsert
-      product = await ProductModel.create({ ...body, id: body.id || id });
+    function triggerProductRevalidation(prod: any) {
+      try {
+        if (prod?.slug) {
+          revalidatePath(`/products/${prod.slug}`);
+          revalidatePath(`/products/${prod.slug}`, "page");
+        }
+        if (prod?.category) {
+          revalidatePath(`/categories/${prod.category}`);
+          revalidatePath(`/collections/${prod.category}`);
+        }
+        revalidatePath("/products");
+        revalidatePath("/collections/shop-all");
+        revalidatePath("/");
+      } catch {}
     }
+
+    triggerProductRevalidation(product);
 
     return NextResponse.json(product);
   } catch (error: any) {
@@ -80,6 +96,20 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
 
+    try {
+      if (product.slug) {
+        revalidatePath(`/products/${product.slug}`);
+        revalidatePath(`/products/${product.slug}`, "page");
+      }
+      if (product.category) {
+        revalidatePath(`/categories/${product.category}`);
+        revalidatePath(`/collections/${product.category}`);
+      }
+      revalidatePath("/products");
+      revalidatePath("/collections/shop-all");
+      revalidatePath("/");
+    } catch {}
+
     return NextResponse.json(product);
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -92,7 +122,22 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
     await connectToDatabase();
 
     const query = getProductQuery(id);
-    await ProductModel.findOneAndDelete(query);
+    const deleted = await ProductModel.findOneAndDelete(query);
+
+    try {
+      if (deleted?.slug) {
+        revalidatePath(`/products/${deleted.slug}`);
+        revalidatePath(`/products/${deleted.slug}`, "page");
+      }
+      if (deleted?.category) {
+        revalidatePath(`/categories/${deleted.category}`);
+        revalidatePath(`/collections/${deleted.category}`);
+      }
+      revalidatePath("/products");
+      revalidatePath("/collections/shop-all");
+      revalidatePath("/");
+    } catch {}
+
     return NextResponse.json({ success: true });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

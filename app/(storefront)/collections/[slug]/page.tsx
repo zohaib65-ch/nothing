@@ -5,6 +5,9 @@ import { connectToDatabase } from "@/lib/mongodb";
 import { ProductModel } from "@/models/Product";
 import CollectionClient from "./collection-client";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
