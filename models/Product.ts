@@ -38,6 +38,7 @@ const ProductVariantSchema = new Schema({
   isFeatured: { type: Boolean, default: false },
   image: { type: String, default: "" },
   specifications: [SpecificationGroupSchema],
+  highlights: [{ type: String }],
 });
 
 const ProductHighlightSchema = new Schema({

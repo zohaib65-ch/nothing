@@ -17,6 +17,7 @@ export interface ProductVariant {
   isFeatured?: boolean;
   image?: string;
   specifications?: SpecificationGroup[];
+  highlights?: string[];
 }
 
 export interface SpecificationItem {

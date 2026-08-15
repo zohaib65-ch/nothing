@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Image from "next/image";
-import { Layers, Plus, Trash2, Upload, FileText, Copy } from "lucide-react";
+import { Layers, Plus, Trash2, Upload, FileText, Copy, Pencil, Check, X } from "lucide-react";
 import { useFormContext, useFieldArray } from "react-hook-form";
 import { ProductFormValues } from "@/lib/validations/product.schema";
 import { Input } from "@/components/ui/input";
@@ -24,6 +24,162 @@ const QUICK_COLOR_PRESETS = [
 ];
 
 const STORAGE_PRESET_OPTIONS = ["8 + 128", "12 + 256", "16 + 512", "8GB + 128GB", "12GB + 256GB", "16GB + 512GB"];
+
+interface VariantHighlightsProps {
+  variantIndex: number;
+  watch: any;
+  setValue: any;
+}
+
+function VariantHighlights({ variantIndex, watch, setValue }: VariantHighlightsProps) {
+  const highlights: string[] = watch(`variants.${variantIndex}.highlights`) || [];
+  const [inputValue, setInputValue] = React.useState("");
+  const [editingIndex, setEditingIndex] = React.useState<number | null>(null);
+  const [editingValue, setEditingValue] = React.useState("");
+
+  const handleAdd = () => {
+    if (!inputValue.trim()) return;
+    if (highlights.length >= 3) {
+      toast.error("Maximum 3 highlights allowed");
+      return;
+    }
+    const updated = [...highlights, inputValue.trim()];
+    setValue(`variants.${variantIndex}.highlights`, updated, { shouldDirty: true });
+    setInputValue("");
+  };
+
+  const handleRemove = (hlIndex: number) => {
+    const updated = highlights.filter((_, idx) => idx !== hlIndex);
+    setValue(`variants.${variantIndex}.highlights`, updated, { shouldDirty: true });
+    if (editingIndex === hlIndex) {
+      setEditingIndex(null);
+    }
+  };
+
+  const handleStartEdit = (idx: number, currentVal: string) => {
+    setEditingIndex(idx);
+    setEditingValue(currentVal);
+  };
+
+  const handleSaveEdit = (idx: number) => {
+    if (!editingValue.trim()) return;
+    const updated = [...highlights];
+    updated[idx] = editingValue.trim();
+    setValue(`variants.${variantIndex}.highlights`, updated, { shouldDirty: true });
+    setEditingIndex(null);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingIndex(null);
+    setEditingValue("");
+  };
+
+  return (
+    <div className="bg-neutral-50/70 border border-neutral-200 rounded-xl p-4 space-y-3">
+      {highlights.length > 0 ? (
+        <div className="space-y-2">
+          {highlights.map((hl, hlIdx) => {
+            const isEditing = editingIndex === hlIdx;
+            return (
+              <div key={hlIdx} className="flex items-center justify-between bg-white px-3 py-2 rounded-lg border border-neutral-200 shadow-xs gap-2 min-h-10">
+                {isEditing ? (
+                  <div className="flex items-center gap-1.5 flex-1">
+                    <Input
+                      value={editingValue}
+                      onChange={(e) => setEditingValue(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          handleSaveEdit(hlIdx);
+                        } else if (e.key === "Escape") {
+                          handleCancelEdit();
+                        }
+                      }}
+                      className="h-8 text-xs bg-white flex-1"
+                      autoFocus
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleSaveEdit(hlIdx)}
+                      className="text-green-600 hover:text-green-700 h-7 w-7 p-0 hover:bg-neutral-100 rounded-full shrink-0 flex items-center justify-center"
+                    >
+                      <Check className="h-3.5 w-3.5" />
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleCancelEdit}
+                      className="text-neutral-400 hover:text-neutral-600 h-7 w-7 p-0 hover:bg-neutral-100 rounded-full shrink-0 flex items-center justify-center"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
+                ) : (
+                  <>
+                    <span className="text-xs text-neutral-850 font-mono break-all flex-1">{hl}</span>
+                    <div className="flex items-center gap-1 shrink-0">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleStartEdit(hlIdx, hl)}
+                        className="text-neutral-400 hover:text-blue-600 h-6 w-6 p-0 hover:bg-neutral-100 rounded-full flex items-center justify-center"
+                        title="Edit highlight"
+                      >
+                        <Pencil className="h-3.5 w-3.5" />
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleRemove(hlIdx)}
+                        className="text-neutral-400 hover:text-red-650 h-6 w-6 p-0 hover:bg-neutral-100 rounded-full flex items-center justify-center"
+                        title="Delete highlight"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
+                  </>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <p className="text-[11px] text-neutral-400 font-mono">No highlights added yet.</p>
+      )}
+
+      {highlights.length < 3 ? (
+        <div className="flex gap-2">
+          <Input
+            placeholder="Type a highlight description (e.g. Free shipping)..."
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                handleAdd();
+              }
+            }}
+            className="w-full bg-white text-xs"
+          />
+          <Button
+            type="button"
+            onClick={handleAdd}
+            className="bg-neutral-900 text-white hover:bg-neutral-800 shrink-0 h-10 px-4 flex items-center justify-center"
+          >
+            <Plus className="h-4 w-4" />
+          </Button>
+        </div>
+      ) : (
+        <p className="text-[10px] text-neutral-400 font-mono uppercase font-semibold">✓ Maximum 3 highlights added</p>
+      )}
+    </div>
+  );
+}
 
 export function VariantsInfoSection() {
   const { register, watch, setValue, control } = useFormContext<ProductFormValues>();
@@ -401,6 +557,14 @@ export function VariantsInfoSection() {
                         </div>
                       );
                     })()}
+                  </div>
+
+                  {/* Section 3.5: Variant Custom Highlights (Max 3) */}
+                  <div className="pt-3 border-t border-neutral-100 space-y-3">
+                    <label className="block text-[11px] uppercase font-bold text-neutral-700 tracking-wider">
+                      VARIANT HIGHLIGHTS (MAX 3)
+                    </label>
+                    <VariantHighlights variantIndex={index} watch={watch} setValue={setValue} />
                   </div>
 
                   {/* Section 4: Variant Image Upload (ENLARGED PREVIEW) */}

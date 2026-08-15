@@ -47,6 +47,7 @@ export const ProductVariantSchema = z.object({
   isFeatured: z.boolean().optional().default(false),
   image: z.string().optional(),
   specifications: z.array(SpecificationGroupSchema).optional(),
+  highlights: z.array(z.string()).optional(),
 });
 
 export const ProductFeatureSchema = z.object({
