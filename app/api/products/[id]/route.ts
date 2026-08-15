@@ -55,7 +55,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     }
 
     const query = getProductQuery(id);
-    let product = await ProductModel.findOneAndUpdate(query, body, {
+    const product = await ProductModel.findOneAndUpdate(query, body, {
       returnDocument: "after",
     });
 

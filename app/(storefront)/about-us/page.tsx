@@ -97,7 +97,7 @@ export default function AboutUsPage() {
           sameAs: [],
         }}
       />
-      <div className="min-h-screen overflow-x-hidden bg-[#f4f4f0] text-[#111] pt-20">
+      <div className="min-h-screen overflow-x-hidden text-[#111] pt-20">
         <section className="border-b border-black/10 px-4 py-12 md:px-8 md:py-16">
           <div className="mx-auto grid max-w-screen-2xl gap-8 lg:grid-cols-[minmax(0,1fr)_380px] lg:items-end">
             {/* Left — heading + subtitle */}

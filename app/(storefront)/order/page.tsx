@@ -254,20 +254,20 @@ export default function CartCheckoutPage() {
               </div>
 
               {/* Product preview list */}
-              <div className="space-y-4 max-h-60 overflow-y-auto pr-1 border-b border-slate-100 pb-5">
+              <div className="space-y-4 pr-1 border-b border-slate-100 pb-5">
                 {itemsWithPrices.map((item) => {
                   const prices = item.prices;
                   return (
-                    <div key={item.id} className="flex items-center space-x-4 py-1">
-                      <div className="h-20 w-20 bg-slate-50/80 rounded-2xl overflow-hidden border border-slate-200/80 shrink-0 flex items-center justify-center p-2.5 shadow-sm">
+                    <div key={item.id} className="flex items-center justify-between gap-5 py-3 border-b border-slate-50 last:border-0">
+                      <div className="h-32 w-32 bg-white rounded-2xl overflow-hidden border border-slate-200 shrink-0 flex items-center justify-center p-1">
                         <img
                           alt={item.product.name}
                           src={item.selectedVariant.image || item.product.images[0]}
                           className="h-full w-full object-contain"
                         />
                       </div>
-                      <div className="space-y-1 flex-1">
-                        <h4 className="text-xs font-bold text-slate-900 line-clamp-1">{item.product.name}</h4>
+                      <div className="space-y-1.5 flex-1 flex flex-col items-end text-right">
+                        <h4 className="text-[13px] font-bold text-slate-900 line-clamp-2 leading-snug">{item.product.name}</h4>
                         <p className="text-[11px] text-slate-500 font-sans">
                           Color: <span className="font-semibold text-slate-700">{item.selectedVariant.color}</span>
                           {item.selectedVariant.storage && (
@@ -277,18 +277,18 @@ export default function CartCheckoutPage() {
                             </>
                           )}
                         </p>
-                        <div className="flex items-center justify-between pt-1">
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold text-slate-700 bg-slate-100 border border-slate-200/80">
+                        <div className="flex flex-col items-end pt-1 gap-1">
+                          <span className="inline-flex items-center text-[10px] font-mono font-bold text-slate-500">
                             QTY: {item.quantity}
                           </span>
-                          <div className="flex items-center gap-1.5">
+                          <div className="flex items-center justify-end gap-1.5 mt-0.5">
                             {prices.originalItemTotal ? (
                               <>
-                                <span className="line-through text-slate-400 text-xs font-normal">{formatPKR(prices.originalItemTotal)}</span>
-                                <span className="text-xs font-bold text-slate-900">{formatPKR(prices.itemTotal)}</span>
+                                <span className="line-through text-slate-400 text-[11px] font-normal">{formatPKR(prices.originalItemTotal)}</span>
+                                <span className="text-[15px] font-bold text-slate-900">{formatPKR(prices.itemTotal)}</span>
                               </>
                             ) : (
-                              <span className="text-xs font-bold text-slate-900">{formatPKR(prices.itemTotal)}</span>
+                              <span className="text-[15px] font-bold text-slate-900">{formatPKR(prices.itemTotal)}</span>
                             )}
                           </div>
                         </div>
@@ -300,25 +300,6 @@ export default function CartCheckoutPage() {
 
               {/* Calculation list */}
               <div className="space-y-3.5 text-xs">
-                <div className="flex justify-between">
-                  <span className="text-slate-500">Subtotal</span>
-                  <div className="flex items-center gap-1.5">
-                    {originalTotalSum ? (
-                      <>
-                        <span className="line-through text-slate-400 text-xs font-normal">{formatPKR(originalTotalSum)}</span>
-                        <span className="font-bold text-slate-800">{formatPKR(subtotal)}</span>
-                      </>
-                    ) : (
-                      <span className="font-bold text-slate-800">{formatPKR(subtotal)}</span>
-                    )}
-                  </div>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-500">Fulfillment</span>
-                  <span className="font-bold text-slate-800">
-                    {fulfillmentMethod === "pickup" ? <span className="text-emerald-600 font-bold">Store Pickup (Free)</span> : "Door Delivery"}
-                  </span>
-                </div>
                 <div className="flex justify-between">
                   <span className="text-slate-500">Shipping fee</span>
                   <span className="font-bold text-slate-800">

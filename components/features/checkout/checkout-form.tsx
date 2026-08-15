@@ -102,7 +102,7 @@ export function SharedCheckoutForm({
 
       {/* SECTION: Payment method (SHIP MODE) */}
       {fulfillmentMethod === "ship" && (
-        <div className="bg-white rounded-[28px] p-6 md:p-8 border border-slate-200/80 shadow-sm space-y-6">
+        <div className="bg-white rounded-[28px] p-4 sm:p-6 md:p-8 border border-slate-200/80 shadow-sm space-y-6">
           <div>
             <h2 className="text-lg font-bold tracking-tight text-slate-900 font-ntype">Payment method</h2>
             <p className="text-xs text-slate-500 mt-1 font-ntype leading-relaxed">
@@ -112,13 +112,12 @@ export function SharedCheckoutForm({
 
           {/* Warning Banner for High-value orders */}
           {isHighValue && (
-            <div className="bg-emerald-50/70 border border-emerald-200/90 rounded-[20px] p-5 text-slate-800 text-xs font-ntype leading-relaxed space-y-2.5 shadow-sm">
+            <div className="bg-emerald-50/70 border border-emerald-200/90 rounded-[20px] sm:p-5 p-4 text-slate-800 text-xs font-ntype leading-relaxed space-y-2.5 shadow-sm">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-600 text-white font-mono text-[10px] font-bold uppercase tracking-wider rounded-full shadow-sm">
-                <span>★ CUSTOMER BENEFIT</span>
+                <span>CUSTOMER BENEFIT</span>
               </span>
-              <p className="text-slate-700 font-sans leading-relaxed">
-                For the safety and accountability of high-value shipments, we highly recommend bank transfer pre-payment. Orders paid via Bank
-                Transfer receive priority processing and express next-day delivery.
+              <p className="text-slate-700 font-sans  text-[11px] leading-relaxed">
+                For the safety and accountability of high-value shipments, we highly recommend bank transfer pre-payment.
               </p>
             </div>
           )}
@@ -128,7 +127,7 @@ export function SharedCheckoutForm({
             <div
               onClick={() => setPaymentMethod("cod")}
               className={cn(
-                "p-5 rounded-[20px] border transition-all duration-200 flex items-center justify-between cursor-pointer select-none",
+                "p-4 sm:p-5 rounded-[20px] border transition-all duration-200 flex items-center justify-between cursor-pointer select-none",
                 paymentMethod === "cod" ? "border-emerald-500 bg-emerald-50/15" : "border-slate-200 hover:border-slate-300 bg-white",
               )}
             >
@@ -153,7 +152,7 @@ export function SharedCheckoutForm({
             <div
               onClick={() => setPaymentMethod("bank_transfer")}
               className={cn(
-                "p-5 rounded-[20px] border transition-all duration-200 space-y-5 cursor-pointer select-none",
+                "p-4 sm:p-5 rounded-[20px] border transition-all duration-200 space-y-5 cursor-pointer select-none",
                 paymentMethod === "bank_transfer" ? "border-emerald-500 bg-emerald-50/15" : "border-slate-200 hover:border-slate-300 bg-white",
               )}
             >
@@ -180,7 +179,7 @@ export function SharedCheckoutForm({
               {/* Nested Bank Details Subcard */}
               {paymentMethod === "bank_transfer" && (
                 <div
-                  className="bg-emerald-50/20 border border-emerald-100/80 rounded-[20px] p-5 space-y-4 text-xs font-ntype text-slate-700 animate-in fade-in-20 duration-200"
+                  className="bg-emerald-50/20 border border-emerald-100/80 rounded-[20px] sm:p-5 p-4 space-y-4 text-xs font-ntype text-slate-700 animate-in fade-in-20 duration-200"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <div className="items-center space-x-3 text-slate-800 pb-2 border-b border-emerald-100/60">
@@ -193,7 +192,7 @@ export function SharedCheckoutForm({
                     <p className="font-ntype text-[9px] text-slate-400 uppercase tracking-widest font-bold">ACCOUNT TITLE</p>
                     <p className="font-bold text-slate-800 mt-0.5 text-[13px]">NOTHING OFFICIAL</p>
                   </div>
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-white border border-slate-200/80 rounded-xl p-3 gap-2.5 shadow-sm">
+                  <div className="flex flex-row items-center justify-between bg-white border border-slate-200/80 rounded-xl p-3 gap-2.5 shadow-sm">
                     <div className="min-w-0">
                       <p className="font-ntype text-[9px] text-slate-400 uppercase tracking-widest font-bold">ACCOUNT NUMBER</p>
                       <p className="font-ntype text-sm font-bold text-slate-800 mt-0.5 break-all tracking-wider">57065002935977</p>
@@ -204,22 +203,22 @@ export function SharedCheckoutForm({
                         e.stopPropagation();
                         onCopyText("57065002935977", "account");
                       }}
-                      className="inline-flex items-center space-x-1.5 border border-slate-200 hover:border-black bg-slate-50 hover:bg-black hover:text-white transition-all text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg text-slate-700 cursor-pointer self-end sm:self-center"
+                      className="inline-flex items-center space-x-1.5 border border-slate-200 hover:border-black bg-slate-50 hover:bg-black hover:text-white transition-all text-[10px] font-bold uppercase tracking-wider px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg text-slate-700 cursor-pointer shrink-0"
                     >
                       {copiedAccount ? (
                         <>
                           <Check className="h-3 w-3 text-emerald-600 stroke-[2.5]" />
-                          <span className="text-emerald-600">Copied!</span>
+                          <span className="text-emerald-600 hidden sm:inline">Copied!</span>
                         </>
                       ) : (
                         <>
                           <Copy className="h-3 w-3" />
-                          <span>Copy</span>
+                          <span className="hidden sm:inline">Copy</span>
                         </>
                       )}
                     </button>
                   </div>
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-white border border-slate-200/80 rounded-xl p-3 gap-2.5 shadow-sm">
+                  <div className="flex flex-row items-center justify-between bg-white border border-slate-200/80 rounded-xl p-3 gap-2.5 shadow-sm">
                     <div className="min-w-0">
                       <p className="font-ntype text-[9px] text-slate-400 uppercase tracking-widest font-bold">IBAN</p>
                       <p className="font-ntype text-xs sm:text-sm font-bold text-slate-800 mt-0.5 break-all tracking-wider">
@@ -232,17 +231,17 @@ export function SharedCheckoutForm({
                         e.stopPropagation();
                         onCopyText("PK35ALFH5706005002935977", "iban");
                       }}
-                      className="inline-flex items-center space-x-1.5 border border-slate-200 hover:border-black bg-slate-50 hover:bg-black hover:text-white transition-all text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg text-slate-700 cursor-pointer self-end sm:self-center"
+                      className="inline-flex items-center space-x-1.5 border border-slate-200 hover:border-black bg-slate-50 hover:bg-black hover:text-white transition-all text-[10px] font-bold uppercase tracking-wider px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg text-slate-700 cursor-pointer shrink-0"
                     >
                       {copiedIban ? (
                         <>
                           <Check className="h-3 w-3 text-emerald-600 stroke-[2.5]" />
-                          <span className="text-emerald-600">Copied!</span>
+                          <span className="text-emerald-600 hidden sm:inline">Copied!</span>
                         </>
                       ) : (
                         <>
                           <Copy className="h-3 w-3" />
-                          <span>Copy</span>
+                          <span className="hidden sm:inline">Copy</span>
                         </>
                       )}
                     </button>
@@ -256,7 +255,7 @@ export function SharedCheckoutForm({
 
       {/* SECTION: Payment method (PICKUP MODE) */}
       {fulfillmentMethod === "pickup" && (
-        <div className="bg-white rounded-[28px] p-6 md:p-8 border border-slate-200/80 shadow-sm space-y-6">
+        <div className="bg-white rounded-[28px] p-4 sm:p-6 md:p-8 border border-slate-200/80 shadow-sm space-y-6">
           <div>
             <h2 className="text-lg font-bold tracking-tight text-slate-900 font-ntype">Pickup Payment Options</h2>
             <p className="text-xs text-slate-500 mt-1 font-ntype leading-relaxed">
@@ -317,7 +316,7 @@ export function SharedCheckoutForm({
             <div
               onClick={() => setPaymentMethod("bank_transfer")}
               className={cn(
-                "p-5 rounded-[20px] border transition-all duration-200 space-y-5 cursor-pointer select-none",
+                "p-4 sm:p-5 rounded-[20px] border transition-all duration-200 space-y-5 cursor-pointer select-none",
                 paymentMethod === "bank_transfer" ? "border-emerald-500 bg-emerald-50/15" : "border-slate-200 hover:border-slate-300 bg-white",
               )}
             >
@@ -344,7 +343,7 @@ export function SharedCheckoutForm({
               {/* Nested Bank Details Subcard */}
               {paymentMethod === "bank_transfer" && (
                 <div
-                  className="bg-emerald-50/20 border border-emerald-100/80 rounded-[20px] p-5 space-y-4 text-xs font-ntype text-slate-700 animate-in fade-in-20 duration-200"
+                  className="bg-emerald-50/20 border border-emerald-100/80 rounded-[20px] sm:p-5 p-4 space-y-4 text-xs font-ntype text-slate-700 animate-in fade-in-20 duration-200"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <div className="items-center space-x-3 text-slate-800 pb-2 border-b border-emerald-100/60">
@@ -357,7 +356,7 @@ export function SharedCheckoutForm({
                     <p className="font-ntype text-[9px] text-slate-400 uppercase tracking-widest font-bold">ACCOUNT TITLE</p>
                     <p className="font-bold text-slate-800 mt-0.5 text-[13px]">NOTHING OFFICIAL</p>
                   </div>
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-white border border-slate-200/80 rounded-xl p-3 gap-2.5 shadow-sm">
+                  <div className="flex flex-row items-center justify-between bg-white border border-slate-200/80 rounded-xl p-3 gap-2.5 shadow-sm">
                     <div className="min-w-0">
                       <p className="font-ntype text-[9px] text-slate-400 uppercase tracking-widest font-bold">ACCOUNT NUMBER</p>
                       <p className="font-ntype text-sm font-bold text-slate-800 mt-0.5 break-all tracking-wider">57065002935977</p>
@@ -368,22 +367,22 @@ export function SharedCheckoutForm({
                         e.stopPropagation();
                         onCopyText("57065002935977", "account");
                       }}
-                      className="inline-flex items-center space-x-1.5 border border-slate-200 hover:border-black bg-slate-50 hover:bg-black hover:text-white transition-all text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg text-slate-700 cursor-pointer self-end sm:self-center"
+                      className="inline-flex items-center space-x-1.5 border border-slate-200 hover:border-black bg-slate-50 hover:bg-black hover:text-white transition-all text-[10px] font-bold uppercase tracking-wider px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg text-slate-700 cursor-pointer shrink-0"
                     >
                       {copiedAccount ? (
                         <>
                           <Check className="h-3 w-3 text-emerald-600 stroke-[2.5]" />
-                          <span className="text-emerald-600">Copied!</span>
+                          <span className="text-emerald-600 hidden sm:inline">Copied!</span>
                         </>
                       ) : (
                         <>
                           <Copy className="h-3 w-3" />
-                          <span>Copy</span>
+                          <span className="hidden sm:inline">Copy</span>
                         </>
                       )}
                     </button>
                   </div>
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-white border border-slate-200/80 rounded-xl p-3 gap-2.5 shadow-sm">
+                  <div className="flex flex-row items-center justify-between bg-white border border-slate-200/80 rounded-xl p-3 gap-2.5 shadow-sm">
                     <div className="min-w-0">
                       <p className="font-ntype text-[9px] text-slate-400 uppercase tracking-widest font-bold">IBAN</p>
                       <p className="font-ntype text-xs sm:text-sm font-bold text-slate-800 mt-0.5 break-all tracking-wider">
@@ -396,17 +395,17 @@ export function SharedCheckoutForm({
                         e.stopPropagation();
                         onCopyText("PK35ALFH5706005002935977", "iban");
                       }}
-                      className="inline-flex items-center space-x-1.5 border border-slate-200 hover:border-black bg-slate-50 hover:bg-black hover:text-white transition-all text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg text-slate-700 cursor-pointer self-end sm:self-center"
+                      className="inline-flex items-center space-x-1.5 border border-slate-200 hover:border-black bg-slate-50 hover:bg-black hover:text-white transition-all text-[10px] font-bold uppercase tracking-wider px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg text-slate-700 cursor-pointer shrink-0"
                     >
                       {copiedIban ? (
                         <>
                           <Check className="h-3 w-3 text-emerald-600 stroke-[2.5]" />
-                          <span className="text-emerald-600">Copied!</span>
+                          <span className="text-emerald-600 hidden sm:inline">Copied!</span>
                         </>
                       ) : (
                         <>
                           <Copy className="h-3 w-3" />
-                          <span>Copy</span>
+                          <span className="hidden sm:inline">Copy</span>
                         </>
                       )}
                     </button>

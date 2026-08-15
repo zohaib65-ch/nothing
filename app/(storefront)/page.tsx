@@ -303,9 +303,9 @@ const verifiedReviews = [
     name: "Hamza K.",
     city: "Lahore",
     product: "Nothing Phone (3a)",
-    rating: 5,
+    rating: 4.5,
     date: "Verified Buyer • 2 days ago",
-    comment: "Original product with official box. Delivered within 24 hours in Lahore! Glyph lighting looks amazing in real life.",
+    comment: "Official box, delivered in 24 hours. Glyph lighting looks amazing in real life.",
   },
   {
     name: "Zain Ul Abideen",
@@ -313,15 +313,15 @@ const verifiedReviews = [
     product: "CMF Power 65W GaN",
     rating: 5,
     date: "Verified Buyer • 4 days ago",
-    comment: "Charges my Nothing Phone and MacBook simultaneously. Super fast 65W output with zero heating. Best purchase!",
+    comment: "Charges Phone and MacBook together. Super fast 65W with zero heating. Best purchase!",
   },
   {
     name: "Syed Shahmeer",
     city: "Islamabad",
     product: "CMF Buds Pro 2",
-    rating: 5,
+    rating: 4,
     date: "Verified Buyer • 1 week ago",
-    comment: "The Smart Dial case control is super smooth and convenient. Crisp sound with deep bass.",
+    comment: "Smart Dial control is super smooth and convenient. Crisp sound with deep bass.",
   },
   {
     name: "Bilal Ahmed",
@@ -329,15 +329,55 @@ const verifiedReviews = [
     product: "Ear (a)",
     rating: 5,
     date: "Verified Buyer • 1 week ago",
-    comment: "Best Active Noise Cancellation in this budget. Yellow color looks super stylish and unique.",
+    comment: "Best ANC in this budget. Yellow color is super stylish and turns heads everywhere.",
   },
   {
     name: "Usman Ali",
     city: "Faisalabad",
     product: "Nothing USB-C Cable",
+    rating: 4.5,
+    date: "Verified Buyer • 2 weeks ago",
+    comment: "Solid transparent build quality. Fast charging works perfectly without any warm up.",
+  },
+  {
+    name: "Ali Raza",
+    city: "Multan",
+    product: "Nothing Phone (3a) Pro",
+    rating: 5,
+    date: "Verified Buyer • 3 days ago",
+    comment: "Pro camera upgrade is genuinely impressive. Fast delivery and packed beautifully.",
+  },
+  {
+    name: "Sara Noor",
+    city: "Lahore",
+    product: "CMF Watch Pro 2",
+    rating: 4.5,
+    date: "Verified Buyer • 5 days ago",
+    comment: "Battery lasts 5 days easily. Fitness tracking accurate and display is crisp.",
+  },
+  {
+    name: "Fahad Mirza",
+    city: "Karachi",
+    product: "Nothing Ear (open)",
+    rating: 5,
+    date: "Verified Buyer • 1 week ago",
+    comment: "Open-ear design is comfortable all day. Sound quality is clear without blocking world.",
+  },
+  {
+    name: "Hassan Tariq",
+    city: "Islamabad",
+    product: "CMF Buds Pro 2",
+    rating: 4,
+    date: "Verified Buyer • 10 days ago",
+    comment: "Great value buds. ANC blocks traffic noise well and bass is punchy for the price.",
+  },
+  {
+    name: "Maryam Sheikh",
+    city: "Peshawar",
+    product: "Nothing Phone (3a)",
     rating: 5,
     date: "Verified Buyer • 2 weeks ago",
-    comment: "Solid transparent strain relief build quality. Fast charging supported without warm up.",
+    comment: "Phone exceeded expectations. Glyph alerts are practical and the camera is brilliant.",
   },
 ];
 
@@ -347,6 +387,8 @@ export default function HomePage() {
   const [activeFaqCategory, setActiveFaqCategory] = React.useState("general");
   const [openFaqIndex, setOpenFaqIndex] = React.useState<number | null>(null);
   const reviewsRef = React.useRef<HTMLDivElement>(null);
+  const [currentReviewIndex, setCurrentReviewIndex] = React.useState(0);
+  const autoSlideRef = React.useRef<ReturnType<typeof setInterval> | null>(null);
 
   const rawGems = products.filter((p) => p.isFeatured).length > 0
     ? [...products.filter((p) => p.isFeatured)].sort((a, b) => new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime())
@@ -356,29 +398,54 @@ export default function HomePage() {
 
   const filteredFaqs = allFaqs.filter((f) => f.category === activeFaqCategory);
 
+  const CARD_WIDTH = () => (reviewsRef.current ? reviewsRef.current.clientWidth / 4 : 260);
+
+  const scrollToReview = React.useCallback((index: number) => {
+    if (reviewsRef.current) {
+      reviewsRef.current.scrollTo({ left: index * CARD_WIDTH(), behavior: "smooth" });
+    }
+    setCurrentReviewIndex(index);
+  }, []);
+
   const scrollReviews = (dir: "left" | "right") => {
-    reviewsRef.current?.scrollBy({ left: dir === "left" ? -350 : 350, behavior: "smooth" });
+    const next = dir === "right"
+      ? (currentReviewIndex + 1) % verifiedReviews.length
+      : (currentReviewIndex - 1 + verifiedReviews.length) % verifiedReviews.length;
+    scrollToReview(next);
   };
+
+  React.useEffect(() => {
+    autoSlideRef.current = setInterval(() => {
+      setCurrentReviewIndex((prev) => {
+        const next = (prev + 1) % verifiedReviews.length;
+        if (reviewsRef.current) {
+          reviewsRef.current.scrollTo({ left: next * CARD_WIDTH(), behavior: "smooth" });
+        }
+        return next;
+      });
+    }, 2000);
+    return () => { if (autoSlideRef.current) clearInterval(autoSlideRef.current); };
+  }, []);
 
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-white text-[#111]">
       <div aria-hidden="true" className="site-dot-overlay" />
 
       {/* ═══════ 1 · HERO ═══════ */}
-      <section className="relative flex h-screen min-h-[640px] max-h-[100svh] items-end overflow-hidden border-b border-black/10">
-        {}
+      <section className="relative flex h-screen min-h-[640px] max-h-[100svh] items-end overflow-hidden">
+        { }
         <img
           alt="Nothing Phone 3 hero background"
           src="https://nothingshop.b-cdn.net/banner/nothing_pakistan.avif"
           className="absolute inset-0 h-full w-full object-cover object-center"
         />
-        <div className="relative z-10 flex h-full w-full px-4 pb-7 pt-24 sm:px-6 sm:pb-9 sm:pt-28 md:px-8 lg:pb-6 lg:pt-32">
-          <div className="mx-auto flex h-full max-w-screen-2xl items-end">
-            <div className="max-w-3xl text-black lg:max-w-2xl">
-              <h1 className="dot-heading text-[1.18rem] leading-[0.98] tracking-[0.1em] text-black sm:text-[1.7rem] lg:text-[1.9rem]">
+        <div className="relative z-10 flex h-full w-full items-end justify-center px-4 pb-7 pt-24 sm:px-6 sm:pb-9 sm:pt-28 md:px-8 lg:pb-8">
+          <div className="mx-auto flex w-full max-w-screen-2xl items-end justify-center">
+            <div className="max-w-2xl text-center rounded-2xl bg-white/80 backdrop-blur-md border border-white/60 p-5 sm:p-7 shadow-lg text-black">
+              <h1 className="dot-heading text-[1.18rem] leading-[1.05] tracking-[0.1em] text-black sm:text-[1.6rem] lg:text-[1.85rem]">
                 Nothing & CMF Products in Pakistan
               </h1>
-              <p className="mt-3 max-w-xl text-center font-sans text-[0.82rem] leading-6 text-black sm:mt-3 sm:max-w-xl sm:text-[0.95rem] sm:leading-6 lg:max-w-xl lg:text-[0.88rem] lg:leading-5">
+              <p className="mt-3 max-w-xl mx-auto font-ntype82 text-[0.82rem] leading-relaxed text-black/80 sm:text-[0.92rem] lg:text-[0.88rem]">
                 Shop Nothing and CMF phones, earbuds, chargers, cables, and accessories with live pricing, product details, and WhatsApp support
                 through Nothing CMF Pakistan.
               </p>
@@ -393,7 +460,7 @@ export default function HomePage() {
           <div className="flex items-end justify-between gap-4">
             <div>
               <p className="text-[10px] uppercase tracking-[0.3em] text-black/42"> Best Product Sale </p>
-              <h2 className="collection-product-name mt-3 text-4xl leading-none text-black sm:text-5xl"> Selected Gems </h2>
+              <h2 className="collection-product-name font-extralight mt-3 text-4xl leading-none text-black sm:text-5xl"> Selected Gems </h2>
             </div>
           </div>
 
@@ -418,30 +485,29 @@ export default function HomePage() {
                         <img
                           alt={`${p.name} original product price in Pakistan from Nothing CMF Pakistan`}
                           loading="lazy"
-                          className={`absolute inset-0 h-full w-full object-contain object-center transition-transform duration-500 ease-out ${
-                            !isOutOfStock ? "group-hover:scale-[1.02]" : "grayscale-[30%]"
-                          }`}
+                          className={`absolute inset-0 h-full w-full object-contain object-center transition-transform duration-500 ease-out ${!isOutOfStock ? "group-hover:scale-[1.02]" : "grayscale-[30%]"
+                            }`}
                           src={p.image}
                         />
                       </div>
                       <div className="mt-3 text-center">
-                        <h3 className="font-sans text-[0.98rem] sm:text-[1.04rem] leading-[1.12] text-black font-normal tracking-normal">{p.name}</h3>
+                        <h3 className=" font-ntype82 text-[0.98rem] sm:text-[1.04rem] leading-[1.12] text-black font-normal tracking-normal">{p.name}</h3>
                         <div className="mt-1">
                           {isOutOfStock ? (
-                            <p className="text-[11px] text-red-600 font-mono font-bold uppercase tracking-wider">OUT OF STOCK</p>
+                            <p className="text-[11px] text-red-600 font-ntype82 font-bold uppercase tracking-wider">OUT OF STOCK</p>
                           ) : p.isComingSoon ? (
-                            <p className="text-[11px] text-[#D71921] font-mono font-bold uppercase tracking-wider">COMING SOON</p>
+                            <p className="text-[11px] text-[#D71921] font-ntype82 font-bold uppercase tracking-wider">COMING SOON</p>
                           ) : (
                             <>
                               {p.salePrice && p.salePrice > 0 ? (
                                 <>
-                                  <p className="text-[11px] text-black/62 font-[system-ui] font-normal"> Rs {p.salePrice.toLocaleString()} </p>
-                                  <p className="mt-0.5 text-[10px] text-black/65 line-through decoration-black/65 font-[system-ui] font-normal">
+                                  <p className="text-[11px] text-black/62 font-normal" style={{ fontFamily: "'LatteraMonoLL', 'letteraRegular', monospace" }}> Rs {p.salePrice.toLocaleString()} </p>
+                                  <p className="mt-0.5 text-[10px] text-black/65 line-through decoration-black/65 font-normal" style={{ fontFamily: "'LatteraMonoLL', 'letteraRegular', monospace" }}>
                                     Rs {p.price.toLocaleString()}
                                   </p>
                                 </>
                               ) : (
-                                <p className="text-[11px] text-black/62 font-[system-ui] font-normal"> Rs {p.price.toLocaleString()} </p>
+                                <p className="text-[11px] text-black/62 font-normal" style={{ fontFamily: "'LatteraMonoLL', 'letteraRegular', monospace" }}> Rs {p.price.toLocaleString()} </p>
                               )}
                             </>
                           )}
@@ -483,30 +549,29 @@ export default function HomePage() {
                         <img
                           alt={`${p.name} original product price in Pakistan from Nothing CMF Pakistan`}
                           loading="lazy"
-                          className={`absolute inset-0 h-full w-full object-contain object-center transition-transform duration-500 ease-out ${
-                            !isOutOfStock ? "group-hover:scale-[1.02]" : "grayscale-[30%]"
-                          }`}
+                          className={`absolute inset-0 h-full w-full object-contain object-center transition-transform duration-500 ease-out ${!isOutOfStock ? "group-hover:scale-[1.02]" : "grayscale-[30%]"
+                            }`}
                           src={p.image}
                         />
                       </div>
                       <div className="mt-3 text-center">
-                        <h3 className="font-sans text-[0.98rem] sm:text-[1.04rem] leading-[1.12] text-black font-normal tracking-normal">{p.name}</h3>
+                        <h3 className="font-ntype82 text-[0.98rem] sm:text-[1.04rem] leading-[1.12] text-black font-normal tracking-normal">{p.name}</h3>
                         <div className="mt-1">
                           {isOutOfStock ? (
-                            <p className="text-[11px] text-red-600 font-mono font-bold uppercase tracking-wider">OUT OF STOCK</p>
+                            <p className="text-[11px] text-red-600 font-ntype82 font-bold uppercase tracking-wider">OUT OF STOCK</p>
                           ) : p.isComingSoon ? (
-                            <p className="text-[11px] text-[#D71921] font-mono font-bold uppercase tracking-wider">COMING SOON</p>
+                            <p className="text-[11px] text-[#D71921] font-ntype82 font-bold uppercase tracking-wider">COMING SOON</p>
                           ) : (
                             <>
                               {p.salePrice && p.salePrice > 0 ? (
                                 <>
-                                  <p className="text-[11px] text-black/62 font-[system-ui] font-normal"> Rs {p.salePrice.toLocaleString()} </p>
-                                  <p className="mt-0.5 text-[10px] text-black/65 line-through decoration-black/65 font-[system-ui] font-normal">
+                                  <p className="text-[11px] font-bold text-black " style={{ fontFamily: "'LatteraMonoLL', 'letteraRegular', monospace" }}> Rs {p.salePrice.toLocaleString()} </p>
+                                  <p className="mt-0.5 text-[10px] text-black/65 line-through decoration-black/65 font-normal" style={{ fontFamily: "'LatteraMonoLL', 'letteraRegular', monospace" }}>
                                     Rs {p.price.toLocaleString()}
                                   </p>
                                 </>
                               ) : (
-                                <p className="text-[11px] text-black/62 font-[system-ui] font-normal"> Rs {p.price.toLocaleString()} </p>
+                                <p className="text-[11px] text-black/62 font-normal" style={{ fontFamily: "'LatteraMonoLL', 'letteraRegular', monospace" }}> Rs {p.price.toLocaleString()} </p>
                               )}
                             </>
                           )}
@@ -538,13 +603,9 @@ export default function HomePage() {
       {/* ═══════ 3 · CHOOSE YOUR MODEL ═══════ */}
       <section className="border-b border-black/10 bg-white px-4 py-12 md:px-8 md:py-16">
         <div className="mx-auto max-w-screen-2xl">
-          <div className="mx-auto max-w-3xl text-center">
+          <div className=" text-left">
             <p className="dot-heading text-[10px] tracking-[0.3em] text-black/42"> Phones </p>
             <h2 className="collection-product-name mt-4 text-4xl leading-none text-black sm:text-5xl lg:text-6xl"> Choose Your Model </h2>
-            <p className="mt-5 font-sans text-[15px] leading-7 text-black/68 sm:text-base">
-              {" "}
-              Pick your Nothing or CMF phone and browse accessories that fit right, look clean, and are ready to order across Pakistan.
-            </p>
           </div>
 
           {isLoading ? (
@@ -569,32 +630,31 @@ export default function HomePage() {
                         <img
                           alt={phone.name}
                           loading="lazy"
-                          className={`absolute inset-0 h-full w-full scale-[1.08] object-contain object-center transition-transform duration-500 ease-out ${
-                            !isOutOfStock ? "group-hover:scale-[1.12] lg:scale-[1.12] lg:group-hover:scale-[1.16]" : "grayscale-[30%]"
-                          }`}
+                          className={`absolute inset-0 h-full w-full scale-[1.08] object-contain object-center transition-transform duration-500 ease-out ${!isOutOfStock ? "group-hover:scale-[1.12] lg:scale-[1.12] lg:group-hover:scale-[1.16]" : "grayscale-[30%]"
+                            }`}
                           src={phone.image}
                         />
                       </div>
                     </div>
-                    <div className="w-full text-center mt-4">
-                      <p className="font-sans font-normal mx-auto min-h-[2.5rem] w-full text-center text-[0.92rem] leading-[1.25] text-black/78 sm:min-h-[2.8rem] sm:text-[1rem] lg:min-h-[3rem] lg:text-[1.08rem]">
+                    <div className="w-full text-center mt-1">
+                      <p className="font-normal mx-auto w-full font-ntype82  text-center text-[0.92rem] leading-[1.25] text-black/78 sm:text-[1rem] lg:text-[1.08rem]">
                         {phone.name}
                       </p>
                       {isOutOfStock ? (
-                        <p className="text-[11px] text-red-600 font-mono font-bold uppercase tracking-wider">OUT OF STOCK</p>
+                        <p className="text-[11px] text-red-600 font-ntype82 font-bold uppercase font-ntype82  tracking-wider">OUT OF STOCK</p>
                       ) : phone.isComingSoon ? (
-                        <p className="text-[11px] text-[#D71921] font-mono font-bold uppercase tracking-wider">COMING SOON</p>
+                        <p className="text-[11px] text-[#D71921] font-ntype82 font-bold uppercase tracking-wider">COMING SOON</p>
                       ) : (
                         <div className="mt-1">
                           {phone.salePrice && phone.salePrice > 0 ? (
                             <>
-                              <p className="text-[11px] text-black/62 font-[system-ui] font-normal"> Rs {phone.salePrice.toLocaleString()} </p>
-                              <p className="mt-0.5 text-[10px] text-black/65 line-through decoration-black/65 font-[system-ui] font-normal">
+                              <p className="text-[11px] text-black font-bold " style={{ fontFamily: "'LatteraMonoLL', 'letteraRegular', monospace" }}> Rs {phone.salePrice.toLocaleString()} </p>
+                              <p className="mt-0.5 text-[10px] text-black/65 line-through decoration-black/65 font-normal" style={{ fontFamily: "'LatteraMonoLL', 'letteraRegular', monospace" }}>
                                 Rs {phone.price.toLocaleString()}
                               </p>
                             </>
                           ) : (
-                            <p className="text-[11px] text-black/62 font-[system-ui] font-normal"> Rs {phone.price.toLocaleString()} </p>
+                            <p className="text-[11px] text-black/62 font-normal" style={{ fontFamily: "'LatteraMonoLL', 'letteraRegular', monospace" }}> Rs {phone.price.toLocaleString()} </p>
                           )}
                         </div>
                       )}
@@ -665,32 +725,60 @@ export default function HomePage() {
 
           <div
             ref={reviewsRef}
-            className="mt-8 flex gap-5 overflow-x-auto pb-4 snap-x snap-mandatory"
+            className="mt-8 flex gap-5 overflow-x-hidden pb-4 snap-x snap-mandatory"
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+            onMouseEnter={() => { if (autoSlideRef.current) clearInterval(autoSlideRef.current); }}
+            onMouseLeave={() => {
+              autoSlideRef.current = setInterval(() => {
+                setCurrentReviewIndex((prev) => {
+                  const next = (prev + 1) % verifiedReviews.length;
+                  if (reviewsRef.current) reviewsRef.current.scrollTo({ left: next * CARD_WIDTH(), behavior: "smooth" });
+                  return next;
+                });
+              }, 2000);
+            }}
           >
             {verifiedReviews.map((r, idx) => (
               <article
                 key={idx}
-                className="min-w-[300px] sm:min-w-[360px] max-w-[380px] shrink-0 snap-start rounded-[8px] border border-black/8 bg-white p-5 sm:p-6"
+                className="w-[calc(25%-15px)] shrink-0 snap-start rounded-[8px] border border-black/8 bg-white p-4"
               >
-                <div className="flex items-center gap-1 text-amber-500">
-                  {[...Array(r.rating)].map((_, i) => (
-                    <svg key={i} width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                      {" "}
-                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />{" "}
-                    </svg>
-                  ))}
-                </div>
-                <p className="mt-3 text-[13px] leading-6 text-black/78 sm:text-sm">& ldquo; {r.comment}& rdquo; </p>
-                <div className="mt-5 flex items-center justify-between border-t border-black/8 pt-4">
+                {/* Comment */}
+                <p className="text-[13px] leading-snug text-black/70 line-clamp-2">"{r.comment}"</p>
+
+                {/* Footer: Name/Product (left) | Stars + Date (right) */}
+                <div className="mt-5 flex items-end justify-between border-t border-black/8 pt-4">
                   <div>
-                    <p className="text-[13px] text-black"> {r.name} </p>
+                    <p className="text-[13px] text-black">{r.name}</p>
                     <p className="mt-0.5 text-[10px] tracking-[0.08em] text-black/50">
-                      {" "}
-                      {r.city} • {r.product}{" "}
+                      {r.city} • {r.product}
                     </p>
                   </div>
-                  <span className="text-[9px] tracking-[0.08em] text-black/40"> {r.date} </span>
+                  <div className="flex flex-col items-end gap-1">
+                    {/* Stars */}
+                    <div className="flex items-center gap-0.5">
+                      {[1, 2, 3, 4, 5].map((starIndex) => {
+                        const isFull = r.rating >= starIndex;
+                        const isHalf = !isFull && r.rating >= starIndex - 0.5;
+                        return (
+                          <div key={starIndex} className="relative inline-block w-3 h-3">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" className="text-neutral-300" aria-hidden="true">
+                              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                            </svg>
+                            {(isFull || isHalf) && (
+                              <div className="absolute top-0 left-0 overflow-hidden text-amber-500" style={{ width: isFull ? "100%" : "50%" }}>
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                                </svg>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                    {/* Date */}
+                    <span className="text-[9px] tracking-[0.08em] text-black/40">{r.date}</span>
+                  </div>
                 </div>
               </article>
             ))}
@@ -712,9 +800,11 @@ export default function HomePage() {
             <div className="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-5">
               {storeBenefits.map((b, i) => (
                 <article key={i} className="rounded-[8px] border font-ntype82 border-black/8 bg-white p-4 sm:p-5">
-                  <div className="flex h-10 w-10 items-center justify-center text-black/82">{b.icon}</div>
-                  <h3 className="mt-4 text-[15px] leading-6 text-black sm:text-base"> {b.title} </h3>
-                  <p className="mt-2 text-[12px] leading-6 text-black/62 sm:text-[13px]"> {b.desc} </p>
+                  <div className="flex items-center gap-2.5">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center text-black/82">{b.icon}</div>
+                    <h3 className="text-[13px] leading-snug text-black sm:text-[14px]">{b.title}</h3>
+                  </div>
+                  <p className="mt-3 text-[12px] leading-6 text-black/62 sm:text-[13px]">{b.desc}</p>
                 </article>
               ))}
             </div>

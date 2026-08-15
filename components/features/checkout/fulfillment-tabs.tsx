@@ -38,16 +38,30 @@ export function FulfillmentTabs({ register, setValue, errors, fulfillmentMethod,
       </div>
 
       <Tabs value={fulfillmentMethod} onValueChange={handleTabChange}>
-        <TabsList>
-          <TabsTrigger value="ship" className="flex items-center gap-2">
+        <div className="relative flex h-12 w-full items-center justify-between rounded-[18px] bg-slate-100 p-1 border border-slate-200/60">
+          <div
+            className={`absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-[14px] bg-white shadow-sm border border-slate-200/80 transition-transform duration-300 ease-out z-0 ${fulfillmentMethod === "ship" ? "translate-x-0" : "translate-x-full"
+              }`}
+          />
+          <button
+            type="button"
+            onClick={() => handleTabChange("ship")}
+            className={`relative z-10 flex h-full w-1/2 items-center justify-center gap-2 rounded-[14px] px-4 py-2 text-xs font-bold font-ntype cursor-pointer select-none transition-colors duration-300 ${fulfillmentMethod === "ship" ? "text-slate-900" : "text-slate-500 hover:text-slate-900"
+              }`}
+          >
             <Truck className="h-4 w-4" />
             <span>Ship to Address</span>
-          </TabsTrigger>
-          <TabsTrigger value="pickup" className="flex items-center gap-2">
+          </button>
+          <button
+            type="button"
+            onClick={() => handleTabChange("pickup")}
+            className={`relative z-10 flex h-full w-1/2 items-center justify-center gap-2 rounded-[14px] px-4 py-2 text-xs font-bold font-ntype cursor-pointer select-none transition-colors duration-300 ${fulfillmentMethod === "pickup" ? "text-slate-900" : "text-slate-500 hover:text-slate-900"
+              }`}
+          >
             <Store className="h-4 w-4" />
             <span>Office Pickup</span>
-          </TabsTrigger>
-        </TabsList>
+          </button>
+        </div>
 
         {/* SHIP TAB CONTENT */}
         <TabsContent value="ship" className="space-y-4 pt-2">
@@ -209,7 +223,7 @@ export function FulfillmentTabs({ register, setValue, errors, fulfillmentMethod,
                 <p className="text-[11px] text-emerald-700 font-semibold">Appointment Pickup Available</p>
               </div>
             </div>
-            <p className="text-[11px] text-emerald-800 font-bold font-ntype leading-relaxed bg-emerald-100/60 p-3 rounded-xl border border-emerald-200/80">
+            <p className="text-[11px] text-emerald-800 font-bold font-ntype leading-relaxed  p-3 rounded-xl border border-emerald-200/80">
               * For product pick-ups, please reserve your product and book an appointment before visiting our office.
             </p>
           </div>

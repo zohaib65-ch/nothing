@@ -43,9 +43,6 @@ export default function ShopAllClient() {
               <h1 className="font-ndot57 uppercase text-center text-[2.15rem] leading-[0.95] tracking-[0.2em] text-black sm:text-[2.9rem] lg:text-[3.45rem]">
                 All products
               </h1>
-              <p className="mx-auto mt-4 max-w-3xl text-sm leading-7 text-black/62 md:text-base font-sans">
-                Browse the full Nothing Pakistan catalog for chargers, earbuds, protectors, CMF devices, and other compatible accessories.
-              </p>
             </div>
           </div>
         </div>
@@ -61,9 +58,8 @@ export default function ShopAllClient() {
 
                 const CardContent = (
                   <article
-                    className={`flex h-full flex-col ${
-                      isOutOfStock ? "opacity-60 cursor-not-allowed select-none" : ""
-                    }`}
+                    className={`flex h-full flex-col ${isOutOfStock ? "opacity-60 cursor-not-allowed select-none" : ""
+                      }`}
                   >
                     {/* Image Wrap */}
                     <div className="relative overflow-hidden aspect-[4/5] rounded-xl flex items-center justify-center p-4">
@@ -88,9 +84,8 @@ export default function ShopAllClient() {
                         <img
                           alt={item.name}
                           src={item.image}
-                          className={`h-full w-full object-contain transition-transform duration-500 ease-out ${
-                            !isOutOfStock ? "group-hover:scale-[1.02]" : "grayscale-[30%]"
-                          }`}
+                          className={`h-full w-full object-contain transition-transform duration-500 ease-out ${!isOutOfStock ? "group-hover:scale-[1.02]" : "grayscale-[30%]"
+                            }`}
                         />
                       ) : (
                         <div className="flex h-full w-full items-center justify-center text-black/10">
@@ -129,15 +124,15 @@ export default function ShopAllClient() {
                           </p>
                         ) : item.salePrice && item.salePrice > 0 && item.salePrice < item.price ? (
                           <>
-                            <p className="text-[11px] text-black font-bold font-ntype82">
+                            <p className="text-[11px] text-black font-bold font-ntype82" style={{ fontFamily: "'LatteraMonoLL', 'letteraRegular', monospace" }}>
                               Rs {item.salePrice.toLocaleString()}
                             </p>
-                            <p className="mt-0.5 text-[10px] text-black/50 line-through font-ntype82 font-normal">
+                            <p className="mt-0.5 text-[10px] text-black/50 line-through font-ntype82 font-normal" style={{ fontFamily: "'LatteraMonoLL', 'letteraRegular', monospace" }}>
                               Rs {item.price.toLocaleString()}
                             </p>
                           </>
                         ) : (
-                          <p className="text-[11px] text-black/62 font-ntype82 font-normal">
+                          <p className="text-[11px] text-black/62 font-ntype82 font-normal" style={{ fontFamily: "'LatteraMonoLL', 'letteraRegular', monospace" }}>
                             Rs {item.price.toLocaleString()}
                           </p>
                         )}

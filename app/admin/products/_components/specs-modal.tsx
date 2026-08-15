@@ -6,12 +6,25 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { SpecificationGroup } from "@/types";
+import { Plus, Trash2 } from "lucide-react";
 
 interface SpecsModalProps {
   isOpen: boolean;
   onClose: () => void;
   specifications: SpecificationGroup[];
   onSave: (specs: SpecificationGroup[]) => void;
+}
+
+export interface CustomSpecItem {
+  id: string;
+  name: string;
+  value: string;
+}
+
+export interface CustomSpecGroup {
+  id: string;
+  category: string;
+  items: CustomSpecItem[];
 }
 
 interface SpecsState {
@@ -38,7 +51,26 @@ interface SpecsState {
   osVersion: string;
   sustainabilityDetails: string;
   inTheBoxContents: string;
+  customGroups: CustomSpecGroup[];
 }
+
+const KNOWN_CATEGORIES = [
+  "colours & capacity",
+  "dimensions",
+  "processor",
+  "camera",
+  "display",
+  "battery & charging",
+  "multimedia",
+  "audio",
+  "design",
+  "other features",
+  "operating system",
+  "sustainability",
+  "in the box",
+];
+
+const generateId = () => Math.random().toString(36).substring(2, 9) + Date.now().toString(36);
 
 function parseSpecifications(specs: SpecificationGroup[]): SpecsState {
   const findItem = (category: string, itemName: string) => {
@@ -50,6 +82,22 @@ function parseSpecifications(specs: SpecificationGroup[]): SpecsState {
     const group = specs.find((g) => g.category?.toLowerCase() === category.toLowerCase());
     return group?.items?.[0]?.value || "";
   };
+
+  // Find any groups not part of the standard 13 categories
+  const customGroups: CustomSpecGroup[] = specs
+    .filter((g) => g.category && !KNOWN_CATEGORIES.includes(g.category.toLowerCase().trim()))
+    .map((g) => ({
+      id: generateId(),
+      category: g.category,
+      items:
+        g.items && g.items.length > 0
+          ? g.items.map((i) => ({
+              id: generateId(),
+              name: i.name || "",
+              value: i.value || "",
+            }))
+          : [{ id: generateId(), name: "", value: "" }],
+    }));
 
   return {
     colours: findItem("Colours & capacity", "Colours") || findFirstValue("Colours & capacity"),
@@ -75,6 +123,7 @@ function parseSpecifications(specs: SpecificationGroup[]): SpecsState {
     osVersion: findItem("Operating system", "Operating System") || findFirstValue("Operating system"),
     sustainabilityDetails: findItem("Sustainability", "Eco Details") || findFirstValue("Sustainability"),
     inTheBoxContents: findItem("In the box", "Package Contents") || findFirstValue("In the box"),
+    customGroups,
   };
 }
 
@@ -188,6 +237,26 @@ function buildSpecifications(state: SpecsState): SpecificationGroup[] {
     });
   }
 
+  // Custom specifications (Custom Categories & Items)
+  if (state.customGroups && state.customGroups.length > 0) {
+    state.customGroups.forEach((group) => {
+      const categoryName = group.category?.trim();
+      const validItems = (group.items || [])
+        .filter((item) => item.name?.trim() || item.value?.trim())
+        .map((item) => ({
+          name: item.name.trim() || categoryName || "Specification",
+          value: item.value.trim(),
+        }));
+
+      if (categoryName || validItems.length > 0) {
+        groups.push({
+          category: categoryName || "Custom Specifications",
+          items: validItems.length > 0 ? validItems : [{ name: categoryName || "Specification", value: "" }],
+        });
+      }
+    });
+  }
+
   return groups;
 }
 
@@ -216,6 +285,7 @@ export function SpecsModal({ isOpen, onClose, specifications, onSave }: SpecsMod
     osVersion: "",
     sustainabilityDetails: "",
     inTheBoxContents: "",
+    customGroups: [],
   });
 
   React.useEffect(() => {
@@ -229,12 +299,87 @@ export function SpecsModal({ isOpen, onClose, specifications, onSave }: SpecsMod
     onSave(updated);
   };
 
+  // Custom specifications handlers
+  const handleAddCustomGroup = () => {
+    setState((prev) => ({
+      ...prev,
+      customGroups: [
+        ...prev.customGroups,
+        {
+          id: generateId(),
+          category: "",
+          items: [{ id: generateId(), name: "", value: "" }],
+        },
+      ],
+    }));
+  };
+
+  const handleRemoveCustomGroup = (groupId: string) => {
+    setState((prev) => ({
+      ...prev,
+      customGroups: prev.customGroups.filter((g) => g.id !== groupId),
+    }));
+  };
+
+  const handleUpdateGroupCategory = (groupId: string, category: string) => {
+    setState((prev) => ({
+      ...prev,
+      customGroups: prev.customGroups.map((g) => (g.id === groupId ? { ...g, category } : g)),
+    }));
+  };
+
+  const handleAddItemToGroup = (groupId: string) => {
+    setState((prev) => ({
+      ...prev,
+      customGroups: prev.customGroups.map((g) =>
+        g.id === groupId
+          ? {
+              ...g,
+              items: [...g.items, { id: generateId(), name: "", value: "" }],
+            }
+          : g
+      ),
+    }));
+  };
+
+  const handleRemoveItemFromGroup = (groupId: string, itemId: string) => {
+    setState((prev) => ({
+      ...prev,
+      customGroups: prev.customGroups.map((g) => {
+        if (g.id !== groupId) return g;
+        const filtered = g.items.filter((i) => i.id !== itemId);
+        return {
+          ...g,
+          items: filtered.length > 0 ? filtered : [{ id: generateId(), name: "", value: "" }],
+        };
+      }),
+    }));
+  };
+
+  const handleUpdateItem = (
+    groupId: string,
+    itemId: string,
+    field: "name" | "value",
+    val: string
+  ) => {
+    setState((prev) => ({
+      ...prev,
+      customGroups: prev.customGroups.map((g) => {
+        if (g.id !== groupId) return g;
+        return {
+          ...g,
+          items: g.items.map((i) => (i.id === itemId ? { ...i, [field]: val } : i)),
+        };
+      }),
+    }));
+  };
+
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
       title="Add Product Technical Specifications"
-      subtitle="Input specific details for each hardware specification category"
+      subtitle="Input specific details for hardware specifications or add custom specification categories"
       maxWidth="2xl"
     >
       <div className="space-y-6">
@@ -493,6 +638,119 @@ export function SpecsModal({ isOpen, onClose, specifications, onSave }: SpecsMod
               onChange={(e) => setState((prev) => ({ ...prev, inTheBoxContents: e.target.value }))}
               placeholder="e.g. Nothing Phone (2a), USB-C cable, SIM ejector"
             />
+          </div>
+
+          {/* 14) Custom Specifications */}
+          <div className="border border-neutral-100 dark:border-[#26262A] rounded p-4 space-y-3 bg-neutral-50/50 dark:bg-neutral-900/50">
+            <div className="flex items-center justify-between border-b border-neutral-200 dark:border-[#26262A] pb-1.5">
+              <h4 className="font-bold text-[#D71921] uppercase text-[10px] tracking-wider flex items-center gap-1.5">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#D71921]" />
+                14) Custom Specifications
+              </h4>
+              <Button
+                type="button"
+                variant="ndot"
+                size="sm"
+                onClick={handleAddCustomGroup}
+                className="h-7 px-2.5 text-[10px] flex items-center gap-1"
+              >
+                <Plus className="w-3 h-3" />
+                Add Custom Category
+              </Button>
+            </div>
+
+            {state.customGroups.length === 0 ? (
+              <div className="py-4 text-center border border-dashed border-neutral-200 dark:border-[#26262A] rounded bg-white/50 dark:bg-neutral-900/50">
+                <p className="text-neutral-400 text-[11px] font-sans">
+                  No custom specifications added yet.
+                </p>
+                <button
+                  type="button"
+                  onClick={handleAddCustomGroup}
+                  className="mt-1 text-[10px] text-[#D71921] hover:underline font-bold font-mono inline-flex items-center gap-1"
+                >
+                  <Plus className="w-3 h-3" /> Add Custom Category
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-3.5">
+                {state.customGroups.map((group) => (
+                  <div
+                    key={group.id}
+                    className="border border-neutral-200 dark:border-[#26262A] bg-white dark:bg-[#141416] rounded-md p-3 space-y-3 shadow-xs"
+                  >
+                    {/* Category Title & Delete Header */}
+                    <div className="flex items-end gap-2">
+                      <div className="flex-1">
+                        <Input
+                          label="Category Title"
+                          value={group.category}
+                          onChange={(e) => handleUpdateGroupCategory(group.id, e.target.value)}
+                          placeholder="e.g. Connectivity, Gaming, Warranty, Network"
+                        />
+                      </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleRemoveCustomGroup(group.id)}
+                        className="h-11 px-2.5 text-neutral-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 shrink-0"
+                        title="Delete this category"
+                      >
+                        <Trash2 className="w-4 h-4 text-red-500" />
+                      </Button>
+                    </div>
+
+                    {/* Specification Items in this Category */}
+                    <div className="space-y-2 pt-1 pl-2 border-l border-neutral-200 dark:border-[#26262A]">
+                      {group.items.map((item, iIndex) => (
+                        <div key={item.id} className="flex items-end gap-2">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 flex-1">
+                            <Input
+                              label={iIndex === 0 ? "Title / Name" : undefined}
+                              value={item.name}
+                              onChange={(e) =>
+                                handleUpdateItem(group.id, item.id, "name", e.target.value)
+                              }
+                              placeholder="e.g. 5G Bands, Bluetooth, Period"
+                            />
+                            <Input
+                              label={iIndex === 0 ? "Value" : undefined}
+                              value={item.value}
+                              onChange={(e) =>
+                                handleUpdateItem(group.id, item.id, "value", e.target.value)
+                              }
+                              placeholder="e.g. Dual 5G SA/NSA, v5.3, 1 Year"
+                            />
+                          </div>
+                          {group.items.length > 1 && (
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleRemoveItemFromGroup(group.id, item.id)}
+                              className="h-11 px-2 text-neutral-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 shrink-0"
+                              title="Delete this item"
+                            >
+                              <Trash2 className="w-3.5 h-3.5 text-red-400" />
+                            </Button>
+                          )}
+                        </div>
+                      ))}
+
+                      {/* Add more items under this category */}
+                      <button
+                        type="button"
+                        onClick={() => handleAddItemToGroup(group.id)}
+                        className="text-[10px] text-[#D71921] hover:underline font-mono inline-flex items-center gap-1 pt-1"
+                      >
+                        <Plus className="w-3 h-3" /> Add another item
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
