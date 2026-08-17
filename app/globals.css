@@ -211,7 +211,9 @@ body {
   background-image: radial-gradient(circle, #ffffff 0 1px, transparent 1.7px);
   background-position: -25px -25px;
   background-size: 114px 114px;
-  opacity: 0.76;
+  /* Invert against whatever is beneath: white dots → black on light, white on dark */
+  mix-blend-mode: difference;
+  opacity: 1;
   transition:
     opacity 0.2s ease,
     visibility 0.2s ease;

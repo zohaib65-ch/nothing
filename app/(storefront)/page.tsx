@@ -429,8 +429,6 @@ export default function HomePage() {
 
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-white text-[#111]">
-      <div aria-hidden="true" className="site-dot-overlay" />
-
       {/* ═══════ 1 · HERO ═══════ */}
       <section className="relative flex h-screen min-h-[640px] max-h-[100svh] items-end overflow-hidden">
         { }

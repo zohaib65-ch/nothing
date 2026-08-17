@@ -33,7 +33,6 @@ export default function ShopAllClient() {
 
   return (
     <div className="min-h-screen bg-[#f4f5f8] text-[#111] pt-24 pb-16 px-4 md:px-6 lg:px-8">
-      <div aria-hidden="true" className="site-dot-overlay" />
 
       <div className="mx-auto max-w-[1680px]">
         {/* Header Title */}
