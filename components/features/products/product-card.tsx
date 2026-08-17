@@ -65,7 +65,7 @@ function OutOfStockOverlay({ compact }: { compact?: boolean }) {
 }
 
 function PriceBlock({ item, isOutOfStock }: { item: ListingCardItem; isOutOfStock: boolean }) {
-  const monoStyle = { fontFamily: "'LatteraMonoLL', 'letteraRegular', monospace" };
+  const priceClass = "font-lattera-mono text-[11px] leading-[11px] font-normal";
 
   if (isOutOfStock) {
     return (
@@ -84,12 +84,11 @@ function PriceBlock({ item, isOutOfStock }: { item: ListingCardItem; isOutOfStoc
   if (hasSale) {
     return (
       <>
-        <p className="text-[11px] font-bold text-black font-ntype82" style={monoStyle}>
+        <p className={`${priceClass} text-black`}>
           Rs {item.salePrice!.toLocaleString()}
         </p>
         <p
-          className="mt-0.5 text-[10px] font-normal text-black/50 line-through font-ntype82"
-          style={monoStyle}
+          className={`${priceClass} mt-0.5 text-[10px] text-black/50 line-through`}
         >
           Rs {item.price.toLocaleString()}
         </p>
@@ -98,7 +97,7 @@ function PriceBlock({ item, isOutOfStock }: { item: ListingCardItem; isOutOfStoc
   }
 
   return (
-    <p className="text-[11px] font-normal text-black/62 font-ntype82" style={monoStyle}>
+    <p className={`${priceClass} text-black/62`}>
       Rs {item.price.toLocaleString()}
     </p>
   );
@@ -150,7 +149,7 @@ export function ProductCard({
           <p className="mx-auto w-full text-center font-ntype82 text-[0.92rem] font-normal leading-[1.15] text-black/78 sm:text-[1rem] lg:text-[1.08rem]">
             {item.name}
           </p>
-          <div className="mt-0.5 flex flex-col items-center">
+          <div className="mt-3 flex flex-col items-center">
             <PriceBlock item={item} isOutOfStock={isOutOfStock} />
           </div>
         </div>
@@ -183,7 +182,7 @@ export function ProductCard({
           <h3 className="font-ntype82 text-[0.98rem] font-normal leading-[1.1] tracking-normal text-black sm:text-[1.04rem]">
             {item.name}
           </h3>
-          <div className="mt-0.5 flex flex-col items-center">
+          <div className="mt-3 flex flex-col items-center">
             <PriceBlock item={item} isOutOfStock={isOutOfStock} />
           </div>
         </div>

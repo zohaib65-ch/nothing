@@ -1,6 +1,8 @@
 import * as React from "react";
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import ShopAllClient from "./shop-all-client";
+import { Loader } from "@/components/ui/loader";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -29,5 +31,9 @@ export const metadata: Metadata = {
 };
 
 export default function ShopAllPage() {
-  return <ShopAllClient />;
+  return (
+    <Suspense fallback={<Loader />}>
+      <ShopAllClient />
+    </Suspense>
+  );
 }

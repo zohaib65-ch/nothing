@@ -87,10 +87,10 @@
     font-display: swap;
   }
 
-  /* LatteraMonoLL — Custom Monospace */
+  /* LatteraMonoLL — Custom Monospace (Lettera Mono LL Regular) */
   @font-face {
     font-family: "LatteraMonoLL";
-    src: url("/fonts/LatteraMonoLL.otf") format("opentype");
+    src: url("/fonts/ndot-2.otf") format("opentype");
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -119,7 +119,7 @@
   --font-lettera-regular: "letteraRegular", "Arial", monospace;
   --font-inter-light: "interLight", "Arial", sans-serif;
   --font-inter-medium: "interMedium", "Arial", sans-serif;
-  --font-lattera-mono: "LatteraMonoLL";
+  --font-lattera-mono: "LatteraMonoLL", sans-serif;
 
   --font-sans: "ntype82", "Arial", sans-serif;
   --font-mono: "letteraRegular", "Arial", monospace;
@@ -150,7 +150,21 @@ body {
 }
 
 .font-lattera-mono {
-  font-family: "LatteraMonoLL" !important;
+  font-family: "LatteraMonoLL", sans-serif !important;
+}
+
+.frost-white-intense {
+  background: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+}
+
+.type-callout {
+  font-family: "LatteraMonoLL", sans-serif;
+  font-size: 11px;
+  line-height: 11px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
 }
 
 /* Custom Scrollbar */
