@@ -71,14 +71,7 @@ export default function ProductsCatalogClient() {
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 lg:gap-12">
             {getVariantCardsForListing(filteredProducts).map((item) => (
-              <ProductCard
-                key={item.id}
-                product={item.product}
-                imageUrl={item.image}
-                href={item.href}
-                displayPrice={item.price}
-                variant={item.variant}
-              />
+              <ProductCard key={item.id} item={item} />
             ))}
           </div>
         )}

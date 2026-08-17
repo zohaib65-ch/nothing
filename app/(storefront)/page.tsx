@@ -4,6 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { useProductStore } from "@/store/useProductStore";
 import { Loader } from "@/components/ui/loader";
+import { ProductCard } from "@/components/features/products/product-card";
 import { getVariantCardsForListing } from "@/lib/utils";
 
 const storeBenefits = [
@@ -468,130 +469,26 @@ export default function HomePage() {
             <>
               {/* Mobile: 2-col grid */}
               <div className="mt-8 grid grid-cols-2 gap-x-4 gap-y-9 lg:hidden">
-                {selectedGems.slice(0, 6).map((p) => {
-                  const isOutOfStock = p.inStock === false;
-                  const CardContent = (
-                    <article className={`flex h-full flex-col ${isOutOfStock ? "opacity-60 cursor-not-allowed select-none" : ""}`}>
-                      <div className="relative overflow-hidden aspect-[4/5] rounded-xl flex items-center justify-center">
-                        {isOutOfStock && (
-                          <div className="absolute inset-0 z-30 bg-black/40 backdrop-blur-[1px] flex items-center justify-center">
-                            <span className="bg-red-600 text-white font-mono text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded shadow">
-                              OUT OF STOCK
-                            </span>
-                          </div>
-                        )}
-                        <img
-                          alt={`${p.name} original product price in Pakistan from Nothing CMF Pakistan`}
-                          loading="lazy"
-                          className={`absolute inset-0 h-full w-full object-contain object-center transition-transform duration-500 ease-out ${!isOutOfStock ? "group-hover:scale-[1.02]" : "grayscale-[30%]"
-                            }`}
-                          src={p.image}
-                        />
-                      </div>
-                      <div className="mt-3 text-center">
-                        <h3 className=" font-ntype82 text-[0.98rem] sm:text-[1.04rem] leading-[1.12] text-black font-normal tracking-normal">{p.name}</h3>
-                        <div className="mt-1">
-                          {isOutOfStock ? (
-                            <p className="text-[11px] text-red-600 font-ntype82 font-bold uppercase tracking-wider">OUT OF STOCK</p>
-                          ) : p.isComingSoon ? (
-                            <p className="text-[11px] text-[#D71921] font-ntype82 font-bold uppercase tracking-wider">COMING SOON</p>
-                          ) : (
-                            <>
-                              {p.salePrice && p.salePrice > 0 ? (
-                                <>
-                                  <p className="text-[11px] text-black/62 font-normal" style={{ fontFamily: "'LatteraMonoLL', 'letteraRegular', monospace" }}> Rs {p.salePrice.toLocaleString()} </p>
-                                  <p className="mt-0.5 text-[10px] text-black/65 line-through decoration-black/65 font-normal" style={{ fontFamily: "'LatteraMonoLL', 'letteraRegular', monospace" }}>
-                                    Rs {p.price.toLocaleString()}
-                                  </p>
-                                </>
-                              ) : (
-                                <p className="text-[11px] text-black/62 font-normal" style={{ fontFamily: "'LatteraMonoLL', 'letteraRegular', monospace" }}> Rs {p.price.toLocaleString()} </p>
-                              )}
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    </article>
-                  );
-
-                  if (isOutOfStock) {
-                    return (
-                      <div key={p.id} className="group block cursor-not-allowed">
-                        {CardContent}
-                      </div>
-                    );
-                  }
-
-                  return (
-                    <Link key={p.id} className="group block" href={p.href}>
-                      {CardContent}
-                    </Link>
-                  );
-                })}
+                {selectedGems.slice(0, 6).map((item) => (
+                  <ProductCard
+                    key={item.id}
+                    item={item}
+                    showWarranty={false}
+                    imageAlt={`${item.name} original product price in Pakistan from Nothing CMF Pakistan`}
+                  />
+                ))}
               </div>
 
               {/* Desktop: 5-col grid */}
               <div className="mt-8 hidden grid-cols-5 gap-x-7 gap-y-14 lg:grid">
-                {selectedGems.slice(0, 10).map((p) => {
-                  const isOutOfStock = p.inStock === false;
-                  const CardContent = (
-                    <article className={`flex h-full flex-col ${isOutOfStock ? "opacity-60 cursor-not-allowed select-none" : ""}`}>
-                      <div className="relative overflow-hidden aspect-[4/5] rounded-xl flex items-center justify-center">
-                        {isOutOfStock && (
-                          <div className="absolute inset-0 z-30 bg-black/40 backdrop-blur-[1px] flex items-center justify-center">
-                            <span className="bg-red-600 text-white font-mono text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded shadow-md">
-                              OUT OF STOCK
-                            </span>
-                          </div>
-                        )}
-                        <img
-                          alt={`${p.name} original product price in Pakistan from Nothing CMF Pakistan`}
-                          loading="lazy"
-                          className={`absolute inset-0 h-full w-full object-contain object-center transition-transform duration-500 ease-out ${!isOutOfStock ? "group-hover:scale-[1.02]" : "grayscale-[30%]"
-                            }`}
-                          src={p.image}
-                        />
-                      </div>
-                      <div className="mt-3 text-center">
-                        <h3 className="font-ntype82 text-[0.98rem] sm:text-[1.04rem] leading-[1.12] text-black font-normal tracking-normal">{p.name}</h3>
-                        <div className="mt-1">
-                          {isOutOfStock ? (
-                            <p className="text-[11px] text-red-600 font-ntype82 font-bold uppercase tracking-wider">OUT OF STOCK</p>
-                          ) : p.isComingSoon ? (
-                            <p className="text-[11px] text-[#D71921] font-ntype82 font-bold uppercase tracking-wider">COMING SOON</p>
-                          ) : (
-                            <>
-                              {p.salePrice && p.salePrice > 0 ? (
-                                <>
-                                  <p className="text-[11px] font-bold text-black " style={{ fontFamily: "'LatteraMonoLL', 'letteraRegular', monospace" }}> Rs {p.salePrice.toLocaleString()} </p>
-                                  <p className="mt-0.5 text-[10px] text-black/65 line-through decoration-black/65 font-normal" style={{ fontFamily: "'LatteraMonoLL', 'letteraRegular', monospace" }}>
-                                    Rs {p.price.toLocaleString()}
-                                  </p>
-                                </>
-                              ) : (
-                                <p className="text-[11px] text-black/62 font-normal" style={{ fontFamily: "'LatteraMonoLL', 'letteraRegular', monospace" }}> Rs {p.price.toLocaleString()} </p>
-                              )}
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    </article>
-                  );
-
-                  if (isOutOfStock) {
-                    return (
-                      <div key={p.id} className="group block cursor-not-allowed">
-                        {CardContent}
-                      </div>
-                    );
-                  }
-
-                  return (
-                    <Link key={p.id} className="group block" href={p.href}>
-                      {CardContent}
-                    </Link>
-                  );
-                })}
+                {selectedGems.slice(0, 10).map((item) => (
+                  <ProductCard
+                    key={item.id}
+                    item={item}
+                    showWarranty={false}
+                    imageAlt={`${item.name} original product price in Pakistan from Nothing CMF Pakistan`}
+                  />
+                ))}
               </div>
             </>
           )}
@@ -610,78 +507,9 @@ export default function HomePage() {
             <Loader />
           ) : (
             <div className="mt-10 grid grid-cols-2 gap-4 lg:grid-cols-5 lg:gap-5">
-              {phoneModels.map((phone) => {
-                const isOutOfStock = phone.inStock === false;
-                const CardContent = (
-                  <div
-                    className={`flex flex-col h-full items-center justify-between w-full ${isOutOfStock ? "opacity-60 cursor-not-allowed select-none" : ""}`}
-                  >
-                    <div className="w-full">
-                      <div className="relative mx-auto h-[215px] w-full max-w-[190px] sm:h-[265px] sm:max-w-[230px] lg:h-[365px] lg:max-w-[275px] rounded-2xl flex items-center justify-center">
-                        {isOutOfStock && (
-                          <div className="absolute inset-0 z-30 bg-black/40 backdrop-blur-[1px] flex items-center justify-center">
-                            <span className="bg-red-600 text-white font-mono text-[9px] sm:text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded shadow-md">
-                              OUT OF STOCK
-                            </span>
-                          </div>
-                        )}
-                        <img
-                          alt={phone.name}
-                          loading="lazy"
-                          className={`absolute inset-0 h-full w-full scale-[1.08] object-contain object-center transition-transform duration-500 ease-out ${!isOutOfStock ? "group-hover:scale-[1.12] lg:scale-[1.12] lg:group-hover:scale-[1.16]" : "grayscale-[30%]"
-                            }`}
-                          src={phone.image}
-                        />
-                      </div>
-                    </div>
-                    <div className="w-full text-center mt-1">
-                      <p className="font-normal mx-auto w-full font-ntype82  text-center text-[0.92rem] leading-[1.25] text-black/78 sm:text-[1rem] lg:text-[1.08rem]">
-                        {phone.name}
-                      </p>
-                      {isOutOfStock ? (
-                        <p className="text-[11px] text-red-600 font-ntype82 font-bold uppercase font-ntype82  tracking-wider">OUT OF STOCK</p>
-                      ) : phone.isComingSoon ? (
-                        <p className="text-[11px] text-[#D71921] font-ntype82 font-bold uppercase tracking-wider">COMING SOON</p>
-                      ) : (
-                        <div className="mt-1">
-                          {phone.salePrice && phone.salePrice > 0 ? (
-                            <>
-                              <p className="text-[11px] text-black font-bold " style={{ fontFamily: "'LatteraMonoLL', 'letteraRegular', monospace" }}> Rs {phone.salePrice.toLocaleString()} </p>
-                              <p className="mt-0.5 text-[10px] text-black/65 line-through decoration-black/65 font-normal" style={{ fontFamily: "'LatteraMonoLL', 'letteraRegular', monospace" }}>
-                                Rs {phone.price.toLocaleString()}
-                              </p>
-                            </>
-                          ) : (
-                            <p className="text-[11px] text-black/62 font-normal" style={{ fontFamily: "'LatteraMonoLL', 'letteraRegular', monospace" }}> Rs {phone.price.toLocaleString()} </p>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                );
-
-                if (isOutOfStock) {
-                  return (
-                    <div
-                      key={phone.id}
-                      className="group flex min-h-[270px] flex-col items-start justify-between rounded-[28px] bg-transparent p-1 sm:min-h-[330px] lg:min-h-[455px] lg:p-2 cursor-not-allowed"
-                    >
-                      {CardContent}
-                    </div>
-                  );
-                }
-
-                return (
-                  <Link
-                    key={phone.id}
-                    className="group flex min-h-[270px] flex-col items-start justify-between rounded-[28px] bg-transparent p-1 transition duration-300 hover:-translate-y-1 sm:min-h-[330px] lg:min-h-[455px] lg:p-2"
-                    aria-label={`Open ${phone.name}`}
-                    href={phone.href}
-                  >
-                    {CardContent}
-                  </Link>
-                );
-              })}
+              {phoneModels.map((item) => (
+                <ProductCard key={item.id} item={item} layout="phone" showWarranty={false} />
+              ))}
             </div>
           )}
         </div>
