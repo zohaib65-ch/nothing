@@ -21,7 +21,7 @@ interface ShopAllFilterBarProps {
 export function ShopAllFilterBar({ filters }: ShopAllFilterBarProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const [filtersExpanded, setFiltersExpanded] = React.useState(true);
+  const [filtersExpanded, setFiltersExpanded] = React.useState(false);
 
   const activeType = getActiveNavType(filters);
 
