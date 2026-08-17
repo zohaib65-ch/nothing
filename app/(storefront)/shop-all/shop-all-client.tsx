@@ -10,7 +10,7 @@ import { Loader } from "@/components/ui/loader";
 import { ProductCard } from "@/components/features/products/product-card";
 import { ShopAllFilterBar } from "@/components/features/shop-all/shop-all-filter-bar";
 import { getVariantCardsForListing } from "@/lib/utils";
-import { filterShopAllProducts, parseShopAllParams } from "@/lib/shop-all-filters";
+import { filterShopAllProducts, parseShopAllParams, sortShopAllProducts } from "@/lib/shop-all-filters";
 import { toast } from "sonner";
 
 export default function ShopAllClient() {
@@ -36,7 +36,7 @@ export default function ShopAllClient() {
   const isLoading = storeLoading || fallbackLoading;
 
   const filteredProducts = React.useMemo(
-    () => filterShopAllProducts(products, filters),
+    () => sortShopAllProducts(filterShopAllProducts(products, filters)),
     [products, filters]
   );
 

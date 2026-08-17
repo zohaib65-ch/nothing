@@ -76,6 +76,14 @@ export function getActiveNavType(filters: ShopAllFilterState): ShopAllType | nul
   return filters.type;
 }
 
+export function sortShopAllProducts(products: Product[]): Product[] {
+  return [...products].sort((a, b) => {
+    const aIsPhone = a.category === "phones" ? 0 : 1;
+    const bIsPhone = b.category === "phones" ? 0 : 1;
+    return aIsPhone - bIsPhone;
+  });
+}
+
 export function filterShopAllProducts(products: Product[], filters: ShopAllFilterState): Product[] {
   return products.filter((product) => {
     if (filters.vendor && getProductVendor(product) !== filters.vendor) {
