@@ -28,6 +28,14 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "apicdn.sanity.io",
       },
+      {
+        protocol: "https",
+        hostname: "checkout.nothing.tech",
+      },
+      {
+        protocol: "https",
+        hostname: "nothing.tech",
+      },
     ],
   },
   async redirects() {
@@ -35,6 +43,11 @@ const nextConfig: NextConfig = {
       {
         source: "/about",
         destination: "/about-us",
+        permanent: true,
+      },
+      {
+        source: "/pages/support-product-help",
+        destination: "/support-centre/product-guide",
         permanent: true,
       },
     ];
