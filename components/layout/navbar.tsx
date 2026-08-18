@@ -6,6 +6,7 @@ import { X } from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
 import { useSpecsStore } from "@/store/useSpecsStore";
 import { SpecsDropdownOverlay } from "@/components/features/products/specs-dropdown-overlay";
+import { ShippingLocationOverlay } from "./shipping-location-overlay";
 
 export function Navbar() {
   const { openCart, getTotalItems } = useCartStore();
@@ -90,6 +91,9 @@ export function Navbar() {
 
       {/* ─── Specs Dropdown Overlay Component ──────────────────── */}
       <SpecsDropdownOverlay />
+
+      {/* ─── Shipping Location Overlay Component ───────────────── */}
+      <ShippingLocationOverlay />
 
       {/* ─── Mobile Menu Modal Overlay ────────────────────────── */}
       {isMenuOpen && (

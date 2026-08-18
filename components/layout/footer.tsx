@@ -1,10 +1,12 @@
 "use client";
 
+import * as React from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { WHATSAPP_NUMBER } from "@/lib/config";
 import { useProductStore } from "@/store/useProductStore";
 import { ProductDisclaimer } from "@/components/features/products/product-disclaimer";
+import { useLocationStore } from "@/store/useLocationStore";
 
 const AboutIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -203,6 +205,13 @@ export function Footer() {
   const product = useProductStore((s) => (slug ? s.getProductBySlug(slug) : undefined));
   const disclaimers = product?.disclaimers;
 
+  const { openLocationModal, selectedLocation } = useLocationStore();
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER.replace(/\+/g, "")}`;
 
   const actionLinks = [
@@ -218,12 +227,14 @@ export function Footer() {
     { label: "Legal", href: "/pages/terms-of-sale", external: false },
   ];
 
+  const locationDisplayText = mounted && selectedLocation?.name ? `Store: ${selectedLocation.name}` : "Store: Pakistan";
+
   return (
     <footer className="bg-black text-white uppercase" style={{ fontFamily: "var(--font-ndot57), sans-serif" }}>
       <ProductDisclaimer disclaimers={disclaimers} />
       {/* ═══ DESKTOP FOOTER ═══ */}
       <div className="hidden lg:block">
-        <div className="relative overflow-hidden rounded-t-[28px] bg-[#020202]">
+        <div className="relative overflow-hidden rounded-t-[28px] bg-black">
           <div className="relative min-h-[920px] px-10 pb-8 pt-10  xl:px-12">
             <div className="mx-auto flex w-full max-w-[1220px] flex-col items-center text-center">
               <div className="flex w-full max-w-[560px] flex-col items-center">
@@ -246,7 +257,7 @@ export function Footer() {
                     link.external ? (
                       <a
                         key={link.label}
-                        className="flex h-[44px] items-center justify-between rounded-[8px] bg-white/[0.06] px-5 transition-colors hover:bg-white/[0.09]"
+                        className="flex h-[44px] items-center justify-between rounded-[8px] bg-white/[0.06] px-5 transition-colors hover:bg-transparent"
                         href={link.href}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -259,7 +270,7 @@ export function Footer() {
                     ) : (
                       <Link
                         key={link.label}
-                        className="flex h-[44px] items-center justify-between rounded-[8px] bg-white/[0.06] px-5 transition-colors hover:bg-white/[0.09]"
+                        className="flex h-[44px] items-center justify-between rounded-[8px] bg-white/[0.06] px-5 transition-colors hover:bg-transparent"
                         href={link.href}
                       >
                         <span className="text-[10px] uppercase tracking-[0.08em] text-white" style={{ fontFamily: "var(--font-lettera-regular)" }}>
@@ -271,10 +282,11 @@ export function Footer() {
                   )}
                   <button
                     type="button"
-                    className="flex h-[44px] items-center justify-between rounded-[8px] bg-white/[0.06] px-5 text-[10px] uppercase tracking-[0.08em] text-white transition-colors hover:bg-white/[0.09]"
+                    onClick={openLocationModal}
+                    className="flex h-[44px] items-center justify-between rounded-[8px] bg-white/[0.06] px-5 text-[10px] uppercase tracking-[0.08em] text-white transition-colors hover:bg-white/[0.09] cursor-pointer"
                     style={{ fontFamily: "var(--font-lettera-regular)" }}
                   >
-                    <span>Store: Pakistan</span>
+                    <span>{locationDisplayText}</span>
                     <GlobeIcon />
                   </button>
                 </div>
@@ -384,10 +396,11 @@ export function Footer() {
             )}
             <button
               type="button"
-              className="flex h-[52px] items-center justify-between rounded-[10px] bg-white/[0.06] px-4 text-[10px] uppercase tracking-[0.08em] text-white transition-colors hover:bg-white/[0.09]"
+              onClick={openLocationModal}
+              className="flex h-[52px] items-center justify-between rounded-[10px] bg-white/[0.06] px-4 text-[10px] uppercase tracking-[0.08em] text-white transition-colors hover:bg-white/[0.09] cursor-pointer"
               style={{ fontFamily: "var(--font-lettera-regular)" }}
             >
-              <span>Store: Pakistan</span>
+              <span>{locationDisplayText}</span>
               <GlobeIcon />
             </button>
           </div>
