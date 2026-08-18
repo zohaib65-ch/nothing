@@ -96,6 +96,15 @@
     font-display: swap;
   }
 
+  /* NType82Mono — Nothing Support Site article font (weight 300) */
+  @font-face {
+    font-family: "NType82Mono";
+    src: url("/fonts/LatteraMonoLL.woff") format("woff"), url("/fonts/ndot-2.otf") format("opentype");
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+  }
+
   * {
     @apply border-border outline-ring/50;
   }
@@ -151,6 +160,12 @@ body {
 
 .font-lattera-mono {
   font-family: "LatteraMonoLL", sans-serif !important;
+}
+
+/* NType82Mono — matches Nothing support site article links */
+.font-ntype-mono {
+  font-family: "NType82Mono", "LatteraMonoLL", "letteraRegular", monospace !important;
+  font-weight: 300 !important;
 }
 
 .frost-white-intense {

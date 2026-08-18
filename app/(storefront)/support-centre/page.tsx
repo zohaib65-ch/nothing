@@ -1,4 +1,3 @@
-import * as React from "react";
 import type { Metadata } from "next";
 import { WHATSAPP_NUMBER } from "@/lib/config";
 import { SupportClient } from "./support-client";
