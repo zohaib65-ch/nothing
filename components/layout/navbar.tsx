@@ -7,6 +7,7 @@ import { useCartStore } from "@/store/useCartStore";
 import { useSpecsStore } from "@/store/useSpecsStore";
 import { SpecsDropdownOverlay } from "@/components/features/products/specs-dropdown-overlay";
 import { ShippingLocationOverlay } from "./shipping-location-overlay";
+import { CartDrawer } from "@/components/features/cart/cart-drawer";
 
 export function Navbar() {
   const { openCart, getTotalItems } = useCartStore();
@@ -94,6 +95,9 @@ export function Navbar() {
 
       {/* ─── Shipping Location Overlay Component ───────────────── */}
       <ShippingLocationOverlay />
+
+      {/* ─── Cart Drawer Overlay Component ─────────────────────── */}
+      <CartDrawer />
 
       {/* ─── Mobile Menu Modal Overlay ────────────────────────── */}
       {isMenuOpen && (

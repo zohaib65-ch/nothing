@@ -4,7 +4,6 @@ import * as React from "react";
 import { LenisProvider } from "@/providers/lenis-provider";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
-import { CartDrawer } from "@/components/features/cart/cart-drawer";
 import { useProductStore } from "@/store/useProductStore";
 
 export default function StorefrontLayout({ children }: { children: React.ReactNode }) {
@@ -23,7 +22,6 @@ export default function StorefrontLayout({ children }: { children: React.ReactNo
         <Navbar />
         <main className="flex-1">{children}</main>
         <Footer />
-        <CartDrawer />
       </div>
     </LenisProvider>
   );
