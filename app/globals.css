@@ -235,7 +235,9 @@ body {
 
 body.menu-open .site-dot-overlay,
 body.specs-open .site-dot-overlay,
-body:has([data-navbar-menu]) .site-dot-overlay {
+body:has([data-navbar-menu]) .site-dot-overlay,
+body:has([data-hide-dots]) .site-dot-overlay,
+div:has([data-hide-dots]) .site-dot-overlay {
   opacity: 0 !important;
   visibility: hidden !important;
   pointer-events: none !important;
