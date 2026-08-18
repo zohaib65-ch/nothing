@@ -6,7 +6,15 @@
 
 @layer base {
 
-  /* ntype82Headline — used for big section headings (Selected Gems, Choose Your Model, etc.) */
+  /* NType82-bold / ntype82Headline — used for big section headings (Selected Gems, Choose Your Model, etc.) */
+  @font-face {
+    font-family: "NType82-bold";
+    src: url("/fonts/ndot-1.otf") format("opentype");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
   @font-face {
     font-family: "ntype82Headline";
     src: url("/fonts/ndot-1.otf") format("opentype");
@@ -124,7 +132,8 @@
   --font-ndot55-caps: "ndot55Caps", "Arial", sans-serif;
   --font-ndot57: "ndot57", "Arial", sans-serif;
   --font-ntype82: "ntype82", "Arial", sans-serif;
-  --font-ntype82-headline: "ntype82Headline", "Arial", sans-serif;
+  --font-ntype82-headline: "ntype82Headline", "NType82-bold", "Arial", sans-serif;
+  --font-ntype82-bold: "NType82-bold", "Noto Sans Thai", "NType82Mono", Arial, sans-serif;
   --font-lettera-regular: "letteraRegular", "Arial", monospace;
   --font-inter-light: "interLight", "Arial", sans-serif;
   --font-inter-medium: "interMedium", "Arial", sans-serif;
@@ -143,6 +152,11 @@ body {
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Font utility classes matching original site's CSS variable classes */
+.font-ntype82-bold {
+  font-family: "NType82-bold", "ntype82Headline", "Noto Sans Thai", "NType82Mono", Arial, sans-serif !important;
 }
 
 /* Font utility classes matching original site's CSS variable classes */

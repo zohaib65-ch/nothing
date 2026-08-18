@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { CONTACT_EMAIL } from "@/lib/config";
 
 interface VerificationClientProps {
   whatsappNumber: string;
@@ -167,8 +168,8 @@ export function VerificationClient({ whatsappNumber, faqs }: VerificationClientP
             <div className="flex flex-col">
               <dt className="font-mono text-[11px] uppercase tracking-[0.14em] text-white/46">Email</dt>
               <dd className="mt-2 font-ntype82 text-base leading-[1.45] text-white/86">
-                <a href="mailto:Contact@nothingofficial.pk" className="hover:underline">
-                  Contact@nothingofficial.pk
+                <a href={`mailto:${CONTACT_EMAIL}`} className="hover:underline">
+                  {CONTACT_EMAIL}
                 </a>
               </dd>
             </div>

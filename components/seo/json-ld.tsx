@@ -32,8 +32,8 @@ export function JsonLd({ type, data }: JsonLdProps) {
       "logo": data.logo || "https://www.nothingcmf.pk/nothing_logo.webp",
       "contactPoint": {
         "@type": "ContactPoint",
-        "telephone": data.telephone || "+923361070111",
-        "email": "Contact@nothingofficial.pk",
+        "telephone": data.telephone || process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "+923361070111",
+        "email": data.email || process.env.NEXT_PUBLIC_CONTACT_EMAIL || "Contact@nothingofficial.pk",
         "contactType": "customer support",
         "areaServed": "PK",
         "availableLanguage": ["English", "Urdu"]

@@ -7,16 +7,16 @@ export const metadata: Metadata = {
   description:
     "These Terms of Sale govern product purchases made through Nothing Pakistan, including pricing, delivery, returns, and warranty handling.",
   alternates: {
-    canonical: "https://www.nothingcmf.pk/pages/terms-of-sale",
+    canonical: "https://www.nothingcmf.pk/pages/terms-of-sales",
   },
   openGraph: {
     title: "Terms of Sales | Nothing Official Pakistan",
     description:
       "These Terms of Sale govern product purchases made through Nothing Pakistan.",
-    url: "https://www.nothingcmf.pk/pages/terms-of-sale",
+    url: "https://www.nothingcmf.pk/pages/terms-of-sales",
   },
 };
 
-export default function TermsOfSalePage() {
-  return <TermsClient initialPolicy="privacy-policy" />;
+export default function TermsOfSalesPluralPage() {
+  return <TermsClient initialPolicy="terms-of-sales" />;
 }

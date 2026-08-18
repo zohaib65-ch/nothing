@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { WHATSAPP_NUMBER } from "@/lib/config";
+import { WHATSAPP_NUMBER, CONTACT_EMAIL } from "@/lib/config";
 import { useProductStore } from "@/store/useProductStore";
 import { ProductDisclaimer } from "@/components/features/products/product-disclaimer";
 import { useLocationStore } from "@/store/useLocationStore";
@@ -236,7 +236,7 @@ export function Footer() {
       <div className="hidden lg:block">
         <div className="relative overflow-hidden rounded-t-[28px] bg-black">
           <div className="relative min-h-[920px] px-10 pb-8 pt-10  xl:px-12">
-            <div className="mx-auto flex w-full max-w-[1220px] flex-col items-center text-center">
+            <div className="mx-auto flex flex-col items-center text-center">
               <div className="flex w-full max-w-[560px] flex-col items-center">
                 {/* Big Nav Links */}
                 <nav className="flex flex-col items-center gap-7">
@@ -298,7 +298,7 @@ export function Footer() {
                 <p className="mt-2 text-sm leading-6 text-white/88">NOTHING OFFICIAL (SMC-PRIVATE) LIMITED</p>
                 <p className="mt-1 text-xs text-white/58">CUIN: 0337422</p>
                 <p className="mt-1 text-xs text-white/58">
-                  <a href="mailto:Contact@nothingofficial.pk" className="hover:text-white transition-colors">Contact@nothingofficial.pk</a>
+                  <a href={`mailto:${CONTACT_EMAIL}`} className="hover:text-white transition-colors">{CONTACT_EMAIL}</a>
                 </p>
                 <Link
                   className="mt-3 inline-block text-[10px] uppercase tracking-[0.2em] underline-offset-4 hover:underline text-white"
@@ -309,7 +309,7 @@ export function Footer() {
               </div>
 
               {/* Bottom Links Row */}
-              <div className="mt-10 flex w-full max-w-[1220px] items-start justify-between gap-10">
+              <div className="mt-10 flex w-full items-start justify-between gap-10">
                 <div className="flex flex-wrap items-center gap-x-10 gap-y-3 text-left">
                   {bottomLinks.map((link) =>
                     link.external ? (
@@ -411,7 +411,7 @@ export function Footer() {
             <p className="mt-2 text-sm leading-6 text-white/88">NOTHING OFFICIAL (SMC-PRIVATE) LIMITED</p>
             <p className="mt-1 text-xs text-white/58">CUIN: 0337422</p>
             <p className="mt-1 text-xs text-white/58">
-              <a href="mailto:Contact@nothingofficial.pk" className="hover:text-white transition-colors">Contact@nothingofficial.pk</a>
+              <a href={`mailto:${CONTACT_EMAIL}`} className="hover:text-white transition-colors">{CONTACT_EMAIL}</a>
             </p>
             <Link
               className="mt-3 inline-block text-[10px] uppercase tracking-[0.2em] underline-offset-4 hover:underline text-white"
