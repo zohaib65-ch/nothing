@@ -20,7 +20,24 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "cdn.nothingcmf.pk",
       },
+      {
+        protocol: "https",
+        hostname: "cdn.sanity.io",
+      },
+      {
+        protocol: "https",
+        hostname: "apicdn.sanity.io",
+      },
     ],
+  },
+  async redirects() {
+    return [
+      {
+        source: "/about",
+        destination: "/about-us",
+        permanent: true,
+      },
+    ];
   },
   async headers() {
     return [
