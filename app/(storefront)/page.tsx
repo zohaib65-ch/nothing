@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
 import { useProductStore } from "@/store/useProductStore";
 import { Loader } from "@/components/ui/loader";
 import { ProductCard } from "@/components/features/products/product-card";
@@ -436,6 +435,8 @@ export default function HomePage() {
         <img
           alt="Nothing Phone 3 hero background"
           src="https://nothingshop.b-cdn.net/banner/nothing_pakistan.avif"
+          fetchPriority="high"
+          loading="eager"
           className="absolute inset-0 h-full w-full object-cover object-center"
         />
         <div className="relative z-10 flex h-full w-full items-end justify-center px-4 pb-7 pt-24 sm:px-6 sm:pb-9 sm:pt-28 md:px-8 lg:pb-8">

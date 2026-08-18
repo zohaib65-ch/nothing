@@ -41,33 +41,14 @@ export function CartDrawer() {
   const { products: storeProducts, fetchAll } = useProductStore();
   const { itemsWithPrices } = useCartItemPrices(items);
 
-  const [dbRecommended, setDbRecommended] = React.useState<Product[]>([]);
   const [mounted, setMounted] = React.useState(false);
   const [selectedVariants, setSelectedVariants] = React.useState<Record<string, string>>({});
 
   React.useEffect(() => {
     setMounted(true);
-  }, []);
-
-  // Fetch live products from DB/API on mount if not loaded
-  React.useEffect(() => {
-    async function loadDbProducts() {
-      try {
-        if (!storeProducts || storeProducts.length === 0) {
-          await fetchAll();
-        }
-        const res = await fetch("/api/products?status=published", { cache: "no-store" });
-        if (res.ok) {
-          const data = await res.json();
-          if (Array.isArray(data) && data.length > 0) {
-            setDbRecommended(data);
-          }
-        }
-      } catch {
-        // Handled silently
-      }
+    if (!storeProducts || storeProducts.length === 0) {
+      fetchAll();
     }
-    loadDbProducts();
   }, [fetchAll, storeProducts]);
 
   // Lock body scroll when cart is open
@@ -90,17 +71,16 @@ export function CartDrawer() {
 
   const totalItems = mounted ? getTotalItems() : 0;
 
-  // Derive recommendations dynamically from live DB products
+  // Derive recommendations dynamically from live store products
   const recommendedList = React.useMemo(() => {
-    const sourceList = dbRecommended.length > 0 ? dbRecommended : storeProducts;
-    if (!sourceList || sourceList.length === 0) return [];
+    if (!storeProducts || storeProducts.length === 0) return [];
 
     const cartProductIds = new Set(
       items.map((it) => (it.product?.id || it.product?.slug || "").toLowerCase())
     );
 
     // Filter out products already in cart
-    const candidates = sourceList.filter((p) => {
+    const candidates = storeProducts.filter((p) => {
       const id = (p.id || "").toLowerCase();
       const slug = (p.slug || "").toLowerCase();
       return !cartProductIds.has(id) && !cartProductIds.has(slug);
@@ -122,7 +102,7 @@ export function CartDrawer() {
     });
 
     return priorityList.slice(0, 3);
-  }, [dbRecommended, storeProducts, items]);
+  }, [storeProducts, items]);
 
   if (!isOpen) return null;
 

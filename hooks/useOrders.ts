@@ -1,5 +1,4 @@
 import * as React from "react";
-import { jsPDF } from "jspdf";
 import { toast } from "sonner";
 
 export interface OrderItem {
@@ -138,7 +137,8 @@ export function useOrders() {
   }, [orders, searchTerm, statusFilter, paymentFilter, fulfillmentFilter]);
 
   // Generate Single Order PDF Invoice matching exact reference design
-  const generateInvoicePDF = (order: Order) => {
+  const generateInvoicePDF = async (order: Order) => {
+    const { jsPDF } = await import("jspdf");
     const doc = new jsPDF({
       orientation: "portrait",
       unit: "mm",
@@ -416,7 +416,8 @@ export function useOrders() {
   };
 
   // Generate All Filtered Orders PDF Report
-  const generateReportPDF = () => {
+  const generateReportPDF = async () => {
+    const { jsPDF } = await import("jspdf");
     const doc = new jsPDF({
       orientation: "landscape",
       unit: "mm",

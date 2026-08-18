@@ -65,7 +65,7 @@ const ProductFeatureSchema = new Schema({
 const ProductSchema = new Schema<IProductDocument>(
   {
     name: { type: String, required: true, trim: true },
-    slug: { type: String, required: true, index: true },
+    slug: { type: String, required: true },
     price: { type: Number, default: 0 },
     salePrice: { type: Number },
     category: { type: String, default: "phones", index: true },
