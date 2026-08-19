@@ -4,8 +4,8 @@ import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useProductStore } from "@/store/useProductStore";
-import { slugify } from "@/lib/utils";
-import { ChevronDown, Search } from "lucide-react";
+import { getValidImageUrl } from "@/lib/utils";
+import { ChevronDown } from "lucide-react";
 
 export interface DbProductItem {
   id: string;
@@ -13,278 +13,9 @@ export interface DbProductItem {
   slug: string;
   category: string;
   image?: string;
+  images?: string[];
   status?: string;
 }
-
-interface ProductGuideItem {
-  id: string;
-  name: string;
-  category: "phones" | "audio" | "wearables" | "charger";
-  image: string;
-  slugFallback: string;
-}
-
-const OFFICIAL_NOTHING_PRODUCTS: ProductGuideItem[] = [
-  // ─── Phones ──────────────────────────────────────────
-  {
-    id: "phone-4a-pro",
-    name: "Nothing Phone (4a) Pro",
-    category: "phones",
-    image: "https://checkout.nothing.tech/cdn/shop/files/Phone_4a_Pro.jpg?v=1772767194",
-    slugFallback: "nothing-phone-4a-pro",
-  },
-  {
-    id: "phone-4a",
-    name: "Nothing Phone (4a)",
-    category: "phones",
-    image: "https://checkout.nothing.tech/cdn/shop/files/Phone_4a.jpg?v=1772767193",
-    slugFallback: "nothing-phone-4a",
-  },
-  {
-    id: "phone-4b",
-    name: "Nothing Phone (4b)",
-    category: "phones",
-    image: "https://checkout.nothing.tech/cdn/shop/files/phone_4b_product_guide.jpg?v=1782976467",
-    slugFallback: "nothing-phone-4b",
-  },
-  {
-    id: "phone-3",
-    name: "Nothing Phone (3)",
-    category: "phones",
-    image: "https://checkout.nothing.tech/cdn/shop/files/phone-3.jpg?v=1752560157",
-    slugFallback: "nothing-phone-3",
-  },
-  {
-    id: "phone-3a-lite",
-    name: "Nothing Phone (3a) Lite",
-    category: "phones",
-    image: "https://checkout.nothing.tech/cdn/shop/files/Product_Guide_Cover.jpg?v=1761705498",
-    slugFallback: "nothing-phone-3a-lite",
-  },
-  {
-    id: "phone-3a-pro",
-    name: "Nothing Phone (3a) Pro",
-    category: "phones",
-    image: "https://checkout.nothing.tech/cdn/shop/files/Arc_Pro_-_Suport_Product_Guide_1080_x_1080_px.png?v=1741244526",
-    slugFallback: "nothing-phone-3a-pro",
-  },
-  {
-    id: "phone-3a",
-    name: "Nothing Phone (3a)",
-    category: "phones",
-    image: "https://checkout.nothing.tech/cdn/shop/files/Arc_-_Suport_Product_Guide_1080_x_1080_px.png?v=1741244524",
-    slugFallback: "nothing-phone-3a",
-  },
-  {
-    id: "phone-2a-plus",
-    name: "Nothing Phone (2a) Plus",
-    category: "phones",
-    image: "https://checkout.nothing.tech/cdn/shop/files/nothing-phone-2a-plus.png?v=1724741471",
-    slugFallback: "nothing-phone-2a-plus",
-  },
-  {
-    id: "phone-2a",
-    name: "Nothing Phone (2a)",
-    category: "phones",
-    image: "https://checkout.nothing.tech/cdn/shop/files/phone2a_0708.jpg?v=1720522361",
-    slugFallback: "nothing-phone-2a",
-  },
-  {
-    id: "phone-2",
-    name: "Nothing Phone (2)",
-    category: "phones",
-    image: "https://checkout.nothing.tech/cdn/shop/files/Phone2_0708.jpg?v=1720522374",
-    slugFallback: "nothing-phone-2",
-  },
-  {
-    id: "phone-1",
-    name: "Nothing Phone (1)",
-    category: "phones",
-    image: "https://checkout.nothing.tech/cdn/shop/files/Phone1_0708.png?v=1720522381",
-    slugFallback: "nothing-phone-1",
-  },
-  {
-    id: "cmf-phone-2-pro",
-    name: "CMF Phone 2 Pro",
-    category: "phones",
-    image: "https://checkout.nothing.tech/cdn/shop/files/Support_Guide_-_Bulbasaur.jpg?v=1745899666",
-    slugFallback: "cmf-phone-2-pro",
-  },
-  {
-    id: "cmf-phone-1",
-    name: "CMF Phone 1",
-    category: "phones",
-    image: "https://checkout.nothing.tech/cdn/shop/files/2048x1352_Buy_Page_-_Black_Phone_-_1_copy_0708.png?v=1720522490",
-    slugFallback: "cmf-phone-1",
-  },
-
-  // ─── Audio ───────────────────────────────────────────
-  {
-    id: "headphone-a",
-    name: "Nothing Headphone (a)",
-    category: "audio",
-    image: "https://checkout.nothing.tech/cdn/shop/files/Headphone_a.jpg?v=1772767193",
-    slugFallback: "nothing-headphone-a",
-  },
-  {
-    id: "headphone-1",
-    name: "Nothing Headphone (1)",
-    category: "audio",
-    image: "https://checkout.nothing.tech/cdn/shop/files/headphone-1.jpg?v=1752560155",
-    slugFallback: "nothing-headphone-1",
-  },
-  {
-    id: "ear-3a",
-    name: "Nothing Ear (3a)",
-    category: "audio",
-    image: "https://checkout.nothing.tech/cdn/shop/files/ear_3a_product_guide.jpg?v=1782976449",
-    slugFallback: "nothing-ear-3a",
-  },
-  {
-    id: "ear-3",
-    name: "Nothing Ear (3)",
-    category: "audio",
-    image: "https://checkout.nothing.tech/cdn/shop/files/ear_3.jpg?v=1758595503",
-    slugFallback: "nothing-ear-3",
-  },
-  {
-    id: "ear-open",
-    name: "Nothing Ear (open)",
-    category: "audio",
-    image: "https://checkout.nothing.tech/cdn/shop/files/ear_open_8876ba0d-7f88-43a3-bb49-3bf9483afe4b.jpg?v=1758530404",
-    slugFallback: "nothing-ear-open",
-  },
-  {
-    id: "ear-a",
-    name: "Nothing Ear (a)",
-    category: "audio",
-    image: "https://checkout.nothing.tech/cdn/shop/files/Eara_0708.jpg?v=1720522390",
-    slugFallback: "nothing-ear-a",
-  },
-  {
-    id: "ear",
-    name: "Nothing Ear",
-    category: "audio",
-    image: "https://checkout.nothing.tech/cdn/shop/files/Ear_0708.jpg?v=1720522395",
-    slugFallback: "nothing-ear",
-  },
-  {
-    id: "ear-2",
-    name: "Nothing Ear (2)",
-    category: "audio",
-    image: "https://checkout.nothing.tech/cdn/shop/files/Ear2_0708.jpg?v=1720522401",
-    slugFallback: "nothing-ear-2",
-  },
-  {
-    id: "ear-1",
-    name: "Nothing Ear (1)",
-    category: "audio",
-    image: "https://checkout.nothing.tech/cdn/shop/files/Ear1_0708.png?v=1720522412",
-    slugFallback: "nothing-ear-1",
-  },
-  {
-    id: "ear-stick",
-    name: "Nothing Ear (stick)",
-    category: "audio",
-    image: "https://checkout.nothing.tech/cdn/shop/files/Earstick_0708.png?v=1720522416",
-    slugFallback: "nothing-ear-stick",
-  },
-  {
-    id: "cmf-clip-pro",
-    name: "CMF Clip Pro",
-    category: "audio",
-    image: "https://checkout.nothing.tech/cdn/shop/files/CMF_Clip_Pro.jpg?v=1785833931",
-    slugFallback: "cmf-clip-pro",
-  },
-  {
-    id: "cmf-buds-2-plus",
-    name: "CMF Buds 2 Plus",
-    category: "audio",
-    image: "https://checkout.nothing.tech/cdn/shop/files/Support_Guide_-_Gilgar.jpg?v=1745899665",
-    slugFallback: "cmf-buds-2-plus",
-  },
-  {
-    id: "cmf-buds-2a",
-    name: "CMF Buds 2a",
-    category: "audio",
-    image: "https://checkout.nothing.tech/cdn/shop/files/Support_Guide_-_hoothoot.jpg?v=1745899666",
-    slugFallback: "cmf-buds-2a",
-  },
-  {
-    id: "cmf-buds-2",
-    name: "CMF Buds 2",
-    category: "audio",
-    image: "https://checkout.nothing.tech/cdn/shop/files/Support_Guide_-_Gira.jpg?v=1744883278",
-    slugFallback: "cmf-buds-2",
-  },
-  {
-    id: "cmf-headphone-pro",
-    name: "CMF Headphone Pro",
-    category: "audio",
-    image: "https://checkout.nothing.tech/cdn/shop/files/headphone_pro.jpg?v=1758595508",
-    slugFallback: "cmf-headphone-pro",
-  },
-  {
-    id: "cmf-buds-pro-2",
-    name: "CMF Buds Pro 2",
-    category: "audio",
-    image: "https://checkout.nothing.tech/cdn/shop/files/CMF-Buds-Pro-2_Dark-Grey_2_copy_0708.png?v=1720522440",
-    slugFallback: "cmf-buds-pro-2",
-  },
-  {
-    id: "cmf-buds-pro",
-    name: "CMF Buds Pro",
-    category: "audio",
-    image: "https://checkout.nothing.tech/cdn/shop/files/CMF-Buds-Pro_Dark-Grey_2_copy_0708.png?v=1720522447",
-    slugFallback: "cmf-buds-pro",
-  },
-  {
-    id: "cmf-buds",
-    name: "CMF Buds",
-    category: "audio",
-    image: "https://checkout.nothing.tech/cdn/shop/files/CMF-Buds_Dark-Grey_2_copy_0708.png?v=1720522461",
-    slugFallback: "cmf-buds",
-  },
-  {
-    id: "cmf-neckband-pro",
-    name: "CMF Neckband Pro",
-    category: "audio",
-    image: "https://checkout.nothing.tech/cdn/shop/files/CMF-Neckband-Pro_Dark-Grey_4_copy_0708.png?v=1720522466",
-    slugFallback: "cmf-neckband-pro",
-  },
-
-  // ─── Wearables ───────────────────────────────────────
-  {
-    id: "cmf-watch-3-pro",
-    name: "CMF Watch 3 Pro",
-    category: "wearables",
-    image: "https://checkout.nothing.tech/cdn/shop/files/Group_1_690d7045-41f5-4da8-be9b-892fcc34a5a8.png?v=1753777096",
-    slugFallback: "cmf-watch-3-pro",
-  },
-  {
-    id: "cmf-watch-pro-2",
-    name: "CMF Watch Pro 2",
-    category: "wearables",
-    image: "https://checkout.nothing.tech/cdn/shop/files/CMF-Watch-Pro-2_Dark-Grey_2_copy_0708.png?v=1720522472",
-    slugFallback: "cmf-watch-pro-2",
-  },
-  {
-    id: "cmf-watch-pro",
-    name: "CMF Watch Pro",
-    category: "wearables",
-    image: "https://checkout.nothing.tech/cdn/shop/files/CMF-Watch-Pro_Dark-Grey_2_copy_0708.png?v=1720522481",
-    slugFallback: "cmf-watch-pro",
-  },
-
-  // ─── Charger ─────────────────────────────────────────
-  {
-    id: "cmf-power-65w-gan",
-    name: "CMF Power 65W GaN",
-    category: "charger",
-    image: "https://checkout.nothing.tech/cdn/shop/files/CMF_Power_65W_GaN_Dark_Grey_UK_1_copy_0708.png?v=1720522503",
-    slugFallback: "cmf-power-65w-gan",
-  },
-];
 
 const CATEGORIES = [
   { key: "all", label: "ALL" },
@@ -292,28 +23,139 @@ const CATEGORIES = [
   { key: "audio", label: "Audio" },
   { key: "wearables", label: "Wearables" },
   { key: "charger", label: "Charger" },
-  { key: "others", label: "Others" },
 ] as const;
+
+// Verified 200 HTTP high-resolution curated cover images mapped by exact product slug
+const GUIDE_COVER_IMAGES: Record<string, string> = {
+  // Phones
+  "phone-4a-pro": "https://checkout.nothing.tech/cdn/shop/files/Phone_4a_Pro.jpg?v=1772767194",
+  "phone-4a": "https://checkout.nothing.tech/cdn/shop/files/Phone_4a.jpg?v=1772767193",
+  "phone-4b": "https://checkout.nothing.tech/cdn/shop/files/phone_4b_product_guide.jpg?v=1782976467",
+  "phone-3": "https://checkout.nothing.tech/cdn/shop/files/phone-3.jpg?v=1752560157",
+  "phone-3a-lite": "https://checkout.nothing.tech/cdn/shop/files/Product_Guide_Cover.jpg?v=1761705498",
+  "phone-3a-pro": "https://checkout.nothing.tech/cdn/shop/files/Arc_Pro_-_Suport_Product_Guide_1080_x_1080_px.png?v=1741244526",
+  "phone-3a": "https://checkout.nothing.tech/cdn/shop/files/Arc_-_Suport_Product_Guide_1080_x_1080_px.png?v=1741244524",
+  "phone2a-plus": "https://checkout.nothing.tech/cdn/shop/files/nothing-phone-2a-plus.png?v=1724741471",
+  "phone-2a-plus": "https://checkout.nothing.tech/cdn/shop/files/nothing-phone-2a-plus.png?v=1724741471",
+  "phone-2a": "https://checkout.nothing.tech/cdn/shop/files/phone2a_0708.jpg?v=1720522361",
+  "phone-2": "https://checkout.nothing.tech/cdn/shop/files/Phone2_0708.jpg?v=1720522374",
+  "phone-1": "https://checkout.nothing.tech/cdn/shop/files/Phone1_0708.png?v=1720522381",
+  "cmf-phone-2-pro": "https://checkout.nothing.tech/cdn/shop/files/Support_Guide_-_Bulbasaur.jpg?v=1745899666",
+  "cmf-phone-1": "https://checkout.nothing.tech/cdn/shop/files/2048x1352_Buy_Page_-_Black_Phone_-_1_copy_0708.png?v=1720522490",
+
+  // Audio (from Excel Sheet)
+  "headphone-a": "https://checkout.nothing.tech/cdn/shop/files/Headphone_a.jpg?v=1772767193",
+  "headphone-1": "https://checkout.nothing.tech/cdn/shop/files/headphone-1.jpg?v=1752560155",
+  "ear-3a": "https://checkout.nothing.tech/cdn/shop/files/ear_3a_product_guide.jpg?v=1782976449",
+  "ear-3": "https://checkout.nothing.tech/cdn/shop/files/ear_3.jpg?v=1758595503",
+  "ear-open": "https://checkout.nothing.tech/cdn/shop/files/ear_open_8876ba0d-7f88-43a3-bb49-3bf9483afe4b.jpg?v=1758530404",
+  "ear-a": "https://checkout.nothing.tech/cdn/shop/files/Eara_0708.jpg?v=1720522390",
+  "ear": "https://checkout.nothing.tech/cdn/shop/files/Ear_0708.jpg?v=1720522395",
+  "ear-2": "https://checkout.nothing.tech/cdn/shop/files/Ear2_0708.jpg?v=1720522401",
+  "ear-1": "https://checkout.nothing.tech/cdn/shop/files/Ear1_0708.png?v=1720522412",
+  "ear-stick": "https://checkout.nothing.tech/cdn/shop/files/Earstick_0708.png?v=1720522416",
+  "cmf-clip-pro": "https://checkout.nothing.tech/cdn/shop/files/CMF_Clip_Pro.jpg?v=1785833931",
+  "cmf-buds-2-plus": "https://checkout.nothing.tech/cdn/shop/files/Support_Guide_-_Gilgar.jpg?v=1745899665",
+  "cmf-buds-2a": "https://checkout.nothing.tech/cdn/shop/files/Support_Guide_-_hoothoot.jpg?v=1745899666",
+  "cmf-buds-2": "https://checkout.nothing.tech/cdn/shop/files/Support_Guide_-_Gira.jpg?v=1744883278",
+  "cmf-headphone-pro": "https://checkout.nothing.tech/cdn/shop/files/headphone_pro.jpg?v=1758595508",
+  "cmf-buds-pro-2": "https://checkout.nothing.tech/cdn/shop/files/CMF-Buds-Pro-2_Dark-Grey_2_copy_0708.png?v=1720522440",
+  "cmf-buds-pro": "https://checkout.nothing.tech/cdn/shop/files/CMF-Buds-Pro_Dark-Grey_2_copy_0708.png?v=1720522447",
+  "cmf-buds": "https://checkout.nothing.tech/cdn/shop/files/CMF-Buds_Dark-Grey_2_copy_0708.png?v=1720522461",
+  "cmf-neckband-pro": "https://checkout.nothing.tech/cdn/shop/files/CMF-Neckband-Pro_Dark-Grey_4_copy_0708.png?v=1720522466",
+
+  // Wearables (from Excel Sheet)
+  "cmf-watch-3-pro": "https://checkout.nothing.tech/cdn/shop/files/Group_1_690d7045-41f5-4da8-be9b-892fcc34a5a8.png?v=1753777096",
+  "cmf-watch-pro-2": "https://checkout.nothing.tech/cdn/shop/files/CMF-Watch-Pro-2_Dark-Grey_2_copy_0708.png?v=1720522472",
+  "cmf-watch-pro": "https://checkout.nothing.tech/cdn/shop/files/CMF-Watch-Pro_Dark-Grey_2_copy_0708.png?v=1720522481",
+
+  // Chargers
+  "power-45w": "https://checkout.nothing.tech/cdn/shop/files/CMF_Power_65W_GaN_Dark_Grey_UK_1_copy_0708.png?v=1720522503",
+};
+
+const EXACT_PHONE_ORDER = [
+  "phone-4a-pro",
+  "phone-4a",
+  "phone-4b",
+  "phone-3",
+  "phone-3a-lite",
+  "phone-3a-pro",
+  "phone-3a",
+  "phone2a-plus",
+  "phone-2a-plus",
+  "phone-2a",
+  "phone-2",
+  "phone-1",
+  "cmf-phone-2-pro",
+  "cmf-phone-1",
+];
+
+const EXACT_AUDIO_ORDER = [
+  "headphone-a",
+  "headphone-1",
+  "ear-3a",
+  "ear-3",
+  "ear-open",
+  "ear-a",
+  "ear",
+  "ear-2",
+  "ear-1",
+  "ear-stick",
+  "cmf-clip-pro",
+  "cmf-buds-2-plus",
+  "cmf-buds-2a",
+  "cmf-buds-2",
+  "cmf-headphone-pro",
+  "cmf-buds-pro-2",
+  "cmf-buds-pro",
+  "cmf-buds",
+  "cmf-neckband-pro",
+];
+
+const EXACT_WEARABLES_ORDER = [
+  "cmf-watch-3-pro",
+  "cmf-watch-pro-2",
+  "cmf-watch-pro",
+];
 
 interface ProductGuideClientProps {
   dbProducts?: DbProductItem[];
 }
 
-function normalizeKey(str: string) {
-  return str
-    .toLowerCase()
-    .replace(/\s+/g, "")
-    .replace(/[()_-]/g, "");
+function formatDisplayName(name: string, cat: string, slug?: string): string {
+  const trimmed = (name || "").trim();
+  const s = (slug || "").toLowerCase();
+  if (cat === "phones") {
+    if (trimmed.startsWith("Phone (") || trimmed.startsWith("Phone(")) {
+      return `Nothing ${trimmed}`;
+    }
+    return trimmed;
+  }
+  if (cat === "audio") {
+    if (
+      (trimmed.startsWith("Ear") || trimmed.startsWith("Headphone")) &&
+      !trimmed.startsWith("Nothing") &&
+      !trimmed.startsWith("CMF")
+    ) {
+      return `Nothing ${trimmed}`;
+    }
+  }
+  if (cat === "charger" || s === "power-45w") {
+    return "Power (45W)";
+  }
+  return trimmed;
 }
 
 function getAccurateCategory(
   name: string,
-  category?: string
-): "phones" | "audio" | "wearables" | "charger" | "others" {
+  category?: string,
+  slug?: string
+): "phones" | "audio" | "wearables" | "charger" | null {
   const n = (name || "").toLowerCase();
   const c = (category || "").toLowerCase();
+  const s = (slug || "").toLowerCase();
 
-  // 1. Others / Accessories (Screen Protectors, Cases, Covers, Glass, Straps, Apparel)
+  // 1. Exclude accessories, apparel, cases, protectors, cables, straps, etc.
   if (
     n.includes("protector") ||
     n.includes("screen") ||
@@ -323,36 +165,45 @@ function getAccurateCategory(
     n.includes("film") ||
     n.includes("strap") ||
     n.includes("lanyard") ||
+    n.includes("cable") ||
     n.includes("t-shirt") ||
     n.includes("hoodie") ||
     n.includes("apparel") ||
+    n.includes("tote") ||
+    n.includes("labcoat") ||
+    n.includes("tracksuit") ||
+    n.includes("cap") ||
+    n.includes("cushion") ||
+    n.includes("lenses") ||
+    n.includes("wallet") ||
+    s.includes("case") ||
+    s.includes("cover") ||
+    s.includes("protector") ||
+    s.includes("wallet") ||
+    s.includes("lenses") ||
+    s.includes("cable") ||
+    s.includes("cushion") ||
+    s.includes("strap") ||
     c.includes("protector") ||
     c.includes("case") ||
     c.includes("apparel") ||
     c.includes("accessories") ||
     c.includes("other")
   ) {
-    return "others";
+    return null;
   }
 
-  // 2. Wearables (Watches)
-  if (n.includes("watch") || c.includes("watch") || c.includes("wearable")) {
-    return "wearables";
-  }
-
-  // 3. Audio (Earbuds, Headphones, Buds, Neckbands, Clips)
+  // 2. Charger: ONLY Power (45W) is shown
   if (
-    n.includes("ear") ||
-    n.includes("headphone") ||
-    n.includes("bud") ||
-    n.includes("neckband") ||
-    n.includes("clip") ||
-    c.includes("audio")
+    s === "power-45w" ||
+    n === "power (45w)" ||
+    n === "power 45w" ||
+    n.includes("power (45w)") ||
+    n.includes("power 45w")
   ) {
-    return "audio";
+    return "charger";
   }
 
-  // 4. Charger (Only Chargers, GaN, Power bricks, Charging cables)
   if (
     n.includes("power") ||
     n.includes("charger") ||
@@ -360,12 +211,50 @@ function getAccurateCategory(
     n.includes("adapter") ||
     c.includes("charger")
   ) {
-    return "charger";
+    return null;
   }
 
-  // 5. Default: Phones
-  return "phones";
+  // 3. Wearables (Watches)
+  if (
+    EXACT_WEARABLES_ORDER.includes(s) ||
+    n.includes("watch") ||
+    c.includes("watch") ||
+    c.includes("wearable")
+  ) {
+    return "wearables";
+  }
+
+  // 4. Audio (Earbuds, Headphones, Buds, Neckbands)
+  if (
+    EXACT_AUDIO_ORDER.includes(s) ||
+    n.includes("ear") ||
+    n.includes("headphone") ||
+    n.includes("bud") ||
+    n.includes("neckband") ||
+    c.includes("audio")
+  ) {
+    return "audio";
+  }
+
+  // 5. Phones (Only official phones)
+  if (
+    EXACT_PHONE_ORDER.includes(s) ||
+    s.startsWith("phone") ||
+    s.startsWith("cmf-phone") ||
+    n.includes("phone")
+  ) {
+    return "phones";
+  }
+
+  return null;
 }
+
+const CATEGORY_ORDER: Record<string, number> = {
+  phones: 1,
+  audio: 2,
+  wearables: 3,
+  charger: 4,
+};
 
 export function ProductGuideClient({ dbProducts = [] }: ProductGuideClientProps) {
   const [selectedCategory, setSelectedCategory] = React.useState<string>("all");
@@ -374,27 +263,6 @@ export function ProductGuideClient({ dbProducts = [] }: ProductGuideClientProps)
   const dropdownRef = React.useRef<HTMLDivElement>(null);
 
   const { products: storeProducts } = useProductStore();
-
-  // Combine DB products with fallback store products
-  const allAvailableDbProducts = React.useMemo(() => {
-    const map = new Map<string, DbProductItem>();
-    dbProducts.forEach((p) => {
-      if (p.slug) map.set(p.slug, p);
-    });
-    storeProducts.forEach((p) => {
-      if (p.slug && !map.has(p.slug)) {
-        map.set(p.slug, {
-          id: p.id || p.slug,
-          name: p.name,
-          slug: p.slug,
-          category: p.category,
-          image: p.images?.[0] || p.variants?.[0]?.image || "",
-          status: p.status,
-        });
-      }
-    });
-    return Array.from(map.values());
-  }, [dbProducts, storeProducts]);
 
   // Close dropdown on outside click
   React.useEffect(() => {
@@ -407,88 +275,93 @@ export function ProductGuideClient({ dbProducts = [] }: ProductGuideClientProps)
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Helper to match a product item with actual database product slug
-  const getProductHref = React.useCallback(
-    (item: { name: string; slug: string; slugFallback: string }) => {
-      const itemKey = normalizeKey(item.name);
-      const fallbackKey = normalizeKey(item.slugFallback);
-
-      // 1. Direct slug match
-      const directMatch = allAvailableDbProducts.find(
-        (p) =>
-          p.slug.toLowerCase() === item.slug.toLowerCase() ||
-          p.slug.toLowerCase() === item.slugFallback.toLowerCase() ||
-          p.slug.toLowerCase() === slugify(item.name).toLowerCase()
-      );
-      if (directMatch) return `/products/${directMatch.slug}`;
-
-      // 2. Normalized name match (matching strictly within same category/type)
-      const nameMatch = allAvailableDbProducts.find((p) => {
-        const pKey = normalizeKey(p.name);
-        return pKey === itemKey || pKey === fallbackKey;
-      });
-      if (nameMatch) return `/products/${nameMatch.slug}`;
-
-      // 3. Fallback to slugified name or fallback slug
-      return `/products/${item.slug || item.slugFallback || slugify(item.name)}`;
-    },
-    [allAvailableDbProducts]
-  );
-
-  // Build the complete display product list, giving priority to DB products where applicable
+  // Consolidate DB products and store products
   const displayItems = React.useMemo(() => {
-    // Start with official list
-    const list = OFFICIAL_NOTHING_PRODUCTS.map((item) => {
-      const itemKey = normalizeKey(item.name);
-      const matchedDb = allAvailableDbProducts.find((p) => {
-        const pKey = normalizeKey(p.name);
-        const pSlugKey = normalizeKey(p.slug);
-        return (
-          pKey === itemKey ||
-          pSlugKey === normalizeKey(item.slugFallback) ||
-          pSlugKey === itemKey
-        );
+    const map = new Map<string, { id: string; name: string; slug: string; category: "phones" | "audio" | "wearables" | "charger"; image: string; fallbackImage?: string }>();
+
+    // 1. Process server-passed DB products
+    dbProducts.forEach((p) => {
+      if (!p.slug) return;
+      const cleanSlug = p.slug.trim().toLowerCase();
+      const cat = getAccurateCategory(p.name, p.category, p.slug);
+      if (!cat) return;
+      const displayName = formatDisplayName(p.name, cat, p.slug);
+      const dbImage = p.image || p.images?.[0] || "";
+      const primaryImage = GUIDE_COVER_IMAGES[cleanSlug] || dbImage || "";
+      map.set(cleanSlug, {
+        id: p.id || cleanSlug,
+        name: displayName,
+        slug: p.slug,
+        category: cat,
+        image: getValidImageUrl(primaryImage),
+        fallbackImage: getValidImageUrl(dbImage),
       });
-
-      const accurateCat = getAccurateCategory(matchedDb ? matchedDb.name : item.name, item.category);
-
-      return {
-        id: matchedDb ? matchedDb.id : item.id,
-        name: matchedDb ? matchedDb.name : item.name,
-        category: accurateCat,
-        image: item.image || (matchedDb?.image ? matchedDb.image : ""),
-        slug: matchedDb ? matchedDb.slug : item.slugFallback,
-        slugFallback: item.slugFallback,
-      };
     });
 
-    // Also include any extra DB products not present in the static list
-    allAvailableDbProducts.forEach((dbP) => {
-      const dbKey = normalizeKey(dbP.name);
-      const alreadyPresent = list.some(
-        (it) => normalizeKey(it.name) === dbKey || it.slug === dbP.slug
-      );
-      if (!alreadyPresent) {
-        const cat = getAccurateCategory(dbP.name, dbP.category);
-        list.push({
-          id: dbP.id,
-          name: dbP.name,
+    // 2. Process any client-side Zustand store products if not already in map
+    storeProducts.forEach((p) => {
+      if (!p.slug) return;
+      const cleanSlug = p.slug.trim().toLowerCase();
+      if (!map.has(cleanSlug)) {
+        const cat = getAccurateCategory(p.name, p.category, p.slug);
+        if (!cat) return;
+        const displayName = formatDisplayName(p.name, cat, p.slug);
+        const storeImage = p.images?.[0] || p.variants?.[0]?.image || "";
+        const primaryImage = GUIDE_COVER_IMAGES[cleanSlug] || storeImage || "";
+        map.set(cleanSlug, {
+          id: p.id || cleanSlug,
+          name: displayName,
+          slug: p.slug,
           category: cat,
-          image: dbP.image || "https://checkout.nothing.tech/cdn/shop/files/phone-3.jpg?v=1752560157",
-          slug: dbP.slug,
-          slugFallback: dbP.slug,
+          image: getValidImageUrl(primaryImage),
+          fallbackImage: getValidImageUrl(storeImage),
         });
       }
     });
 
-    return list;
-  }, [allAvailableDbProducts]);
+    // Sort items: Phones on top sorted by EXACT_PHONE_ORDER, then Audio sorted by EXACT_AUDIO_ORDER, Wearables, Charger
+    return Array.from(map.values()).sort((a, b) => {
+      const orderA = CATEGORY_ORDER[a.category] || 99;
+      const orderB = CATEGORY_ORDER[b.category] || 99;
+      if (orderA !== orderB) return orderA - orderB;
+
+      // If both are phones, sort by the exact phone sequence
+      if (a.category === "phones" && b.category === "phones") {
+        const idxA = EXACT_PHONE_ORDER.indexOf(a.slug.toLowerCase());
+        const idxB = EXACT_PHONE_ORDER.indexOf(b.slug.toLowerCase());
+        const posA = idxA === -1 ? 999 : idxA;
+        const posB = idxB === -1 ? 999 : idxB;
+        return posA - posB;
+      }
+
+      // If both are audio, sort by the exact audio sequence from Excel
+      if (a.category === "audio" && b.category === "audio") {
+        const idxA = EXACT_AUDIO_ORDER.indexOf(a.slug.toLowerCase());
+        const idxB = EXACT_AUDIO_ORDER.indexOf(b.slug.toLowerCase());
+        const posA = idxA === -1 ? 999 : idxA;
+        const posB = idxB === -1 ? 999 : idxB;
+        return posA - posB;
+      }
+
+      // If both are wearables, sort by the exact wearables sequence from Excel
+      if (a.category === "wearables" && b.category === "wearables") {
+        const idxA = EXACT_WEARABLES_ORDER.indexOf(a.slug.toLowerCase());
+        const idxB = EXACT_WEARABLES_ORDER.indexOf(b.slug.toLowerCase());
+        const posA = idxA === -1 ? 999 : idxA;
+        const posB = idxB === -1 ? 999 : idxB;
+        return posA - posB;
+      }
+
+      return 0;
+    });
+  }, [dbProducts, storeProducts]);
 
   const filteredItems = React.useMemo(() => {
     return displayItems.filter((item) => {
       const matchCategory = selectedCategory === "all" || item.category === selectedCategory;
       const matchSearch = searchQuery.trim()
-        ? item.name.toLowerCase().includes(searchQuery.toLowerCase().trim())
+        ? item.name.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
+        item.slug.toLowerCase().includes(searchQuery.toLowerCase().trim())
         : true;
       return matchCategory && matchSearch;
     });
@@ -525,7 +398,7 @@ export function ProductGuideClient({ dbProducts = [] }: ProductGuideClientProps)
                 onClick={() => setIsDropdownOpen((prev) => !prev)}
                 className="w-full rounded-full border border-black bg-transparent flex items-center justify-between px-5 text-left font-ntype text-sm sm:text-base text-black transition-colors hover:bg-black/5 cursor-pointer"
               >
-                <span className="font-medium uppercase tracking-wider">
+                <span className="font-medium  tracking-wider">
                   {selectedCategoryLabel}
                 </span>
                 <ChevronDown
@@ -546,8 +419,8 @@ export function ProductGuideClient({ dbProducts = [] }: ProductGuideClientProps)
                         setIsDropdownOpen(false);
                       }}
                       className={`w-full px-5 py-3 text-left text-sm font-ntype flex items-center transition-colors border-b border-black/10 last:border-b-0 cursor-pointer ${selectedCategory === cat.key
-                          ? "bg-black text-white"
-                          : "text-black hover:bg-black/10"
+                        ? "bg-black text-white"
+                        : "text-black hover:bg-black/10"
                         }`}
                     >
                       {cat.label}
@@ -573,54 +446,77 @@ export function ProductGuideClient({ dbProducts = [] }: ProductGuideClientProps)
                 setSearchQuery("");
                 setSelectedCategory("all");
               }}
-              className="mt-4 inline-block text-sm underline text-[#04326f] hover:opacity-75"
+              className="mt-4 inline-block text-sm underline text-[#04326f] hover:opacity-75 cursor-pointer"
             >
               Clear filters
             </button>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {filteredItems.map((item) => {
-              const href = getProductHref(item);
-              return (
-                <div key={item.id} className="group flex flex-col">
-                  {/* Image Card Box */}
-                  <Link
-                    href={href}
-                    className="relative aspect-square w-full rounded-md overflow-hidden bg-[#ECECEC] flex items-center justify-center transition-all duration-300 group-hover:shadow-md"
-                  >
-                    <Image
-                      src={item.image}
-                      alt={item.name}
-                      fill
-                      className="object-cover p-0 transition-transform duration-500 group-hover:scale-105"
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      unoptimized
-                    />
-                  </Link>
-
-                  {/* Product Title & Link */}
-                  <div className="mt-4 flex flex-col items-start">
-                    <Link
-                      href={href}
-                      className="font-ntype text-lg sm:text-xl font-normal text-black hover:text-black/80 transition-colors leading-tight"
-                    >
-                      {item.name}
-                    </Link>
-
-                    <Link
-                      href={href}
-                      className="mt-2 text-sm sm:text-base font-normal underline underline-offset-4 hover:opacity-75 transition-opacity"
-                      style={{ color: "#04326f" }}
-                    >
-                      ( Read More )
-                    </Link>
-                  </div>
-                </div>
-              );
-            })}
+            {filteredItems.map((item) => (
+              <ProductGuideCard key={item.id} item={item} />
+            ))}
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+function ProductGuideCard({
+  item,
+}: {
+  item: { id: string; name: string; slug: string; image: string; fallbackImage?: string };
+}) {
+  const [imgSrc, setImgSrc] = React.useState(item.image);
+  const href = `/products/${item.slug}`;
+
+  React.useEffect(() => {
+    setImgSrc(item.image);
+  }, [item.image]);
+
+  return (
+    <div className="group flex flex-col">
+      {/* Image Card Box */}
+      <Link
+        href={href}
+        className="relative aspect-square w-full rounded-md overflow-hidden bg-[#ECECEC] flex items-center justify-center transition-all duration-300 group-hover:shadow-md"
+      >
+        {imgSrc ? (
+          <Image
+            src={imgSrc}
+            alt={item.name}
+            fill
+            onError={() => {
+              if (item.fallbackImage && imgSrc !== item.fallbackImage) {
+                setImgSrc(item.fallbackImage);
+              }
+            }}
+            className="object-cover p-0 transition-transform duration-500 group-hover:scale-105"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            unoptimized
+          />
+        ) : (
+          <div className="text-xs text-neutral-400 font-mono">NO IMAGE</div>
+        )}
+      </Link>
+
+      {/* Product Title & Link */}
+      <div className="mt-4 flex flex-col items-start">
+        <Link
+          href={href}
+          className="font-ntype text-lg sm:text-xl font-normal text-black hover:text-black/80 transition-colors leading-tight"
+        >
+          {item.name}
+        </Link>
+
+        <Link
+          href={href}
+          className="mt-2 text-sm sm:text-base font-normal underline underline-offset-4 hover:opacity-75 transition-opacity"
+          style={{ color: "#04326f" }}
+        >
+          ( Read More )
+        </Link>
       </div>
     </div>
   );
