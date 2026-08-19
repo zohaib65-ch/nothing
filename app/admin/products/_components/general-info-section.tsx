@@ -66,11 +66,12 @@ export function GeneralInfoSection() {
                     <SelectValue placeholder="SELECT CATEGORY" />
                   </SelectTrigger>
                   <SelectContent>
-                    {categories.map((cat) => {
-                      const val = cat.slug || cat.name?.toLowerCase().replace(/\s+/g, "-");
+                    {categories.filter(Boolean).map((cat) => {
+                      if (!cat) return null;
+                      const val = cat.slug || cat.name?.toLowerCase().replace(/\s+/g, "-") || "category";
                       return (
                         <SelectItem key={cat.id || val} value={val}>
-                          {cat.name.toUpperCase()}
+                          {(cat.name || val).toUpperCase()}
                         </SelectItem>
                       );
                     })}

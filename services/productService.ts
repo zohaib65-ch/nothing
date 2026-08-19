@@ -15,7 +15,7 @@ export class ProductService {
       });
       if (res.ok) {
         const data = await res.json();
-        if (Array.isArray(data)) return data;
+        if (Array.isArray(data)) return data.filter((p): p is Product => Boolean(p && typeof p === "object"));
       }
     } catch {
       // Fallback
@@ -30,12 +30,13 @@ export class ProductService {
         headers: { "Pragma": "no-cache", "Cache-Control": "no-cache" },
       });
       if (res.ok) {
-        return await res.json();
+        const data = await res.json();
+        if (data && typeof data === "object" && !data.error) return data;
       }
     } catch {
       // Fallback
     }
-    return this.getProductsLocal().find((p) => p.id === id || p.slug === id) || null;
+    return this.getProductsLocal().find((p) => p && (p.id === id || p.slug === id)) || null;
   }
 
   public static getProductsLocal(): Product[] {
@@ -43,7 +44,11 @@ export class ProductService {
     try {
       const stored = localStorage.getItem("nothing_products_v1");
       if (!stored) return [];
-      return JSON.parse(stored) as Product[];
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed)) {
+        return parsed.filter((p): p is Product => Boolean(p && typeof p === "object" && (p.id || p.slug)));
+      }
+      return [];
     } catch {
       return [];
     }
@@ -54,14 +59,15 @@ export class ProductService {
   }
 
   public static getPublishedProducts(): Product[] {
-    return this.getProductsLocal().filter((p) => p.status === "published");
+    return this.getProductsLocal().filter((p) => p && p.status === "published");
   }
 
   public static getProductBySlug(slug: string): Product | undefined {
-    return this.getProductsLocal().find((p) => p.slug === slug);
+    return this.getProductsLocal().find((p) => p && p.slug === slug);
   }
 
   public static async saveProductApi(product: Product): Promise<Product> {
+    if (!product || typeof product !== "object") return product;
     try {
       const res = await fetch(product.id ? `/api/products/${product.id}` : "/api/products", {
         method: product.id ? "PUT" : "POST",
@@ -69,11 +75,15 @@ export class ProductService {
         body: JSON.stringify(product),
       });
       if (res.ok) {
-        const saved = await res.json();
-        this.saveProductLocal(saved);
-        return saved;
+        const saved = await res.json().catch(() => null);
+        if (saved && typeof saved === "object" && !saved.error) {
+          this.saveProductLocal(saved);
+          return saved;
+        }
+        this.saveProductLocal(product);
+        return product;
       }
-      const errData = await res.json();
+      const errData = await res.json().catch(() => ({}));
       throw new Error(errData.error || errData.message || "Failed to save product to server");
     } catch (err: any) {
       if (err.message && !err.message.includes("Failed to fetch")) {
@@ -92,8 +102,10 @@ export class ProductService {
       });
       if (res.ok) {
         const updated = await res.json();
-        this.saveProductLocal(updated);
-        return updated;
+        if (updated && typeof updated === "object" && !updated.error) {
+          this.saveProductLocal(updated);
+          return updated;
+        }
       }
     } catch (err) {
       toast.error("Failed to update product fields. Please try again.");
@@ -107,8 +119,9 @@ export class ProductService {
   }
 
   public static saveProductLocal(product: Product): Product {
+    if (!product || typeof product !== "object") return product;
     const products = this.getProductsLocal();
-    const existingIndex = products.findIndex((p) => p.id === product.id || p.slug === product.slug);
+    const existingIndex = products.findIndex((p) => p && (p.id === product.id || (product.slug && p.slug === product.slug)));
 
     let updated: Product[];
     const now = new Date().toISOString();
@@ -117,12 +130,12 @@ export class ProductService {
       updated = [...products];
       updated[existingIndex] = { ...product, updatedAt: now };
     } else {
-      updated = [{ ...product, createdAt: now, updatedAt: now }, ...products];
+      updated = [{ ...product, createdAt: product.createdAt || now, updatedAt: now }, ...products];
     }
 
     if (this.isBrowser()) {
       try {
-        localStorage.setItem("nothing_products_v1", JSON.stringify(updated));
+        localStorage.setItem("nothing_products_v1", JSON.stringify(updated.filter((p) => p && typeof p === "object")));
       } catch {
         // Quota exceeded in localStorage, safe to ignore as MongoDB handles primary storage
       }
@@ -138,7 +151,7 @@ export class ProductService {
     }
 
     const products = this.getProductsLocal();
-    const filtered = products.filter((p) => p.id !== id);
+    const filtered = products.filter((p) => p && p.id !== id);
     if (this.isBrowser()) {
       try {
         localStorage.setItem("nothing_products_v1", JSON.stringify(filtered));
@@ -154,7 +167,11 @@ export class ProductService {
     try {
       const stored = localStorage.getItem("nothing_categories_v1");
       if (!stored) return [];
-      return JSON.parse(stored) as CategoryInfo[];
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed)) {
+        return parsed.filter((c): c is CategoryInfo => Boolean(c && typeof c === "object"));
+      }
+      return [];
     } catch {
       return [];
     }
@@ -168,7 +185,7 @@ export class ProductService {
       });
       if (res.ok) {
         const data = await res.json();
-        if (Array.isArray(data)) return data;
+        if (Array.isArray(data)) return data.filter((c): c is CategoryInfo => Boolean(c && typeof c === "object"));
       }
     } catch {
       // Fallback
@@ -177,8 +194,11 @@ export class ProductService {
   }
 
   public static saveCategory(category: CategoryInfo): CategoryInfo {
+    if (!category || typeof category !== "object") return category;
     const categories = this.getCategories();
-    const index = categories.findIndex((c) => (c as any)._id === (category as any)._id || c.id === category.id || c.slug === category.slug);
+    const index = categories.findIndex(
+      (c) => c && ((c as any)._id === (category as any)._id || c.id === category.id || c.slug === category.slug)
+    );
     let updated: CategoryInfo[];
     if (index >= 0) {
       updated = [...categories];
@@ -187,7 +207,7 @@ export class ProductService {
       updated = [...categories, category];
     }
     if (this.isBrowser()) {
-      localStorage.setItem("nothing_categories_v1", JSON.stringify(updated));
+      localStorage.setItem("nothing_categories_v1", JSON.stringify(updated.filter(Boolean)));
     }
     return category;
   }
@@ -200,7 +220,9 @@ export class ProductService {
     }
 
     const categories = this.getCategories();
-    const filtered = categories.filter((c) => (c as any)._id !== idOrSlug && c.id !== idOrSlug && c.slug !== idOrSlug && (!slug || c.slug !== slug));
+    const filtered = categories.filter(
+      (c) => c && (c as any)._id !== idOrSlug && c.id !== idOrSlug && c.slug !== idOrSlug && (!slug || c.slug !== slug)
+    );
     if (this.isBrowser()) {
       localStorage.setItem("nothing_categories_v1", JSON.stringify(filtered));
     }

@@ -102,32 +102,34 @@ export function ProductForm({ initialProduct, isEditMode = false, onSave, isSubm
   const onSubmitForm = async (data: ProductFormValues) => {
     const finalSlug = data.slug || slugify(data.name || "");
 
-    // Ensure variants array is formatted properly
-    let updatedVariants: ProductVariant[] = (data.variants || []).map((v) => {
-      const st = v.storage || (v as any).capacity || "Standard";
-      let hex = (v.colorHex || "#000000").trim();
-      if (hex && !hex.startsWith("#")) {
-        hex = `#${hex}`;
-      }
-      return {
-        ...v,
-        id: v.id || `var-${Date.now()}`,
-        name: v.name || `${v.color || "Standard"} - ${st}`,
-        sku: v.sku || `SKU-${Date.now()}`,
-        specifications: v.specifications || [],
-        storage: st,
-        capacity: st,
-        color: v.color || "Standard",
-        colorHex: hex.toUpperCase(),
-        price: v.price !== undefined && v.price !== null ? Number(v.price) : Number(data.price) || 0,
-        salePrice: v.salePrice !== undefined && v.salePrice !== null ? Number(v.salePrice) : data.salePrice,
-        storagePrices: v.storagePrices || {},
-      } as ProductVariant;
-    });
+    // Ensure variants array is formatted properly and filtered
+    let updatedVariants: ProductVariant[] = (data.variants || [])
+      .filter((v): v is NonNullable<typeof v> => v != null && typeof v === "object")
+      .map((v) => {
+        const st = v.storage || (v as any).capacity || "Standard";
+        let hex = (v.colorHex || "#000000").trim();
+        if (hex && !hex.startsWith("#")) {
+          hex = `#${hex}`;
+        }
+        return {
+          ...v,
+          id: v.id || `var-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+          name: v.name || `${v.color || "Standard"} - ${st}`,
+          sku: v.sku || `SKU-${Date.now()}`,
+          specifications: v.specifications || [],
+          storage: st,
+          capacity: st,
+          color: v.color || "Standard",
+          colorHex: hex.toUpperCase(),
+          price: v.price !== undefined && v.price !== null ? Number(v.price) : Number(data.price) || 0,
+          salePrice: v.salePrice !== undefined && v.salePrice !== null ? Number(v.salePrice) : data.salePrice,
+          storagePrices: v.storagePrices || {},
+        } as ProductVariant;
+      });
 
     let primaryRawImage = "";
     if (updatedVariants.length > 0) {
-      primaryRawImage = updatedVariants.find((v) => v.image)?.image || updatedVariants[0]?.image || "";
+      primaryRawImage = updatedVariants.find((v) => v && v.image)?.image || updatedVariants[0]?.image || "";
     } else {
       primaryRawImage = data.images?.[0] || "";
     }
@@ -158,10 +160,12 @@ export function ProductForm({ initialProduct, isEditMode = false, onSave, isSubm
     }
 
     // Always extract storageOptions and colors directly from variants
-    const finalStorageOptions = Array.from(new Set(updatedVariants.map((v) => v.storage || (v as any).capacity).filter(Boolean))) as string[];
+    const finalStorageOptions = Array.from(
+      new Set(updatedVariants.map((v) => v && (v.storage || (v as any).capacity)).filter(Boolean))
+    ) as string[];
 
-    const finalColors = Array.from(new Set(updatedVariants.map((v) => v.color).filter(Boolean))).map((c) => {
-      let rawHex = (updatedVariants.find((v) => v.color === c)?.colorHex || "#000000").trim();
+    const finalColors = Array.from(new Set(updatedVariants.map((v) => v && v.color).filter(Boolean))).map((c) => {
+      let rawHex = (updatedVariants.find((v) => v && v.color === c)?.colorHex || "#000000").trim();
       if (rawHex && !rawHex.startsWith("#")) rawHex = `#${rawHex}`;
       return {
         name: c,

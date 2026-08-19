@@ -46,16 +46,27 @@ export async function POST(request: Request) {
     const body = await request.json();
     await connectToDatabase();
 
-    if (body.variants && body.variants.length > 0) {
-      if (!body.price && body.variants[0].price) {
-        body.price = Number(body.variants[0].price);
+    const { _id, ...cleanBody } = body;
+
+    if (cleanBody.variants && cleanBody.variants.length > 0) {
+      if (!cleanBody.price && cleanBody.variants[0].price) {
+        cleanBody.price = Number(cleanBody.variants[0].price);
       }
-      if (body.salePrice === undefined && body.variants[0].salePrice !== undefined) {
-        body.salePrice = Number(body.variants[0].salePrice);
+      if (cleanBody.salePrice === undefined && cleanBody.variants[0].salePrice !== undefined) {
+        cleanBody.salePrice = Number(cleanBody.variants[0].salePrice);
       }
     }
 
-    const product = await ProductModel.create(body);
+    let product;
+    if (cleanBody.slug) {
+      product = await ProductModel.findOneAndUpdate({ slug: cleanBody.slug }, cleanBody, {
+        returnDocument: "after",
+        new: true,
+        upsert: true,
+      });
+    } else {
+      product = await ProductModel.create(cleanBody);
+    }
 
     try {
       if (product?.slug) {
@@ -71,8 +82,8 @@ export async function POST(request: Request) {
       revalidatePath("/");
     } catch {}
 
-    return NextResponse.json(product, { status: 201 });
+    return NextResponse.json(normalizeLeanDoc(product?.toObject ? product.toObject() : product), { status: 201 });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: error.message || "Failed to create product" }, { status: 500 });
   }
 }

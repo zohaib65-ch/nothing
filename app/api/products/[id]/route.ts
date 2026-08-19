@@ -45,18 +45,22 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     const body = await request.json();
     await connectToDatabase();
 
-    if (body.variants && body.variants.length > 0) {
-      if (!body.price && body.variants[0].price) {
-        body.price = Number(body.variants[0].price);
+    const { _id, ...cleanBody } = body;
+
+    if (cleanBody.variants && cleanBody.variants.length > 0) {
+      if (!cleanBody.price && cleanBody.variants[0].price) {
+        cleanBody.price = Number(cleanBody.variants[0].price);
       }
-      if (body.salePrice === undefined && body.variants[0].salePrice !== undefined) {
-        body.salePrice = Number(body.variants[0].salePrice);
+      if (cleanBody.salePrice === undefined && cleanBody.variants[0].salePrice !== undefined) {
+        cleanBody.salePrice = Number(cleanBody.variants[0].salePrice);
       }
     }
 
     const query = getProductQuery(id);
-    const product = await ProductModel.findOneAndUpdate(query, body, {
+    const product = await ProductModel.findOneAndUpdate(query, cleanBody, {
       returnDocument: "after",
+      new: true,
+      upsert: true,
     });
 
     function triggerProductRevalidation(prod: any) {
@@ -77,9 +81,9 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
 
     triggerProductRevalidation(product);
 
-    return NextResponse.json(product);
+    return NextResponse.json(normalizeLeanDoc(product?.toObject ? product.toObject() : product));
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: error.message || "Failed to update product" }, { status: 500 });
   }
 }
 

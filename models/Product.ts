@@ -1,7 +1,9 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 import { Product } from "@/types";
 
-export interface IProductDocument extends Omit<Product, "id">, Document {}
+export interface IProductDocument extends Document, Omit<Product, "id"> {
+  id?: string;
+}
 
 const SpecificationItemSchema = new Schema({
   name: { type: String, default: "" },
@@ -64,6 +66,7 @@ const ProductFeatureSchema = new Schema({
 
 const ProductSchema = new Schema<IProductDocument>(
   {
+    id: { type: String },
     name: { type: String, required: true, trim: true },
     slug: { type: String, required: true },
     price: { type: Number, default: 0 },
@@ -109,7 +112,7 @@ const ProductSchema = new Schema<IProductDocument>(
     sortOrder: { type: Number, default: 0 },
     status: { type: String, enum: ["draft", "published"], default: "published", index: true },
   },
-  { timestamps: true },
+  { timestamps: true, strict: false },
 );
 
 ProductSchema.set("toJSON", {
