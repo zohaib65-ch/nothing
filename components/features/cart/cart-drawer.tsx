@@ -17,7 +17,10 @@ const DottedCloseIcon = () => (
     <path d="M7 6C7 5.44772 6.55228 5 6 5C5.44772 5 5 5.44772 5 6C5 6.55228 5.44772 7 6 7C6.55228 7 7 6.55228 7 6Z" fill="currentColor" />
     <path d="M9 8C9 7.44772 8.55228 7 8 7C7.44772 7 7 7.44772 7 8C7 8.55228 7.44772 9 8 9C8.55228 9 9 8.55228 9 8Z" fill="currentColor" />
     <path d="M11 10C11 9.44772 10.5523 9 10 9C9.44772 9 9 9.44772 9 10C9 10.5523 9.44772 11 10 11C10.5523 11 11 10.5523 11 10Z" fill="currentColor" />
-    <path d="M13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12C11 12.5523 11.4477 13 12 13C12.5523 13 13 12.5523 13 12Z" fill="currentColor" />
+    <path
+      d="M13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12C11 12.5523 11.4477 13 12 13C12.5523 13 13 12.5523 13 12Z"
+      fill="currentColor"
+    />
     <path d="M12 5C12.5523 5 13 4.55228 13 4C13 3.44772 12.5523 3 12 3C11.4477 3 11 3.44772 11 4C11 4.55228 11.4477 5 12 5Z" fill="currentColor" />
     <path d="M10 7C10.5523 7 11 6.55228 11 6C11 5.44772 10.5523 5 10 5C9.44772 5 9 5.44772 9 6C9 6.55228 9.44772 7 10 7Z" fill="currentColor" />
     <path d="M8 9C8.55228 9 9 8.55228 9 8C9 7.44772 8.55228 7 8 7C7.44772 7 7 7.44772 7 8C7 8.55228 7.44772 9 8 9Z" fill="currentColor" />
@@ -75,9 +78,7 @@ export function CartDrawer() {
   const recommendedList = React.useMemo(() => {
     if (!storeProducts || storeProducts.length === 0) return [];
 
-    const cartProductIds = new Set(
-      items.map((it) => (it.product?.id || it.product?.slug || "").toLowerCase())
-    );
+    const cartProductIds = new Set(items.map((it) => (it.product?.id || it.product?.slug || "").toLowerCase()));
 
     // Filter out products already in cart
     const candidates = storeProducts.filter((p) => {
@@ -90,14 +91,8 @@ export function CartDrawer() {
     const priorityList = [...candidates].sort((a, b) => {
       const catA = (a.category || "").toLowerCase();
       const catB = (b.category || "").toLowerCase();
-      const scoreA =
-        catA.includes("audio") || catA.includes("ear") || catA.includes("watch") || catA.includes("accessor")
-          ? 2
-          : 1;
-      const scoreB =
-        catB.includes("audio") || catB.includes("ear") || catB.includes("watch") || catB.includes("accessor")
-          ? 2
-          : 1;
+      const scoreA = catA.includes("audio") || catA.includes("ear") || catA.includes("watch") || catA.includes("accessor") ? 2 : 1;
+      const scoreB = catB.includes("audio") || catB.includes("ear") || catB.includes("watch") || catB.includes("accessor") ? 2 : 1;
       return scoreB - scoreA;
     });
 
@@ -108,8 +103,7 @@ export function CartDrawer() {
 
   const handleAddRecommended = (prod: any) => {
     const selectedVariantId = selectedVariants[prod.id];
-    const variant: ProductVariant =
-      prod.variants?.find((v: any) => v.id === selectedVariantId) ||
+    const variant: ProductVariant = prod.variants?.find((v: any) => v.id === selectedVariantId) ||
       prod.variants?.[0] || {
         id: `var-${prod.id}`,
         name: "Standard",
@@ -185,7 +179,7 @@ export function CartDrawer() {
           {/* ─── Card 1: "Item added" ─────────────────────────────── */}
           <div className="bg-[#f2f2f2]/95 backdrop-blur-md rounded-2xl p-6 sm:p-7 shadow-[0_16px_40px_rgba(17,17,17,0.1)] border border-black/5 flex flex-col justify-between">
             {/* Header: Centered "Item added" title + Top Right Dotted Cross */}
-            <div className="relative flex items-center justify-center pb-6">
+            <div className="relative flex items-center justify-center pb-2">
               <button
                 type="button"
                 onClick={closeCart}
@@ -201,9 +195,7 @@ export function CartDrawer() {
 
             {items.length === 0 ? (
               <div className="py-8 text-center space-y-4">
-                <p className="text-sm text-black/60 font-serif">
-                  Explore our store and add items to your shopping bag.
-                </p>
+                <p className="text-sm text-black/60 font-serif">Explore our store and add items to your shopping bag.</p>
                 <button
                   type="button"
                   onClick={closeCart}
@@ -213,30 +205,20 @@ export function CartDrawer() {
                 </button>
               </div>
             ) : (
-              <div className="flex flex-col gap-7">
+              <div className="flex flex-col gap-3">
                 {/* All Cart Items with fixed height and scroll */}
                 <div className="max-h-[180px] overflow-y-auto space-y-3.5 pr-1.5 scrollbar-thin scrollbar-thumb-black/15">
                   {itemsWithPrices.map((item) => {
-                    const imageUrl = getValidImageUrl(
-                      item.selectedVariant?.image || item.product?.images?.[0]
-                    );
+                    const imageUrl = getValidImageUrl(item.selectedVariant?.image || item.product?.images?.[0]);
                     const colorStr = item.selectedVariant?.color || "";
-                    const capStr =
-                      item.selectedVariant?.capacity || item.selectedVariant?.storage || "";
+                    const capStr = item.selectedVariant?.capacity || item.selectedVariant?.storage || "";
 
                     return (
                       <div key={item.id} className="flex items-center gap-5 py-1">
                         {/* Phone / Product Image on Left */}
                         <div className="relative w-16 h-20 sm:w-20 sm:h-24 shrink-0 flex items-center justify-center">
                           {imageUrl ? (
-                            <Image
-                              src={imageUrl}
-                              alt={item.product.name}
-                              fill
-                              sizes="100px"
-                              className="object-contain"
-                              unoptimized
-                            />
+                            <Image src={imageUrl} alt={item.product.name} fill sizes="100px" className="object-contain" unoptimized />
                           ) : (
                             <span className="text-[9px] text-black/40 font-mono">NO IMAGE</span>
                           )}
@@ -249,10 +231,7 @@ export function CartDrawer() {
                             {colorStr ? `, ${colorStr}` : ""}
                             {capStr ? `, ${capStr}` : ""}
                           </h3>
-                          <div
-                            className="text-[11px] text-black"
-                            style={{ fontFamily: "'LatteraMonoLL', 'letteraRegular', monospace" }}
-                          >
+                          <div className="text-[11px] text-black" style={{ fontFamily: "'LatteraMonoLL', 'letteraRegular', monospace" }}>
                             {formatPrice(item.prices.itemTotal)}
                           </div>
                         </div>
@@ -290,15 +269,12 @@ export function CartDrawer() {
 
           {/* ─── Card 2: "YOU MIGHT LIKE" ─────────────────────────── */}
           <div className="bg-[#f2f2f2]/95 backdrop-blur-md rounded-2xl p-6 sm:p-7 shadow-[0_16px_40px_rgba(17,17,17,0.1)] border border-black/5 flex flex-col">
-            <h3 className="font-mono text-[11px] uppercase tracking-[0.2em] text-black/80 text-center mb-6">
-              YOU MIGHT LIKE
-            </h3>
+            <h3 className="font-mono text-[11px] uppercase tracking-[0.2em] text-black/80 text-center mb-6">YOU MIGHT LIKE</h3>
 
             <div className="grid grid-cols-3 gap-3 sm:gap-4 items-start">
               {recommendedList.map((prod: any) => {
                 const currentVarId = selectedVariants[prod.id] || prod.variants?.[0]?.id;
-                const currentVar =
-                  prod.variants?.find((v: any) => v.id === currentVarId) || prod.variants?.[0];
+                const currentVar = prod.variants?.find((v: any) => v.id === currentVarId) || prod.variants?.[0];
                 const displayImg = currentVar?.image || prod.images?.[0] || "";
                 const displayPrice = currentVar?.price || prod.price || 0;
                 const hasMultipleVariants = prod.variants && prod.variants.length > 1;
@@ -309,14 +285,7 @@ export function CartDrawer() {
                     <div className="w-full flex flex-col items-center">
                       <div className="relative size-20 sm:size-24 mb-3 flex items-center justify-center">
                         {displayImg ? (
-                          <Image
-                            src={displayImg}
-                            alt={prod.name}
-                            fill
-                            sizes="96px"
-                            className="object-contain"
-                            unoptimized
-                          />
+                          <Image src={displayImg} alt={prod.name} fill sizes="96px" className="object-contain" unoptimized />
                         ) : (
                           <span className="text-[9px] text-black/40 font-mono">NO IMAGE</span>
                         )}
@@ -327,14 +296,12 @@ export function CartDrawer() {
                         {currentVar?.color ? `, ${currentVar.color}` : ""}
                       </h4>
 
-                      <div className="mt-1 font-serif text-xs sm:text-[13px] text-black">
-                        {formatPrice(displayPrice)}
-                      </div>
+                      <div className="mt-1 font-serif text-xs sm:text-[13px] text-black">{formatPrice(displayPrice)}</div>
                     </div>
 
                     {/* Bottom: Variant Selector Button + ADD TO BAG */}
                     <div className="w-full flex flex-col gap-2 mt-4">
-                      {hasMultipleVariants ? (
+                      {hasMultipleVariants && (
                         <div className="relative w-full">
                           <div className="h-11 w-full rounded-md bg-white hover:bg-[#E2E2E2] flex items-center justify-center gap-1.5 px-2 text-[10px] sm:text-[11px] font-mono uppercase tracking-wider text-black transition-colors cursor-pointer">
                             <span className="truncate">{currentVar?.color || currentVar?.name}</span>
@@ -358,8 +325,6 @@ export function CartDrawer() {
                             ))}
                           </select>
                         </div>
-                      ) : (
-                        <div className="h-11 w-full" />
                       )}
 
                       <button
