@@ -33,6 +33,7 @@ interface VariantHighlightsProps {
 
 function VariantHighlights({ variantIndex, watch, setValue }: VariantHighlightsProps) {
   const highlights: string[] = watch(`variants.${variantIndex}.highlights`) || [];
+  const allVariants = watch("variants") || [];
   const [inputValue, setInputValue] = React.useState("");
   const [editingIndex, setEditingIndex] = React.useState<number | null>(null);
   const [editingValue, setEditingValue] = React.useState("");
@@ -74,8 +75,40 @@ function VariantHighlights({ variantIndex, watch, setValue }: VariantHighlightsP
     setEditingValue("");
   };
 
+  const handleCopyFromIndex = (fromIndex: number) => {
+    const sourceHighlights: string[] = watch(`variants.${fromIndex}.highlights`) || [];
+    if (!sourceHighlights || sourceHighlights.length === 0) {
+      toast.error(`Variant ${fromIndex + 1} has no highlights to copy`);
+      return;
+    }
+    setValue(`variants.${variantIndex}.highlights`, [...sourceHighlights], { shouldDirty: true });
+    toast.success(`Copied ${sourceHighlights.length} highlight(s) from Variant ${fromIndex + 1}!`);
+  };
+
+  const prevVariantColor = variantIndex > 0 ? allVariants[variantIndex - 1]?.color : "";
+  const copyButtonLabel = prevVariantColor ? `Copy from Variant ${variantIndex} (${prevVariantColor})` : `Copy from Variant ${variantIndex}`;
+
   return (
     <div className="bg-neutral-50/70 border border-neutral-200 rounded-xl p-4 space-y-3">
+      {/* Action Toolbar for copying highlights from previous variant */}
+      <div className="flex items-center justify-between gap-3 pb-2.5 border-b border-neutral-200/80">
+        <span className="text-[11px] font-mono font-bold text-neutral-600 uppercase tracking-wider">
+          Highlights ({highlights.length}/3)
+        </span>
+
+        {variantIndex > 0 && (
+          <button
+            type="button"
+            onClick={() => handleCopyFromIndex(variantIndex - 1)}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-neutral-100 text-neutral-800 text-xs font-medium border border-neutral-300 rounded-lg shadow-xs transition-all active:scale-[0.98] cursor-pointer whitespace-nowrap"
+            title={`Copy highlights from Variant ${variantIndex}`}
+          >
+            <Copy className="h-3.5 w-3.5 text-neutral-600 shrink-0" />
+            <span>{copyButtonLabel}</span>
+          </button>
+        )}
+      </div>
+
       {highlights.length > 0 ? (
         <div className="space-y-2">
           {highlights.map((hl, hlIdx) => {
