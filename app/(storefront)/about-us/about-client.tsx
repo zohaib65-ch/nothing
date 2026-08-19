@@ -171,10 +171,11 @@ export function AboutClient() {
 
       {/* ─── Hero Statement ────────────────────────────────────── */}
       <div className="px-5 sm:px-8 md:px-12 lg:px-16 pt-16 md:pt-24 pb-16 md:pb-24">
-        <div className="max-w-5xl">
+        <div className="max-w-4xl">
           <h1 className="font-ntype82 text-3xl md:text-4xl xl:text-5xl lg:text-[52px] font-normal leading-[1.12] tracking-[-0.02em] text-black">
             <span className="inline-block size-3.5 sm:size-4 md:size-5 bg-[#C6102E] animate-pulse mr-3 sm:mr-4 mb-3 align-baseline translate-y-[-2px]" />
-            Nothing builds smartphones, audio products and AI tools that look good and make life easier. With a global community of over six million, we&apos;re creating the most loved tech brand for the next generation of creatives.
+            Nothing builds smartphones, audio products and AI tools that look good and make life easier. With a global community of over six million,
+            we&apos;re creating the most loved tech brand for the next generation of creatives.
           </h1>
         </div>
       </div>
@@ -208,15 +209,15 @@ export function AboutClient() {
                   <p className="font-ndot text-sm uppercase text-black">( 1 )</p>
                 </div>
                 <div className="sm:col-span-10">
-                  <h2 className="text-2xl sm:text-3xl md:text-[34px] font-normal leading-tight text-black mb-6">
-                    Rebelling against the status quo.
-                  </h2>
+                  <h2 className="text-2xl sm:text-3xl md:text-[34px] font-normal leading-tight text-black mb-6">Rebelling against the status quo.</h2>
                   <div className="space-y-5 text-lg sm:text-xl text-black">
                     <p>
-                      There was a time when tech was exciting. We looked at machines in bright colours and saw a future of new connections and new ways of engaging with the world. But everything is the same now. We&apos;re bored.
+                      There was a time when tech was exciting. We looked at machines in bright colours and saw a future of new connections and new
+                      ways of engaging with the world. But everything is the same now. We&apos;re bored.
                     </p>
                     <p>
-                      We&apos;re making tech fun. This means creating bold, beautiful and unusual designs for products and software that aid creativity, not distract you. It means imagining a different, better future for humanity. Rebelling against the status quo.
+                      We&apos;re making tech fun. This means creating bold, beautiful and unusual designs for products and software that aid
+                      creativity, not distract you. It means imagining a different, better future for humanity. Rebelling against the status quo.
                     </p>
                     <div className="pt-2 space-y-3">
                       <p className="font-normal text-black">This means we:</p>
@@ -254,15 +255,16 @@ export function AboutClient() {
                   <p className="font-ndot text-sm uppercase text-black">( 2 )</p>
                 </div>
                 <div className="sm:col-span-10">
-                  <h2 className="text-2xl sm:text-3xl md:text-[34px] font-normal leading-tight text-black mb-6">
-                    Life without distraction.
-                  </h2>
+                  <h2 className="text-2xl sm:text-3xl md:text-[34px] font-normal leading-tight text-black mb-6">Life without distraction.</h2>
                   <div className="space-y-5 text-lg sm:text-xl text-black">
                     <p>
-                      Our devices are where your life plays out. They house your memories, frame your relationships and open a gateway to experiencing the world.
+                      Our devices are where your life plays out. They house your memories, frame your relationships and open a gateway to experiencing
+                      the world.
                     </p>
                     <p>
-                      Nothing OS and Essential AI tools are the beginning of a future where you can create freely and engage in the moment. Every interaction, from unlocking your screen to dismissing a notification, carries our design intent and our commitment to quiet the noise.
+                      Nothing OS and Essential AI tools are the beginning of a future where you can create freely and engage in the moment. Every
+                      interaction, from unlocking your screen to dismissing a notification, carries our design intent and our commitment to quiet the
+                      noise.
                     </p>
                   </div>
 
@@ -270,9 +272,7 @@ export function AboutClient() {
                   <div className="mt-10 flex flex-row items-center gap-4 sm:gap-5">
                     <div className="relative  bg-black/[0.03] backdrop-blur-sm rounded-md p-5 sm:p-6 w-full max-w-[180px] aspect-square flex flex-col items-center justify-center text-center">
                       <div className="text-4xl sm:text-5xl font-normal text-black leading-none">30+</div>
-                      <div className="mt-2 text-xs uppercase tracking-[0.14em] text-black/70 font-mono">
-                        Product releases
-                      </div>
+                      <div className="mt-2 text-xs uppercase tracking-[0.14em] text-black/70 font-mono">Product releases</div>
                       <div className="absolute -left-1.5 -top-1.5 z-10">
                         <CrossHairIcon />
                       </div>
@@ -280,9 +280,7 @@ export function AboutClient() {
 
                     <div className="relative  bg-black/[0.03] backdrop-blur-sm rounded-md p-5 sm:p-6 w-full max-w-[180px] aspect-square flex flex-col items-center justify-center text-center">
                       <div className="text-4xl sm:text-5xl font-normal text-black leading-none">60+</div>
-                      <div className="mt-2 text-xs uppercase tracking-[0.14em] text-black/70 font-mono">
-                        Countries
-                      </div>
+                      <div className="mt-2 text-xs uppercase tracking-[0.14em] text-black/70 font-mono">Countries</div>
                       <div className="absolute -right-1.5 -bottom-1.5 z-10">
                         <CrossHairIcon />
                       </div>
@@ -335,18 +333,16 @@ export function AboutClient() {
                   <p className="font-ndot text-sm uppercase text-black">( 3 )</p>
                 </div>
                 <div className="sm:col-span-10">
-                  <h2 className="text-2xl sm:text-3xl md:text-[34px] font-normal leading-tight text-black mb-6">
-                    Different by design
-                  </h2>
+                  <h2 className="text-2xl sm:text-3xl md:text-[34px] font-normal leading-tight text-black mb-6">Different by design</h2>
                   <div className="space-y-5 text-lg sm:text-xl text-black">
+                    <p>Using the best of global engineering and supply-chain production, we design hardware that excites us.</p>
                     <p>
-                      Using the best of global engineering and supply-chain production, we design hardware that excites us.
+                      Our design language is transparent in appearance and ethos. Revealing what is beneath the surface, showing the decisions behind
+                      the engineering and making space for the human experience our products are made to enhance.
                     </p>
                     <p>
-                      Our design language is transparent in appearance and ethos. Revealing what is beneath the surface, showing the decisions behind the engineering and making space for the human experience our products are made to enhance.
-                    </p>
-                    <p>
-                      Drawing inspiration from culture and creating connections to music, fashion, art, film, architecture and design, our references span 90s rave culture, aerospace materials and what matters to our community today.
+                      Drawing inspiration from culture and creating connections to music, fashion, art, film, architecture and design, our references
+                      span 90s rave culture, aerospace materials and what matters to our community today.
                     </p>
                     <p className="font-mono text-xs sm:text-sm uppercase tracking-wider text-black pt-2">
                       &lsquo;A breath of fresh air&rsquo; &mdash; Wired magazine
@@ -357,21 +353,13 @@ export function AboutClient() {
                   <div className="mt-8 flex flex-wrap items-center gap-4 sm:gap-6 pt-2">
                     {AWARDS.map((award) => (
                       <div key={award.name} className="h-7 sm:h-8 relative w-auto flex items-center opacity-80 hover:opacity-100 transition-opacity">
-                        <Image
-                          src={award.src}
-                          alt={award.name}
-                          width={120}
-                          height={32}
-                          className="h-7 sm:h-8 w-auto object-contain"
-                          unoptimized
-                        />
+                        <Image src={award.src} alt={award.name} width={120} height={32} className="h-7 sm:h-8 w-auto object-contain" unoptimized />
                       </div>
                     ))}
                   </div>
                 </div>
               </div>
             </div>
-
           </div>
 
           {/* Product Gallery Carousel */}
@@ -410,19 +398,14 @@ export function AboutClient() {
                 <p className="font-ndot text-sm uppercase text-black">( 4 )</p>
               </div>
               <div className="sm:col-span-10">
-                <h2 className="text-2xl sm:text-3xl md:text-[34px] font-normal leading-tight text-black mb-6">
-                  Co-created with community
-                </h2>
+                <h2 className="text-2xl sm:text-3xl md:text-[34px] font-normal leading-tight text-black mb-6">Co-created with community</h2>
                 <div className="space-y-5 text-lg sm:text-xl text-black">
+                  <p>Since day one, our Nothing Community have been influencing our product development and shaping how we show up in the world.</p>
                   <p>
-                    Since day one, our Nothing Community have been influencing our product development and shaping how we show up in the world.
+                    Our flagship stores realise this creativity and connection in a physical space. Fusing our mechanical codes with local culture, we
+                    bring together creators, tastemakers and fans with limited-edition drops, launches and parties.
                   </p>
-                  <p>
-                    Our flagship stores realise this creativity and connection in a physical space. Fusing our mechanical codes with local culture, we bring together creators, tastemakers and fans with limited-edition drops, launches and parties.
-                  </p>
-                  <p>
-                    Together, we&apos;re reimagining the future of technology.
-                  </p>
+                  <p>Together, we&apos;re reimagining the future of technology.</p>
                 </div>
               </div>
             </div>
@@ -441,12 +424,8 @@ export function AboutClient() {
                   unoptimized
                 />
               </div>
-              <h3 className="text-xl sm:text-2xl font-normal text-black mb-2">
-                Nothing Store Soho
-              </h3>
-              <p className="text-sm sm:text-base text-black/70 mb-2">
-                4 Peter Street, Soho, London W1F 0AD, United Kingdom
-              </p>
+              <h3 className="text-xl sm:text-2xl font-normal text-black mb-2">Nothing Store Soho</h3>
+              <p className="text-sm sm:text-base text-black/70 mb-2">4 Peter Street, Soho, London W1F 0AD, United Kingdom</p>
               <a
                 href="https://maps.app.goo.gl/2zyjKAQHGHhFNiuE7"
                 target="_blank"
@@ -468,12 +447,8 @@ export function AboutClient() {
                   unoptimized
                 />
               </div>
-              <h3 className="text-xl sm:text-2xl font-normal text-black mb-2">
-                Nothing Store Bengaluru
-              </h3>
-              <p className="text-sm sm:text-base text-black/70 mb-2">
-                100 Feet Road, 1st Stage, Indiranagar, Bengaluru 560038, India
-              </p>
+              <h3 className="text-xl sm:text-2xl font-normal text-black mb-2">Nothing Store Bengaluru</h3>
+              <p className="text-sm sm:text-base text-black/70 mb-2">100 Feet Road, 1st Stage, Indiranagar, Bengaluru 560038, India</p>
               <a
                 href="https://maps.app.goo.gl/nkpe5RwBgXrr3PYQ8"
                 target="_blank"
@@ -484,22 +459,19 @@ export function AboutClient() {
               </a>
             </div>
           </div>
-        </div >
-      </section >
+        </div>
+      </section>
 
       {/* ─── Pakistan SECP Company Verification Section ────────── */}
-      < section className="border-t border-black/10 py-16 md:py-20 bg-white" >
+      <section className="border-t border-black/10 py-16 md:py-20 bg-white">
         <div className="px-5 sm:px-8 md:px-12 lg:px-16">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-8">
-              <p className="font-mono text-xs uppercase tracking-[0.2em] text-black/50 mb-2">
-                Pakistan Storefront &amp; Registration
-              </p>
-              <h2 className="text-2xl sm:text-3xl font-normal text-black mb-4">
-                NOTHING OFFICIAL (SMC-PRIVATE) LIMITED
-              </h2>
+              <p className="font-mono text-xs uppercase tracking-[0.2em] text-black/50 mb-2">Pakistan Storefront &amp; Registration</p>
+              <h2 className="text-2xl sm:text-3xl font-normal text-black mb-4">NOTHING OFFICIAL (SMC-PRIVATE) LIMITED</h2>
               <p className="text-base text-black/70 max-w-2xl leading-relaxed">
-                Operating the verified storefront for Nothing and CMF in Pakistan under SECP CUIN: 0337422. We publish legal company details, certificate verification, warranty, and WhatsApp customer support openly for transparency.
+                Operating the verified storefront for Nothing and CMF in Pakistan under SECP CUIN: 0337422. We publish legal company details,
+                certificate verification, warranty, and WhatsApp customer support openly for transparency.
               </p>
               <div className="mt-6 flex flex-wrap gap-4 items-center">
                 <Link
@@ -516,26 +488,19 @@ export function AboutClient() {
                 >
                   WhatsApp: {WHATSAPP_NUMBER}
                 </a>
-
               </div>
             </div>
 
             <div className="lg:col-span-4 rounded-lg border border-black/10 bg-[#F5F5F5] p-6 text-left">
-              <p className="font-mono text-xs uppercase tracking-[0.2em] text-black/50">
-                Registered Authority
-              </p>
-              <p className="mt-2 text-sm font-semibold text-black">
-                Securities and Exchange Commission of Pakistan
-              </p>
+              <p className="font-mono text-xs uppercase tracking-[0.2em] text-black/50">Registered Authority</p>
+              <p className="mt-2 text-sm font-semibold text-black">Securities and Exchange Commission of Pakistan</p>
               <p className="mt-1 text-xs text-black/60">CUIN: 0337422</p>
               <p className="mt-1 text-xs text-black/60">Incorporation Date: 16 May 2026</p>
-              <p className="mt-3 text-xs text-black/50">
-                Official Pakistani Business Identity
-              </p>
+              <p className="mt-3 text-xs text-black/50">Official Pakistani Business Identity</p>
             </div>
           </div>
         </div>
-      </section >
-    </div >
+      </section>
+    </div>
   );
 }
