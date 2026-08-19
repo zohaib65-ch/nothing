@@ -250,8 +250,8 @@ body {
   pointer-events: none;
   position: fixed;
   inset: 0;
-  z-index: 100;
-  background-image: radial-gradient(circle, #ffffff 0 1px, transparent 1.7px);
+  z-index: 40;
+  background-image: radial-gradient(circle, #ffffff 0 0.8px, transparent 1.3px);
   background-position: -25px -25px;
   background-size: 114px 114px;
   /* Invert against whatever is beneath: white dots → black on light, white on dark */

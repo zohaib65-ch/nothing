@@ -13,14 +13,14 @@ interface PageProps {
 }
 
 const titleMap: Record<string, string> = {
-  phones: "Nothing & CMF Phones",
-  chargers: "Power & Fast Chargers",
-  audio: "Audio & Wireless Earbuds",
+  phones: "Phones",
+  chargers: "Chargers",
+  audio: "Audio",
   protectors: "Screen & Glass Protectors",
   "shop-all": "Shop All Catalog",
-  apparel: "Nothing Apparel",
-  watches: "CMF Watch & Smartwatches",
-  accessories: "Nothing & CMF Accessories",
+  apparel: "Apparel",
+  watches: "Watches",
+  accessories: "Accessories",
 };
 
 const descMap: Record<string, string> = {

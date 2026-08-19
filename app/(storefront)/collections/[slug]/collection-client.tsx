@@ -13,12 +13,14 @@ interface CollectionClientProps {
 
 export default function CollectionClient({ slug, initialProducts }: CollectionClientProps) {
   const titleMap: Record<string, string> = {
-    phones: "Nothing & CMF Phones",
-    chargers: "Power & Fast Chargers",
-    audio: "Audio & Wireless Earbuds",
+    phones: "Phones",
+    chargers: "Chargers",
+    audio: "Audio",
     protectors: "Screen & Glass Protectors",
     "shop-all": "Shop All Catalog",
-    apparel: "Nothing Apparel",
+    apparel: "Apparel",
+    watches: "Watches",
+    accessories: "Accessories",
   };
 
   const currentTitle = titleMap[slug] || `Collection: ${slug.toUpperCase()}`;
@@ -30,7 +32,7 @@ export default function CollectionClient({ slug, initialProducts }: CollectionCl
         <div className="pb-4 md:pb-6">
           <div className="flex items-center justify-center py-2 sm:py-4">
             <div className="max-w-4xl text-center">
-              <h1 className="font-ndot57 uppercase text-center text-[2.15rem] leading-[0.95] tracking-[0.2em] text-black sm:text-[2.9rem] lg:text-[3.45rem]">
+              <h1 className="font-ndot57 uppercase text-center text-[2.30rem] text-black ">
                 {currentTitle}
               </h1>
             </div>
